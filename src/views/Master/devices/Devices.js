@@ -389,7 +389,7 @@ const Devices = () => {
     }
   }
 
-  const handleSearch = ()=>{
+  const handleSearch = () => {
     filterDevices(searchQuery)
   }
 
@@ -401,13 +401,13 @@ const Devices = () => {
   };
 
   useEffect(() => {
-    if (searchQuery=='') {
+    if (searchQuery == '') {
       filterDevices(searchQuery)
     }
     if (searchQuery) {
       filterDevices(searchQuery)
     }
-  }, [currentItems, searchQuery,currentPage,limit])
+  }, [currentItems, searchQuery, currentPage, limit])
 
   // #########################  Edit Device API function #######################
 
@@ -443,7 +443,7 @@ const Devices = () => {
       // API call
       const accessToken = Cookies.get('authToken')
       const username = 'hbtrack'
-      const password = '123456@
+      const password = '123456@'
       const token1 = btoa(`${username}:${password}`)
       const oldPutApi = `http://63.142.251.13:8082/api/devices`
       const newPutApi = `${import.meta.env.VITE_API_URL}/device`
@@ -454,7 +454,7 @@ const Devices = () => {
 
       const oldRow = {
         id: formData.id,
-        name: formData.name || '','
+        name: formData.name || '',
         uniqueId: formData.uniqueId ? formData.uniqueId.trim() : '',
         phone: formData.sim || '',
         model: formData.model || '',
@@ -742,7 +742,7 @@ const Devices = () => {
       ...formData,
       [name]: value,
     })
-    console.log("Add device formData",formData)
+    console.log("Add device formData", formData)
   }
 
   // Handle year selection for expiration date
@@ -795,43 +795,43 @@ const Devices = () => {
   //     alert('Password is not correct')
   //   }
   // }
-// below is when we deal with custom date
-const handleCheckPassword = () => {
-  if (extendedPassword === myPassword) {
-    setPasswordCheck(true);
-    setExtendedPasswordModel(false);
-    alert('Password is correct');
+  // below is when we deal with custom date
+  const handleCheckPassword = () => {
+    if (extendedPassword === myPassword) {
+      setPasswordCheck(true);
+      setExtendedPasswordModel(false);
+      alert('Password is correct');
 
-    // Update the expiration date
-    if (customExtendDate) {
-      // Apply the custom date selected earlier
-      setFormData({
-        ...formData,
-        extenddate: customExtendDate,
-        expirationdate: customExtendDate,
-      });
-      setCustomExtendDate(null); // Clear the custom date state after applying
-    } else if (formData.expirationdate && extendedYear) {
-      // Apply year extension logic
-      const expiry = new Date(formData.expirationdate);
-      const extendedDate = new Date(
-        expiry.setFullYear(expiry.getFullYear() + extendedYear)
-      )
-        .toISOString()
-        .split('T')[0];
+      // Update the expiration date
+      if (customExtendDate) {
+        // Apply the custom date selected earlier
+        setFormData({
+          ...formData,
+          extenddate: customExtendDate,
+          expirationdate: customExtendDate,
+        });
+        setCustomExtendDate(null); // Clear the custom date state after applying
+      } else if (formData.expirationdate && extendedYear) {
+        // Apply year extension logic
+        const expiry = new Date(formData.expirationdate);
+        const extendedDate = new Date(
+          expiry.setFullYear(expiry.getFullYear() + extendedYear)
+        )
+          .toISOString()
+          .split('T')[0];
 
-      setFormData({
-        ...formData,
-        extenddate: extendedDate,
-        expirationdate: extendedDate,
-      });
+        setFormData({
+          ...formData,
+          extenddate: extendedDate,
+          expirationdate: extendedDate,
+        });
+      }
+
+      setSelectedYears(null); // Reset the selected years
+    } else {
+      alert('Password is not correct');
     }
-
-    setSelectedYears(null); // Reset the selected years
-  } else {
-    alert('Password is not correct');
-  }
-};
+  };
 
 
 
@@ -936,8 +936,8 @@ const handleCheckPassword = () => {
   }
 
   // console.log("pageCountttttttttttt",pageCount)
-  console.log("data.lengthhhhhhhhhhhhhh",data)
-  console.log("filteredDataaaaaaaaaaaaaa",filteredData)
+  console.log("data.lengthhhhhhhhhhhhhh", data)
+  console.log("filteredDataaaaaaaaaaaaaa", filteredData)
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">
@@ -1005,7 +1005,7 @@ const handleCheckPassword = () => {
       >
         <CTable bordered align="middle" className="mb-2 borderless min-vh-25 rounded-top-3" hover responsive >
           <CTableHead style={{ fontFamily: "Roboto, sans-serif", fontSize: '14px', }} bordered align="middle" className="mb-2 border min-vh-25 rounded-top-3" hover responsive >
-            <CTableRow style={{height:'6vh' ,  }} className="text-nowrap "  >
+            <CTableRow style={{ height: '6vh', }} className="text-nowrap "  >
               <CTableHeaderCell className="text-center bg-body-secondary text-center sr-no table-cell" >
                 <strong>SN</strong>
               </CTableHeaderCell >
@@ -1023,7 +1023,7 @@ const handleCheckPassword = () => {
           </CTableHead>
           <CTableBody>
             {loading ? (
-              <CTableRow key="loading"  style={{border:'1px soild black'}}>
+              <CTableRow key="loading" style={{ border: '1px soild black' }}>
                 <CTableDataCell colSpan="16" className="text-center">
                   <div className="text-nowrap mb-2 text-center w-">
                     <p className="card-text placeholder-glow">
