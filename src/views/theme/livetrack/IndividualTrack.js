@@ -288,61 +288,60 @@ const IndividualTrack = () => {
   }, [individualSalesMan])
 
   // NEW: Fetch geofence data for this vehicle
-  useEffect(() => {
-    const fetchGeofences = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/geofence/${deviceId}`, {
-          headers: {
-            Authorization: 'Bearer ' + accessToken,
-          },
-        })
+  const fetchGeofences = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/geofence/${deviceId}`, {
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
+        },
+      })
 
-        // Process circle geofences
-        const circleData = (data) => {
-          return data
-            .filter((item) => item.area.length === 1 && item.area[0].circle)
-            .map((item) => {
-              const match = item.area[0].circle.match(/Circle\(([\d.]+) ([\d.]+), ([\d.]+)\)/)
-              if (match) {
-                return {
-                  name: item.name,
-                  lat: parseFloat(match[1]), // Extract latitude
-                  lng: parseFloat(match[2]), // Extract longitude
-                  radius: parseFloat(match[3]), // Extract radius in meters
-                }
+      // Process circle geofences
+      const circleData = (data) => {
+        return data
+          .filter((item) => item.area.length === 1 && item.area[0].circle)
+          .map((item) => {
+            const match = item.area[0].circle.match(/Circle\(([\d.]+) ([\d.]+), ([\d.]+)\)/)
+            if (match) {
+              return {
+                name: item.name,
+                lat: parseFloat(match[1]), // Extract latitude
+                lng: parseFloat(match[2]), // Extract longitude
+                radius: parseFloat(match[3]), // Extract radius in meters
               }
-              return null
-            })
-            .filter(Boolean)
-        }
-
-        // Process polygon geofences
-        const polygon = (data) => {
-          return data
-            .filter((item) => item.area.length > 1)
-            .map((item) => {
-              const coordinates = item.area.map((coord) => [coord.lat, coord.lng])
-              if (coordinates) {
-                return {
-                  name: item.name,
-                  coordinates,
-                }
-              }
-            })
-            .filter(Boolean)
-        }
-
-        console.log('Fetch GEOFENCE', response.data)
-        console.log('FETCH GEOFENCE POLYGON', polygon(response.data))
-        setGeofences(circleData(response.data))
-        setPolygonData(polygon(response.data))
-      } catch (error) {
-        console.error('Error fetching geofences:', error)
+            }
+            return null
+          })
+          .filter(Boolean)
       }
-    }
 
+      // Process polygon geofences
+      const polygon = (data) => {
+        return data
+          .filter((item) => item.area.length > 1)
+          .map((item) => {
+            const coordinates = item.area.map((coord) => [coord.lat, coord.lng])
+            if (coordinates) {
+              return {
+                name: item.name,
+                coordinates,
+              }
+            }
+          })
+          .filter(Boolean)
+      }
+
+      console.log('Fetch GEOFENCE', response.data)
+      console.log('FETCH GEOFENCE POLYGON', polygon(response.data))
+      setGeofences(circleData(response.data))
+      setPolygonData(polygon(response.data))
+    } catch (error) {
+      console.error('Error fetching geofences:', error)
+    }
+  }
+  useEffect(() => {
     fetchGeofences()
-  }, [deviceId, geofences])
+  }, [deviceId])
 
   // Check if the vehicle is inside any geofence (circle or polygon)
   useEffect(() => {
@@ -447,7 +446,7 @@ const IndividualTrack = () => {
         },
       })
       toast.success('Geofence added successfully')
-
+      fetchGeofences()
       // Reset form values after successful creation
       setGeofencesName('')
       setGeofencesType('')
@@ -507,10 +506,12 @@ const IndividualTrack = () => {
                 <>
                   <ClickHandler onClick={handleMapClick} />
                   {clickedPosition && (
-                    <Marker position={clickedPosition}
+                    <Marker
+                      position={clickedPosition}
                       eventHandlers={{
                         click: () => setAutoFocusEnabled(false), // Disable autofocus on marker click
-                      }}>
+                      }}
+                    >
                       <Popup style={popupStyle}>
                         <div className="row justify-content-center">
                           <div className="col-12" style={{ maxWidth: '400px' }}>
@@ -563,8 +564,8 @@ const IndividualTrack = () => {
 
                                 <button
                                   onClick={() => {
-                                    handleAddGeofence();
-                                    setAutoFocusEnabled(true); // Enable autofocus after geofence submission
+                                    handleAddGeofence()
+                                    setAutoFocusEnabled(true) // Enable autofocus after geofence submission
                                   }}
                                   className="btn btn-primary w-100"
                                 >
@@ -805,7 +806,7 @@ const IndividualTrack = () => {
             </MapContainer>
           </div>
         </div>
-      </div >
+      </div>
       <div className="position-fixed bottom-0 end-0 mb-5 m-3 z-5" style={{ zIndex: '1000' }}>
         <IconDropdown items={dropdownItems} />
       </div>
