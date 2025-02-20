@@ -111,12 +111,12 @@ const AppSidebar = () => {
       </CSidebarHeader>
       {navigatingNav && <AppSidebarNav items={navigatingNav} />}
       <CSidebarFooter className="border-top d-none d-lg-flex">
-        <CTooltip content="Close">
+        {/* <CTooltip content="Close">
           <CSidebarToggler
             onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
             // onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
           />
-        </CTooltip>
+        </CTooltip> */}
 
         {/* <CHeaderToggler
           onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
