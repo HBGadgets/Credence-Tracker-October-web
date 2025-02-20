@@ -364,9 +364,27 @@ const AddDevice1 = ({
                         name: col.accessor,
                         value: newValue.map((user) => user._id),
                       },
-                    })
+                    });
                   }}
-                  ListboxComponent={CustomListbox}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -396,6 +414,7 @@ const AddDevice1 = ({
                   isOptionEqualToValue={(option, value) => option._id === value._id}
                 />
               </FormControl>
+
             )
             //               return(
             //                 <FormControl fullWidth sx={{ marginBottom: 2 }} key={col.accessor}>
@@ -510,9 +529,27 @@ const AddDevice1 = ({
                         name: col.accessor,
                         value: newValue.map((group) => group._id),
                       },
-                    })
+                    });
                   }}
-                  ListboxComponent={CustomListbox}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -542,6 +579,8 @@ const AddDevice1 = ({
                   isOptionEqualToValue={(option, value) => option._id === value._id}
                 />
               </FormControl>
+
+
               // <FormControl fullWidth sx={{ marginBottom: 2,  }} key={col.accessor}>
               //   <Autocomplete
               //     disableCloseOnSelect
@@ -657,7 +696,25 @@ const AddDevice1 = ({
                       },
                     })
                   }}
-                  ListboxComponent={CustomListbox}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -701,7 +758,25 @@ const AddDevice1 = ({
                       },
                     })
                   }}
-                  ListboxComponent={CustomListbox}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -748,7 +823,25 @@ const AddDevice1 = ({
                       },
                     })
                   }}
-                  ListboxComponent={CustomListbox}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -794,7 +887,25 @@ const AddDevice1 = ({
                       },
                     })
                   }}
-                  ListboxComponent={CustomListbox}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -873,16 +984,16 @@ const AddDevice1 = ({
                   <InputLabel>Expiration Plans</InputLabel>
                   <Select
                     onChange={(e) => {
-                      const value = e.target.value
+                      const value = e.target.value;
 
                       // Handle custom logic for the custom date option
                       if (value === 'custom') {
-                        setShowExpirationDropdown(false) // Hide dropdown
-                        setCustomDateMode(true) // Trigger custom date input mode
+                        setShowExpirationDropdown(false); // Hide dropdown
+                        setCustomDateMode(true); // Trigger custom date input mode
                       } else {
-                        handleYearSelection(parseInt(value))
-                        setShowExpirationDropdown(false) // Reset dropdown state
-                        setCustomDateMode(false) // Reset custom date mode
+                        handleYearSelection(parseInt(value));
+                        setShowExpirationDropdown(false); // Reset dropdown state
+                        setCustomDateMode(false); // Reset custom date mode
                       }
                     }}
                     label="Expiration Options"
@@ -896,6 +1007,27 @@ const AddDevice1 = ({
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          maxHeight: 200, // Restrict max height
+                          overflowY: 'scroll', // Always show scrollbar
+                          '&::-webkit-scrollbar': {
+                            width: '8px', // Scrollbar width
+                          },
+                          '&::-webkit-scrollbar-track': {
+                            background: '#f1f1f1', // Track color
+                          },
+                          '&::-webkit-scrollbar-thumb': {
+                            background: '#888', // Scrollbar color
+                            borderRadius: '4px',
+                          },
+                          '&::-webkit-scrollbar-thumb:hover': {
+                            background: '#555', // Hover effect
+                          },
+                        },
+                      },
                     }}
                   >
                     <MenuItem value={1}>1 Year</MenuItem>
@@ -914,16 +1046,16 @@ const AddDevice1 = ({
                         shrink: true,
                       }}
                       onChange={(e) => {
-                        const selectedDate = e.target.value
+                        const selectedDate = e.target.value;
                         setFormData({
                           ...formData,
                           expirationdate: selectedDate, // Directly set expiration date
-                        })
-                        //setCustomDateMode(false); // Close custom date mode
+                        });
                       }}
                     />
                   </FormControl>
                 )}
+
               </>
             )
           }

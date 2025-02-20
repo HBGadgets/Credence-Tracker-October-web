@@ -1241,9 +1241,8 @@ const Driver = () => {
                 <Autocomplete
                   options={devices} // List of devices
                   getOptionLabel={(option) => option.name} // Defines the label for each option
-                  //onChange={(event, value) => setSelectedDevice(value)}
                   onChange={(event, value) =>
-                    setFormData({ ...formData, deviceId: value.deviceId })
+                    setFormData({ ...formData, deviceId: value?.deviceId })
                   } // Handle selection
                   renderInput={(params) => (
                     <TextField
@@ -1266,11 +1265,31 @@ const Driver = () => {
                   )}
                   filterOptions={(options, state) =>
                     options.filter((option) =>
-                      option.name.toLowerCase().includes(state.inputValue.toLowerCase()),
+                      option.name.toLowerCase().includes(state.inputValue.toLowerCase())
                     )
                   }
                   isOptionEqualToValue={(option, value) => option.deviceId === value?.deviceId}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
+                  }}
                 />
+
 
                 <TextField
                   label="Licence No."
@@ -1434,6 +1453,27 @@ const Driver = () => {
                     )
                   }
                   isOptionEqualToValue={(option, value) => option.deviceId === value?.deviceId}
+
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
+                  }}
+
                 />
 
                 <TextField

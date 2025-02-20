@@ -280,55 +280,75 @@ function AllUser({ handleNextStep, handleSkip }) {
               ),
             }}
           />
-          <FormControl fullWidth sx={{ marginBottom: 2 }} >
-                      <Autocomplete
-                        disableCloseOnSelect
-                        multiple
-                        
-                        options={groups}
-                        getOptionLabel={(option) => option.name || ''}
-                        value={
-                          groups.filter((group) => formData.groups?.includes(group._id)) ||
-                          []
-                        }
-                        onChange={(event, newValue) => {
-                          handleInputChange({
-                            target: {
-                              name: "groups",
-                              value: newValue.map((group) => group._id),
-                            },
-                          })
-                        }}
-                        ListboxComponent={CustomListbox} 
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label="groups"
-                            placeholder="Search group..."
-                            variant="outlined"
-                            InputProps={{
-                              ...params.InputProps,
-                              startAdornment: (
-                                <>
-                                  <InputAdornment position="start">
-                                    <FaUserGroup
-                                      style={{
-                                        fontSize: '1.3rem',
-                                        color: 'rgb(51 51 51 / 73%)',
-                                        marginRight: '0.5rem',
-                                        marginLeft: '0.5rem',
-                                      }}
-                                    />
-                                  </InputAdornment>
-                                  {params.InputProps.startAdornment}
-                                </>
-                              ),
+
+          <FormControl fullWidth sx={{ marginBottom: 2 }}>
+            <Autocomplete
+              disableCloseOnSelect
+              multiple
+              options={groups}
+              getOptionLabel={(option) => option.name || ''}
+              value={
+                groups.filter((group) => formData.groups?.includes(group._id)) || []
+              }
+              onChange={(event, newValue) => {
+                handleInputChange({
+                  target: {
+                    name: "groups",
+                    value: newValue.map((group) => group._id),
+                  },
+                });
+              }}
+              ListboxProps={{
+                sx: {
+                  maxHeight: 200, // Restrict max height
+                  overflowY: 'scroll', // Always show scrollbar
+                  '&::-webkit-scrollbar': {
+                    width: '8px', // Scrollbar width
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    background: '#f1f1f1', // Track color
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: '#888', // Scrollbar color
+                    borderRadius: '4px',
+                  },
+                  '&::-webkit-scrollbar-thumb:hover': {
+                    background: '#555', // Hover effect
+                  },
+                },
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="groups"
+                  placeholder="Search group..."
+                  variant="outlined"
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <>
+                        <InputAdornment position="start">
+                          <FaUserGroup
+                            style={{
+                              fontSize: '1.3rem',
+                              color: 'rgb(51 51 51 / 73%)',
+                              marginRight: '0.5rem',
+                              marginLeft: '0.5rem',
                             }}
                           />
-                        )}
-                        isOptionEqualToValue={(option, value) => option._id === value._id}
-                      />
-                    </FormControl>
+                        </InputAdornment>
+                        {params.InputProps.startAdornment}
+                      </>
+                    ),
+                  }}
+                />
+              )}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+            />
+          </FormControl>
+
+
+
           {/* <FormControl fullWidth sx={{ marginBottom: 2 }}>
             <Autocomplete
               disableCloseOnSelect

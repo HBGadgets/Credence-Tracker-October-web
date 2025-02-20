@@ -133,7 +133,7 @@ const Notification = () => {
     borderRadius: '10px',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '40%',
+    width: '60%',
     maxHeight: '90vh',
     bgcolor: 'background.paper',
     boxShadow: 24,
@@ -1133,7 +1133,7 @@ const Notification = () => {
                   ))}
                 </Select>
               </FormControl> */}
-              <FormControl fullWidth sx={{ marginBottom: 2 }}>
+              <FormControl fullWidth sx={{ marginBottom: 4 }}>
                 <Autocomplete
                   options={groups} // List of devices
                   getOptionLabel={(option) => option.name} // Defines the label for each option
@@ -1175,9 +1175,28 @@ const Notification = () => {
                     )
                   }
                   isOptionEqualToValue={(option, value) => option.deviceId === value?.deviceId}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
+                  }}
                 />
               </FormControl>
-              <FormControl fullWidth sx={{ marginBottom: 2 }}>
+              <FormControl fullWidth sx={{ marginBottom: 4 }}>
                 <Autocomplete
                   multiple
                   options={devices} // List of devices
@@ -1187,6 +1206,25 @@ const Notification = () => {
                     console.log('value in auto devices', newValue)
 
                     setSelectedDevices(newValue)
+                  }}
+                  ListboxProps={{
+                    sx: {
+                      maxHeight: 200, // Restrict max height
+                      overflowY: 'scroll', // Always show scrollbar
+                      '&::-webkit-scrollbar': {
+                        width: '8px', // Scrollbar width
+                      },
+                      '&::-webkit-scrollbar-track': {
+                        background: '#f1f1f1', // Track color
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        background: '#888', // Scrollbar color
+                        borderRadius: '4px',
+                      },
+                      '&::-webkit-scrollbar-thumb:hover': {
+                        background: '#555', // Hover effect
+                      },
+                    },
                   }}
                   renderInput={(params) => (
                     <TextField
@@ -1263,6 +1301,7 @@ const Notification = () => {
                   isOptionEqualToValue={(option, value) => option.deviceId === value?.deviceId}
                 />
               </FormControl>
+
               <Autocomplete
                 multiple
                 options={['All', ...notificationTypes]} // Include "All" dynamically
@@ -1298,6 +1337,25 @@ const Notification = () => {
                     {option}
                   </li>
                 )}
+                ListboxProps={{
+                  sx: {
+                    maxHeight: 200, // Restrict max height
+                    overflowY: 'scroll', // Always show scrollbar
+                    '&::-webkit-scrollbar': {
+                      width: '8px', // Scrollbar width
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      background: '#f1f1f1', // Track color
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: '#888', // Scrollbar color
+                      borderRadius: '4px',
+                    },
+                    '&::-webkit-scrollbar-thumb:hover': {
+                      background: '#555', // Hover effect
+                    },
+                  },
+                }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -1402,24 +1460,25 @@ const Notification = () => {
                   ))}
                 </Select>
               </FormControl> */}
+
               <FormControl fullWidth sx={{ marginBottom: 2, marginTop: 5 }}>
                 <InputLabel>Notification Type</InputLabel>
                 <Select
                   name="type"
                   value={formData.type || []}
                   onChange={(e) => {
-                    const selected = e.target.value
-                    if (selected.includes('All')) {
+                    const selected = e.target.value;
+                    if (selected.includes("All")) {
                       if (formData.type?.length === notificationTypes.length) {
                         // Deselect all if "All" is selected
-                        setFormData({ ...formData, type: [] })
+                        setFormData({ ...formData, type: [] });
                       } else {
                         // Select all options
-                        setFormData({ ...formData, type: notificationTypes })
+                        setFormData({ ...formData, type: notificationTypes });
                       }
                     } else {
                       // Regular update
-                      setFormData({ ...formData, type: selected })
+                      setFormData({ ...formData, type: selected });
                     }
                   }}
                   input={
@@ -1428,11 +1487,11 @@ const Notification = () => {
                         <InputAdornment position="start">
                           <NotificationsIcon
                             sx={{
-                              borderRadius: '50%',
-                              backgroundColor: 'rgba(0, 0, 0, 0.54)',
-                              color: 'white',
-                              padding: '5px',
-                              fontSize: '28px',
+                              borderRadius: "50%",
+                              backgroundColor: "rgba(0, 0, 0, 0.54)",
+                              color: "white",
+                              padding: "5px",
+                              fontSize: "28px",
                             }}
                           />
                         </InputAdornment>
@@ -1442,13 +1501,32 @@ const Notification = () => {
                   }
                   label="Select Notification Type..."
                   multiple
-                  renderValue={(selected) => selected.join(', ')}
+                  renderValue={(selected) => selected.join(", ")}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        maxHeight: 200, // Restrict max height
+                        overflowY: "scroll", // Always show scrollbar
+                        "&::-webkit-scrollbar": {
+                          width: "8px", // Scrollbar width
+                        },
+                        "&::-webkit-scrollbar-track": {
+                          background: "#f1f1f1", // Track color
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          background: "#888", // Scrollbar color
+                          borderRadius: "4px",
+                        },
+                        "&::-webkit-scrollbar-thumb:hover": {
+                          background: "#555", // Hover effect
+                        },
+                      },
+                    },
+                  }}
                 >
                   {/* "All" Option */}
                   <MenuItem value="All">
-                    <Checkbox
-                      checked={formData.type?.length === notificationTypes.length} // Check "All" if all options are selected
-                    />
+                    <Checkbox checked={formData.type?.length === notificationTypes.length} />
                     <ListItemText primary="All" />
                   </MenuItem>
 

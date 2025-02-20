@@ -1859,34 +1859,53 @@ const Users = () => {
               <Autocomplete
                 multiple
                 id="groups-assigned"
-                options={[{ _id: 'new', name: 'Add New Group' }, ...groups]} // Add "Add New Group" as an option
+                options={[{ _id: 'new', name: 'Add New Group' }, ...groups]}
                 getOptionLabel={(option) => option.name}
                 value={groups.filter((group) => formData.groupsAssigned?.includes(group._id)) || []}
                 isOptionEqualToValue={(option, value) => option._id === value._id}
                 onChange={(event, value) => {
-                  // Check if "Add New Group" is selected
-                  const isNewGroupSelected = value.some((item) => item._id === 'new')
-
+                  const isNewGroupSelected = value.some((item) => item._id === 'new');
                   if (isNewGroupSelected) {
-                    const updatedValues = value.filter((item) => item._id !== 'new')
+                    const updatedValues = value.filter((item) => item._id !== 'new');
                     handleInputChange({
                       target: {
                         name: 'groupsAssigned',
                         value: updatedValues.map((item) => item._id),
                       },
-                    })
-
-                    // Trigger "Add New Group" function
-                    handleNewGroup()
+                    });
+                    handleNewGroup();
                   } else {
                     handleInputChange({
                       target: {
                         name: 'groupsAssigned',
                         value: value.map((item) => item._id),
                       },
-                    })
+                    });
                   }
                 }}
+                componentsProps={{
+                  paper: {
+                    sx: {
+                      maxHeight: 200, // Adjust height to prevent forced reflows
+                      overflowY: "overlay", // Ensures a non-intrusive scrollbar
+                      scrollBehavior: "smooth", // Enables smooth scrolling
+                      "&::-webkit-scrollbar": {
+                        width: "6px", // Slightly smaller for smoothness
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        background: "rgba(0,0,0,0.3)", // Light background for smooth feel
+                        borderRadius: "4px",
+                        "&:hover": {
+                          background: "rgba(0,0,0,0.5)", // Slightly darken on hover
+                        },
+                      },
+                      "&::-webkit-scrollbar-track": {
+                        background: "transparent", // Keeps UI clean
+                      },
+                    },
+                  },
+                }}
+
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -1899,10 +1918,10 @@ const Users = () => {
                           <InputAdornment position="start">
                             <FaUserGroup
                               style={{
-                                fontSize: '1.3rem',
-                                color: 'rgb(51 51 51 / 73%)',
-                                marginRight: '0.5rem',
-                                marginLeft: '0.5rem',
+                                fontSize: "1.3rem",
+                                color: "rgb(51 51 51 / 73%)",
+                                marginRight: "0.5rem",
+                                marginLeft: "0.5rem",
                               }}
                             />
                           </InputAdornment>
@@ -1917,12 +1936,12 @@ const Users = () => {
                     component="li"
                     {...props}
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      fontStyle: option._id === 'new' ? 'italic' : 'normal',
+                      display: "flex",
+                      alignItems: "center",
+                      fontStyle: option._id === "new" ? "italic" : "normal",
                     }}
                   >
-                    {option._id === 'new' && <IoMdAddCircle style={{ marginRight: 8 }} />}
+                    {option._id === "new" && <IoMdAddCircle style={{ marginRight: 8 }} />}
                     {option.name}
                   </Box>
                 )}
@@ -1932,6 +1951,7 @@ const Users = () => {
                   ))
                 }
               />
+
 
               {/* // Dialog for creating a new group */}
               <Dialog open={openNewGroupDialog} onClose={() => setOpenNewGroupDialog(false)}>
@@ -2157,6 +2177,8 @@ const Users = () => {
           </div>
         </Box>
       </Modal>
+
+      {/* Edit model */}
       <Modal open={editModalOpen} onClose={handleModalClose}>
         <Box
           sx={{
@@ -2280,6 +2302,27 @@ const Users = () => {
                   onChange={handleInputChange}
                   label={'Groups'}
                   multiple
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        maxHeight: 200, // Restrict max height
+                        overflowY: 'scroll', // Always show scrollbar
+                        '&::-webkit-scrollbar': {
+                          width: '6px', // Scrollbar width
+                        },
+                        '&::-webkit-scrollbar-track': {
+                          background: '#f1f1f1', // Track color
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                          background: '#888', // Scrollbar color
+                          borderRadius: '4px',
+                        },
+                        '&::-webkit-scrollbar-thumb:hover': {
+                          background: '#555', // Hover effect
+                        },
+                      },
+                    },
+                  }}
                 >
                   {groups?.map((group) => (
                     <MenuItem key={group._id} value={group._id}>
@@ -2288,6 +2331,7 @@ const Users = () => {
                   ))}
                 </Select>
               </FormControl>
+
             </div>
             {/* )} */}
 

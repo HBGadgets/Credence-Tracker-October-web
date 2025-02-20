@@ -61,7 +61,7 @@ const EditDeviceModal = ({
         <div className="d-flex justify-content-between align-items-center mb-4">
           <Typography variant="h6" sx={{ color: '#333', fontWeight: 'bold', fontSize: '24px' }}>
             <span role="img" aria-label="device">
-              <MdOutlineOnDeviceTraining style={{verticalAlign: 'text-top'}}/>
+              <MdOutlineOnDeviceTraining style={{ verticalAlign: 'text-top' }} />
             </span>{' '}
             Update Device
           </Typography>
@@ -121,6 +121,27 @@ const EditDeviceModal = ({
                       onChange={handleInputChange}
                       label={col.Header}
                       multiple
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200, // Restrict max height
+                            overflowY: 'scroll', // Always show scrollbar
+                            '&::-webkit-scrollbar': {
+                              width: '8px', // Scrollbar width
+                            },
+                            '&::-webkit-scrollbar-track': {
+                              background: '#f1f1f1', // Track color
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                              background: '#888', // Scrollbar color
+                              borderRadius: '4px',
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                              background: '#555', // Hover effect
+                            },
+                          },
+                        },
+                      }}
                     >
                       {users.map((user) => (
                         <MenuItem key={user._id} value={user._id}>
@@ -129,6 +150,7 @@ const EditDeviceModal = ({
                       ))}
                     </Select>
                   </FormControl>
+
                 )
               } else if (col.accessor === 'groups') {
                 return (
@@ -140,6 +162,27 @@ const EditDeviceModal = ({
                       onChange={handleInputChange}
                       label={col.Header}
                       multiple
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200, // Restrict max height
+                            overflowY: 'scroll', // Always show scrollbar
+                            '&::-webkit-scrollbar': {
+                              width: '8px', // Scrollbar width
+                            },
+                            '&::-webkit-scrollbar-track': {
+                              background: '#f1f1f1', // Track color
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                              background: '#888', // Scrollbar color
+                              borderRadius: '4px',
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                              background: '#555', // Hover effect
+                            },
+                          },
+                        },
+                      }}
                     >
                       {groups.map((group) => (
                         <MenuItem key={group._id} value={group._id}>
@@ -158,6 +201,27 @@ const EditDeviceModal = ({
                       value={formData[col.accessor] || []}
                       onChange={handleInputChange}
                       label={col.Header}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200, // Restrict max height
+                            overflowY: 'scroll', // Always show scrollbar
+                            '&::-webkit-scrollbar': {
+                              width: '8px', // Scrollbar width
+                            },
+                            '&::-webkit-scrollbar-track': {
+                              background: '#f1f1f1', // Track color
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                              background: '#888', // Scrollbar color
+                              borderRadius: '4px',
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                              background: '#555', // Hover effect
+                            },
+                          },
+                        },
+                      }}
                     >
                       <MenuItem value="">select driver...</MenuItem>
                       {drivers.map((driver) => (
@@ -178,6 +242,27 @@ const EditDeviceModal = ({
                       onChange={handleInputChange}
                       label={col.Header}
                       multiple
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200, // Restrict max height
+                            overflowY: 'scroll', // Always show scrollbar
+                            '&::-webkit-scrollbar': {
+                              width: '8px', // Scrollbar width
+                            },
+                            '&::-webkit-scrollbar-track': {
+                              background: '#f1f1f1', // Track color
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                              background: '#888', // Scrollbar color
+                              borderRadius: '4px',
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                              background: '#555', // Hover effect
+                            },
+                          },
+                        },
+                      }}
                     >
                       {areas.map((geofence) => (
                         <MenuItem key={geofence._id} value={geofence._id}>
@@ -196,6 +281,27 @@ const EditDeviceModal = ({
                       value={formData[col.accessor] || []}
                       onChange={handleInputChange}
                       label={col.Header}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200, // Restrict max height
+                            overflowY: 'scroll', // Always show scrollbar
+                            '&::-webkit-scrollbar': {
+                              width: '8px', // Scrollbar width
+                            },
+                            '&::-webkit-scrollbar-track': {
+                              background: '#f1f1f1', // Track color
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                              background: '#888', // Scrollbar color
+                              borderRadius: '4px',
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                              background: '#555', // Hover effect
+                            },
+                          },
+                        },
+                      }}
                     >
                       {models.map((model) => (
                         <MenuItem key={model} value={model.modelName}>
@@ -214,6 +320,27 @@ const EditDeviceModal = ({
                       value={formData[col.accessor] || []}
                       onChange={handleInputChange}
                       label={col.Header}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200, // Restrict max height
+                            overflowY: 'scroll', // Always show scrollbar
+                            '&::-webkit-scrollbar': {
+                              width: '8px', // Scrollbar width
+                            },
+                            '&::-webkit-scrollbar-track': {
+                              background: '#f1f1f1', // Track color
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                              background: '#888', // Scrollbar color
+                              borderRadius: '4px',
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                              background: '#555', // Hover effect
+                            },
+                          },
+                        },
+                      }}
                     >
                       {categories.map((category) => (
                         <MenuItem key={category} value={category.categoryName}>
@@ -280,6 +407,27 @@ const EditDeviceModal = ({
                         }
                       }}
                       fullWidth
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200, // Restrict max height
+                            overflowY: 'scroll', // Always show scrollbar
+                            '&::-webkit-scrollbar': {
+                              width: '8px', // Scrollbar width
+                            },
+                            '&::-webkit-scrollbar-track': {
+                              background: '#f1f1f1', // Track color
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                              background: '#888', // Scrollbar color
+                              borderRadius: '4px',
+                            },
+                            '&::-webkit-scrollbar-thumb:hover': {
+                              background: '#555', // Hover effect
+                            },
+                          },
+                        },
+                      }}
                     >
                       <MenuItem value={1}>1 Year</MenuItem>
                       <MenuItem value={2}>2 Years</MenuItem>
@@ -342,7 +490,7 @@ const EditDeviceModal = ({
         <button onClick={handleEditSubmit} variant="contained" className="btn btn-secondary" color="primary" style={{ marginTop: '2rem', width: '6rem', marginLeft: 'auto' }}>
           Submit
         </button>
-       
+
       </Box>
     </Modal>
   )

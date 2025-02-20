@@ -1706,32 +1706,51 @@ const Geofences = () => {
               {/* Select Place Type */}
               <Select
                 placeholder="Select Place Type..."
-                value={PlaceType.find((option) => option.value === formData.type) || ''}
+                value={PlaceType.find((option) => option.value === formData.type) || ""}
                 onChange={(selectedOption) =>
-                  setFormData({ ...formData, type: selectedOption ? selectedOption.value : '' })
+                  setFormData({ ...formData, type: selectedOption ? selectedOption.value : "" })
                 }
                 options={PlaceType}
                 styles={{
                   container: (base) => ({
                     ...base,
-                    marginTop: '20px',
-                    marginBottom: '20px',
+                    marginTop: "20px",
+                    marginBottom: "20px",
                   }),
                   control: (base) => ({
                     ...base,
-                    borderColor: '#dfe6e9', // Border color
-                    boxShadow: 'none',
-                    '&:hover': {
-                      borderColor: '#3498db', // Border color on hover
+                    borderColor: "#dfe6e9", // Border color
+                    boxShadow: "none",
+                    "&:hover": {
+                      borderColor: "#3498db", // Border color on hover
                     },
                   }),
                   placeholder: (base) => ({
                     ...base,
-                    color: '#7f8c8d', // Placeholder color
-                    fontWeight: '500',
+                    color: "#7f8c8d", // Placeholder color
+                    fontWeight: "500",
+                  }),
+                  menuList: (base) => ({
+                    ...base,
+                    maxHeight: 200, // Restrict max height
+                    overflowY: "scroll", // Always show scrollbar
+                    "&::-webkit-scrollbar": {
+                      width: "8px", // Scrollbar width
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      background: "#f1f1f1", // Track color
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      background: "#888", // Scrollbar color
+                      borderRadius: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      background: "#555", // Hover effect
+                    },
                   }),
                 }}
               />
+
 
               {/* Select Devices */}
               <Select
@@ -1757,6 +1776,24 @@ const Geofences = () => {
                     ...base,
                     color: '#7f8c8d', // Placeholder color
                     fontWeight: '500',
+                  }),
+                  menuList: (base) => ({
+                    ...base,
+                    maxHeight: 200, // Restrict max height
+                    overflowY: "scroll", // Always show scrollbar
+                    "&::-webkit-scrollbar": {
+                      width: "8px", // Scrollbar width
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      background: "#f1f1f1", // Track color
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      background: "#888", // Scrollbar color
+                      borderRadius: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      background: "#555", // Hover effect
+                    },
                   }),
                 }}
               />
@@ -2120,6 +2157,24 @@ const Geofences = () => {
                   color: '#7f8c8d', // Placeholder color
                   fontWeight: '500',
                 }),
+                menuList: (base) => ({
+                  ...base,
+                  maxHeight: 200, // Restrict max height
+                  overflowY: "scroll", // Always show scrollbar
+                  "&::-webkit-scrollbar": {
+                    width: "8px", // Scrollbar width
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    background: "#f1f1f1", // Track color
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#888", // Scrollbar color
+                    borderRadius: "4px",
+                  },
+                  "&::-webkit-scrollbar-thumb:hover": {
+                    background: "#555", // Hover effect
+                  },
+                }),
               }}
             />
 
@@ -2147,6 +2202,24 @@ const Geofences = () => {
                   ...base,
                   color: '#7f8c8d', // Placeholder color
                   fontWeight: '500',
+                }),
+                menuList: (base) => ({
+                  ...base,
+                  maxHeight: 200, // Restrict max height
+                  overflowY: "scroll", // Always show scrollbar
+                  "&::-webkit-scrollbar": {
+                    width: "8px", // Scrollbar width
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    background: "#f1f1f1", // Track color
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#888", // Scrollbar color
+                    borderRadius: "4px",
+                  },
+                  "&::-webkit-scrollbar-thumb:hover": {
+                    background: "#555", // Hover effect
+                  },
                 }),
               }}
             />
