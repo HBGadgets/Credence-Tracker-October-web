@@ -816,7 +816,7 @@ const Notification = () => {
                     type="search"
                     className="form-control border"
                     style={{ height: '40px' }}
-                    placeholder="Search for Device"
+                    placeholder="Search for Vehicles"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
