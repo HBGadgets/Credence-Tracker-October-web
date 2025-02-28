@@ -135,14 +135,34 @@ const HistoryReport = () => {
                   </div>
 
                   {/* Searchable device select using react-select */}
-                  <div style={{ width: '20rem' }}>
-                    <CFormLabel htmlFor="device">Devices</CFormLabel>
+                  <div style={{ width: "20rem" }}>
+                    <CFormLabel htmlFor="device">Vehicles</CFormLabel>
                     <Select
                       id="device-select"
                       value={deviceOptions.find((device) => device.value === deviceId)}
                       onChange={handleDeviceChange}
                       options={deviceOptions}
-                      placeholder="Select a Device"
+                      placeholder="Select a Vehicle"
+                      styles={{
+                        menuList: (base) => ({
+                          ...base,
+                          maxHeight: "200px", // Restrict max height
+                          overflowY: "scroll", // Enable scrolling
+                          "&::-webkit-scrollbar": {
+                            width: "8px", // Scrollbar width
+                          },
+                          "&::-webkit-scrollbar-track": {
+                            background: "#f1f1f1", // Track color
+                          },
+                          "&::-webkit-scrollbar-thumb": {
+                            background: "#888", // Scrollbar color
+                            borderRadius: "4px",
+                          },
+                          "&::-webkit-scrollbar-thumb:hover": {
+                            background: "#555", // Hover effect
+                          },
+                        }),
+                      }}
                     />
                   </div>
 

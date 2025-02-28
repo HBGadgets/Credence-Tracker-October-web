@@ -178,14 +178,14 @@ const SearchStatus = ({
         <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
       </CCol>
       <CCol md={2}>
-        <CFormLabel htmlFor="devices">Devices</CFormLabel>
+        <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
         <CFormSelect
           id="devices"
           required
           value={formData.Devices}
           onChange={(e) => handleInputChange('Devices', e.target.value)}
         >
-          <option value="">Choose a device...</option>
+          <option value="">Choose a Vehicles...</option>
           {loading ? (
             <option disabled>Loading devices...</option>
           ) : devices?.length > 0 ? (
@@ -195,7 +195,7 @@ const SearchStatus = ({
               </option>
             ))
           ) : (
-            <option disabled>No Device in this Group</option>
+            <option disabled>No Vehicles in this Group</option>
           )}
         </CFormSelect>
 

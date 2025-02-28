@@ -181,19 +181,19 @@ const SearchTravel = ({
           isLoading={loading} // Optionally show a loading spinner
           placeholder="Choose a group..."
         />
-        <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
+        <CFormFeedback invalid>Please provide a valid Vehilces.</CFormFeedback>
       </CCol>
       <CCol md={2}>
-        <CFormLabel htmlFor="devices">Devices</CFormLabel>
+        <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
         <CFormSelect
           id="devices"
           required
           value={formData.Devices}
           onChange={(e) => handleInputChange('Devices', e.target.value)}
         >
-          <option value="">Choose a device...</option>
+          <option value="">Choose a Vehilces...</option>
           {loading ? (
-            <option disabled>Loading devices...</option>
+            <option disabled>Loading vehicles...</option>
           ) : devices?.length > 0 ? (
             devices?.map((device) => (
               <option key={device.id} value={device.deviceId}>
@@ -201,10 +201,10 @@ const SearchTravel = ({
               </option>
             ))
           ) : (
-            <option disabled>No Device in this Group</option>
+            <option disabled>No Vehilces in this Group</option>
           )}
         </CFormSelect>
-        <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
+        <CFormFeedback invalid>Please provide a valid vehicle.</CFormFeedback>
       </CCol>
       <CCol md={2}>
         <CFormLabel htmlFor="periods">Period</CFormLabel>

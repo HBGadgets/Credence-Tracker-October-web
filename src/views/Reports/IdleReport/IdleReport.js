@@ -173,17 +173,17 @@ const SearchIdeal = ({
           isLoading={loading} // Show a loading spinner while fetching groups
         />
 
-        <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
+        <CFormFeedback invalid>Please provide a valid Vehilce.</CFormFeedback>
       </CCol>
 
       <CCol md={2}>
-        <CFormLabel htmlFor="devices">Devices</CFormLabel>
+        <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
         <Select
           id="devices"
           options={
             devices.length > 0
               ? devices.map((device) => ({ value: device.deviceId, label: device.name }))
-              : [{ value: '', label: 'Loading devices...', isDisabled: true }]
+              : [{ value: '', label: 'Loading vehilces...', isDisabled: true }]
           }
           value={
             formData.Devices
@@ -194,10 +194,10 @@ const SearchIdeal = ({
               : null
           }
           onChange={(selectedOption) => handleInputChange('Devices', selectedOption?.value)}
-          placeholder="Choose a device..."
+          placeholder="Choose a Vehicles..."
         />
 
-        <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
+        <CFormFeedback invalid>Please provide a valid vehicle.</CFormFeedback>
       </CCol>
 
       <CCol md={2}>

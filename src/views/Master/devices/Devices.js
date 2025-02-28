@@ -148,7 +148,7 @@ const Devices = () => {
 
   const columns = [
     { Header: 'Device Id', accessor: '_id' },
-    { Header: 'Device Name', accessor: 'name' }, // Maps to 'name'
+    { Header: 'Vehicles Name', accessor: 'name' }, // Maps to 'name'
     { Header: 'IMEI No.', accessor: 'uniqueId' }, // Maps to 'uniqueId'
     { Header: 'Sim', accessor: 'sim' }, // Maps to 'sim'
     { Header: 'Speed', accessor: 'speed' }, // Maps to 'speed'
@@ -937,7 +937,7 @@ const Devices = () => {
   const selectedDeviceName = selectedDevice ? selectedDevice.name : ''
 
   useEffect(() => {
-    console.log('Selected Device Name:', selectedDeviceName)
+    console.log('Selected Vehicle Name:', selectedDeviceName)
   }, [selectedDeviceName]) // Log when the selected device changes
 
   // Dropdown icons downloads section
@@ -1059,7 +1059,7 @@ const Devices = () => {
 
       // Initialize workbook and worksheet
       const workbook = new ExcelJS.Workbook()
-      const worksheet = workbook.addWorksheet('Devices Report')
+      const worksheet = workbook.addWorksheet('Vehicle Report')
 
       // Add title and metadata
       const addHeaderSection = () => {
@@ -1075,7 +1075,7 @@ const Devices = () => {
         worksheet.mergeCells('A1:I1')
 
         // Report title
-        const subtitleRow = worksheet.addRow(['Devices Report'])
+        const subtitleRow = worksheet.addRow(['Vehicle Report'])
         subtitleRow.font = {
           ...CONFIG.styles.titleFont,
           size: 14,
@@ -1154,7 +1154,7 @@ const Devices = () => {
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       })
-      const filename = `Devices_Report_${new Date().toISOString().split('T')[0]}.xlsx`
+      const filename = `Vehicles_Report_${new Date().toISOString().split('T')[0]}.xlsx`
       saveAs(blob, filename)
       toast.success('Excel file downloaded successfully')
     } catch (error) {
@@ -1289,14 +1289,14 @@ const Devices = () => {
         return isNaN(date)
           ? '--'
           : date
-              .toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })
-              .replace(',', '')
+            .toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+            .replace(',', '')
       }
 
       const formatCoordinates = (coords) => {
@@ -1311,7 +1311,7 @@ const Devices = () => {
       // Title and date
       doc.setFontSize(24)
       doc.setFont(CONFIG.fonts.primary, 'bold')
-      doc.text('Devices Report', CONFIG.layout.margin, 35)
+      doc.text('Vehicle Report', CONFIG.layout.margin, 35)
 
       const currentDate = new Date().toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -1397,7 +1397,7 @@ const Devices = () => {
       addFooter()
 
       // Save PDF
-      const filename = `Devices_Report_${new Date().toISOString().split('T')[0]}.pdf`
+      const filename = `Vehicle_Report_${new Date().toISOString().split('T')[0]}.pdf`
       doc.save(filename)
       toast.success('PDF downloaded successfully')
     } catch (error) {
@@ -1438,9 +1438,9 @@ const Devices = () => {
                     value={
                       selectedUser
                         ? {
-                            value: selectedUser,
-                            label: users?.find((user) => user._id === selectedUser)?.username || '',
-                          }
+                          value: selectedUser,
+                          label: users?.find((user) => user._id === selectedUser)?.username || '',
+                        }
                         : null
                     }
                     onChange={(selectedOption) => {
@@ -1473,9 +1473,9 @@ const Devices = () => {
                     value={
                       selectedGroup
                         ? {
-                            value: selectedGroup,
-                            label: groups.find((group) => group._id === selectedGroup)?.name,
-                          }
+                          value: selectedGroup,
+                          label: groups.find((group) => group._id === selectedGroup)?.name,
+                        }
                         : null
                     }
                     onChange={(selectedOption) => {
@@ -1528,7 +1528,7 @@ const Devices = () => {
                         type="search"
                         className="form-control border"
                         style={{ height: '40px' }}
-                        placeholder="Search for Device"
+                        placeholder="Search for Vehicles"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
@@ -1549,7 +1549,7 @@ const Devices = () => {
                       className="btn text-white"
                       style={{ backgroundColor: '#0a2d63' }}
                     >
-                      Add Device
+                      Add Vehicle
                     </button>
                   )}
                 </div>

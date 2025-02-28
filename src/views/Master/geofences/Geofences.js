@@ -1758,7 +1758,7 @@ const Geofences = () => {
                 options={deviceOptions}
                 onChange={handleDeviceChange}
                 value={selectedDevices}
-                placeholder="Select devices"
+                placeholder="Select Vehicles"
                 styles={{
                   container: (base) => ({
                     ...base,
@@ -2184,7 +2184,7 @@ const Geofences = () => {
               options={deviceOptions}
               onChange={handleDeviceChange}
               value={selectedDevices}
-              placeholder="Select devices"
+              placeholder="Select Vehicles"
               styles={{
                 container: (base) => ({
                   ...base,

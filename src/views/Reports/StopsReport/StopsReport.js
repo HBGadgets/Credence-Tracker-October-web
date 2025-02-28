@@ -187,7 +187,7 @@ const SearchStop = ({
         <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
       </CCol>
       <CCol md={2}>
-        <CFormLabel htmlFor="devices">Devices</CFormLabel>
+        <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
         {/* <CFormSelect
           id="devices"
           required
@@ -211,10 +211,10 @@ const SearchStop = ({
           id="devices"
           options={
             loading
-              ? [{ value: '', label: 'Loading devices...', isDisabled: true }]
+              ? [{ value: '', label: 'Loading Vehicles...', isDisabled: true }]
               : devices?.length > 0
                 ? devices.map((device) => ({ value: device.deviceId, label: device.name }))
-                : [{ value: '', label: 'No Device in this Group', isDisabled: true }]
+                : [{ value: '', label: 'No Vehicles in this Group', isDisabled: true }]
           }
           value={
             formData.Devices
@@ -225,11 +225,11 @@ const SearchStop = ({
               : null
           }
           onChange={(selectedOption) => handleInputChange('Devices', selectedOption?.value)}
-          placeholder="Choose a device..."
+          placeholder="Choose a Vehicles..."
           isLoading={loading} // Show a loading spinner while fetching devices
         />
 
-        <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
+        <CFormFeedback invalid>Please provide a valid Vehicles.</CFormFeedback>
       </CCol>
       <CCol md={2}>
         <CFormLabel htmlFor="columns">Columns</CFormLabel>

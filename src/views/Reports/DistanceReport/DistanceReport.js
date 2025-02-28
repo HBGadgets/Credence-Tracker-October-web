@@ -80,7 +80,7 @@ const SearchDistance = ({
     handlePutName(putName)
   }, [putName])
 
-  const allDevicesOption = { value: 'all', label: 'All Devices' } // Define an option for "All Devices"
+  const allDevicesOption = { value: 'all', label: 'All Vehilces' } // Define an option for "All Devices"
   const convertToDesiredFormat = (inputDate) => {
     const date = new Date(inputDate) // Create a Date object with the given input
     // Get the timezone offset in minutes and convert to milliseconds
@@ -217,7 +217,7 @@ const SearchDistance = ({
         <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
       </CCol>
       <CCol md={3}>
-        <CFormLabel htmlFor="devices">Devices</CFormLabel>
+        <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
         <Select
           id="devices"
           isMulti
@@ -237,10 +237,10 @@ const SearchDistance = ({
               handleInputChange('Devices', selectedDeviceIds)
             }
           }}
-          placeholder="Choose devices..."
+          placeholder="Choose Vehilces..."
           isClearable={true}
         />
-        <CFormFeedback invalid>Please provide valid devices.</CFormFeedback>
+        <CFormFeedback invalid>Please provide valid Vehicles.</CFormFeedback>
       </CCol>
       {/* Date Inputs for From Date and To Date */}
       <CCol md={2}>
@@ -828,7 +828,7 @@ const ShowDistance = ({
                 className="text-center"
                 onClick={() => handleSort('Vehicle')} // Add click handler
               >
-                Vehicle
+                Vehicles Name
                 {sortBy === 'Vehicle' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
               </CTableHeaderCell>
               {/* Dynamically render table headers based on selected columns */}

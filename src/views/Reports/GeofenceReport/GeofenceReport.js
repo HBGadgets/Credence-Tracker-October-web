@@ -77,7 +77,7 @@ const SearchGeofence = ({
     handlePutName(putName)
   }, [putName])
 
-  const allDevicesOption = { value: 'all', label: 'All Devices' } // Define an option for "All Devices"
+  const allDevicesOption = { value: 'all', label: 'All Vehicles' } // Define an option for "All Devices"
 
   const convertToDesiredFormat = (inputDate) => {
     const date = new Date(inputDate) // Create a Date object with the given input
@@ -199,7 +199,7 @@ const SearchGeofence = ({
       </CCol>
 
       <CCol md={3}>
-        <CFormLabel htmlFor="devices">Devices</CFormLabel>
+        <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
         <Select
           id="devices"
           isMulti
@@ -219,10 +219,10 @@ const SearchGeofence = ({
               handleInputChange('Devices', selectedDeviceIds)
             }
           }}
-          placeholder="Choose devices..."
+          placeholder="Choose Vehicles..."
           isClearable={true}
         />
-        <CFormFeedback invalid>Please provide valid devices.</CFormFeedback>
+        <CFormFeedback invalid>Please provide valid vehicles.</CFormFeedback>
       </CCol>
 
       {/* Date Inputs for From Date and To Date */}

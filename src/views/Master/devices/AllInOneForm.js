@@ -33,7 +33,7 @@ function AllInOneForm({ open, handleClose, setOpen,
   handleBack,
   handleYearSelection,
   setShowExpirationDropdown,
-  
+
 }) {
   const [activeTab, setActiveTab] = useState(0);
   const handleTabChange = (event, newValue) => setActiveTab(newValue);
@@ -49,7 +49,7 @@ function AllInOneForm({ open, handleClose, setOpen,
     mb: 6,
     height: '48px',
     backgroundColor: 'grey',
-  
+
     '& .MuiTab-root': {
       color: 'black',
       textTransform: 'uppercase',
@@ -71,12 +71,12 @@ function AllInOneForm({ open, handleClose, setOpen,
       height: '4px', // Thickness of the indicator
     },
   };
-  
+
   return (
     <Modal open={open} onClose={handleClose}  >
       <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: '72%', height: '94vh', bgcolor: "background.paper", borderRadius: 2, boxShadow: 24, p: 3, overflowY: 'auto', }}>
         <div style={{ display: 'flex', flexDirection: 'row' }}><Typography variant="h6" gutterBottom style={{ textAlign: 'center' }}>
-         
+
         </Typography>
           <IconButton onClick={handleClose} style={{ marginLeft: 'auto' }}>
             <CloseIcon />
@@ -96,7 +96,7 @@ function AllInOneForm({ open, handleClose, setOpen,
           <Tab label="Users" style={{ height: '100%', }}
           // icon={<FontAwesomeIcon icon="fa-sharp fa-regular fa-user-police-tie" />}
           />
-          <Tab label="Device" style={{ height: '100%', }} />
+          <Tab label="Vehicle" style={{ height: '100%', }} />
           <Tab label="Driver" style={{ height: '100%', }} />
         </Tabs>
 

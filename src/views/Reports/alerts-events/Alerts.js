@@ -763,7 +763,7 @@ const Alerts = () => {
                     value={deviceOptions.find((device) => device.value === deviceId)}
                     onChange={handleDeviceChange}
                     options={deviceOptions}
-                    placeholder="Select a Device"
+                    placeholder="Select a Vehicles"
                     style={{ height: '40px' }}
                   />
                 </div>
@@ -859,7 +859,7 @@ const Alerts = () => {
                       >
                         SN
                       </CTableHeaderCell>
-                      {['Device Name', 'Notification', 'Location', 'Message', 'Date/Time'].map(
+                      {['Vehicles Name', 'Notification', 'Location', 'Message', 'Date/Time'].map(
                         (column) => (
                           <CTableHeaderCell
                             key={column}
