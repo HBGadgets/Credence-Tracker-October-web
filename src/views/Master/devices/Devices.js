@@ -148,7 +148,7 @@ const Devices = () => {
 
   const columns = [
     { Header: 'Device Id', accessor: '_id' },
-    { Header: 'Vehicles Name', accessor: 'name' }, // Maps to 'name'
+    { Header: 'Vehicles  Name', accessor: 'name' }, // Maps to 'name'
     { Header: 'IMEI No.', accessor: 'uniqueId' }, // Maps to 'uniqueId'
     { Header: 'Sim', accessor: 'sim' }, // Maps to 'sim'
     { Header: 'Speed', accessor: 'speed' }, // Maps to 'speed'
@@ -287,7 +287,7 @@ const Devices = () => {
     try {
       if (decodedToken.superadmin) {
         const username = 'hbtrack'
-        const password = '123456@'
+        const password = '123456'
         const authtoken = btoa(`${username}:${password}`)
 
         const [oldApiResponse, newApiResponse] = await Promise.all([
@@ -466,7 +466,7 @@ const Devices = () => {
       // API call
       const accessToken = Cookies.get('authToken')
       const username = 'hbtrack'
-      const password = '123456@'
+      const password = '123456'
       const token1 = btoa(`${username}:${password}`)
       const oldPutApi = `${import.meta.env.VITE_API_POSITION}/api/devices`
       const newPutApi = `${import.meta.env.VITE_API_URL}/device`
@@ -571,7 +571,7 @@ const Devices = () => {
 
     const accessToken = Cookies.get('authToken')
     const username = 'hbtrack'
-    const password = '123456@'
+    const password = '123456'
     const token1 = btoa(`${username}:${password}`)
     const oldDeleteApi = `${import.meta.env.VITE_API_POSITION}/api/devices`
     const newDeleteApi = `${import.meta.env.VITE_API_URL}/device`
