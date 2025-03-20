@@ -630,7 +630,7 @@ const Devices = () => {
   }
 
   // ######################################################################
-  // ######################  getting other field data ###############################
+  // ######################  Getting other field data ###############################
   useEffect(() => {
     const fetchUsers = async () => {
       console.log('Fetching users...')
@@ -755,6 +755,7 @@ const Devices = () => {
   }, [])
 
   // ################################################################
+  // Handle input
 
   const handleInputChange = (event) => {
     const { name, value } = event.target
