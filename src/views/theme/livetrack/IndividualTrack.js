@@ -766,9 +766,11 @@ const IndividualTrack = () => {
                         <span>
                           <strong>
                             <IoLocationSharp size={17} color="#FF7A00" />
-                          </strong>{' '}
-                          {'Loading...'}
+                          </strong>
+                          {address ? address : 'Loading...'}
                         </span>
+
+
                         <div
                           style={{
                             display: 'flex',
