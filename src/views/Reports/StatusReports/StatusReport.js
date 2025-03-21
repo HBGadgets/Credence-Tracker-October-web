@@ -53,6 +53,7 @@ import { FaArrowUp } from 'react-icons/fa'
 import toast, { Toaster } from 'react-hot-toast'
 import { jwtDecode } from 'jwt-decode'
 import { ContentPasteOffOutlined } from '@mui/icons-material'
+import Page404 from '../../pages/page404/Page404'
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
 
@@ -1378,6 +1379,7 @@ const Status = () => {
   const [groups, setGroups] = useState([])
   const [devices, setDevices] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const [showMap, setShowMap] = useState(false) //show mapping data
   const [columns] = useState([
     'Vehicle Status',
@@ -1428,6 +1430,7 @@ const Status = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error)
       setDevices([])
       setLoading(false)
@@ -1461,6 +1464,7 @@ const Status = () => {
       const selectedGroupName = selectedGroup ? selectedGroup.name : ''
       console.log('Selected Group:', selectedGroupName)
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -1544,6 +1548,7 @@ const Status = () => {
         setStatusLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       setStatusLoading(false)
       console.error('Error submitting form:', error)
     }
@@ -1557,6 +1562,8 @@ const Status = () => {
   console.log('Selected From Date:', selectedFromDate)
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
+
+  if (error) return <Page404 />
 
   return (
     <>

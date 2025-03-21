@@ -59,6 +59,7 @@ const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
 
 import PropTypes from 'prop-types'
+import Page404 from '../../pages/page404/Page404'
 
 const SearchTravel = ({
   formData,
@@ -1773,6 +1774,7 @@ const TravelReport = () => {
   const [groups, setGroups] = useState([])
   const [devices, setDevices] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const [showMap, setShowMap] = useState(false) //show mapping data
   const [columns] = useState([
     'Vehicle',
@@ -1839,6 +1841,7 @@ const TravelReport = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       console.log('Error fetching data:', error)
       setDevices([])
       setLoading(false)
@@ -1965,6 +1968,7 @@ const TravelReport = () => {
         console.log('All groups')
       }
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       toast.error('Failed to load groups')
     }
@@ -2061,6 +2065,7 @@ const TravelReport = () => {
         setStatusLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       setStatusLoading(false)
       toast.error('Failed to fetch data')
       console.log(
@@ -2089,6 +2094,9 @@ const TravelReport = () => {
   console.log('Selected Period:', selectedPeriod)
 
   console.log('API Data:', apiData)
+
+  if (error) return <Page404 />
+
 
   return (
     <>

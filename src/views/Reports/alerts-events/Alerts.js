@@ -49,6 +49,9 @@ import toast, { Toaster } from 'react-hot-toast'
 import { jwtDecode } from 'jwt-decode'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
+import Page404 from '../../pages/page404/Page404'
+import Loader from '../../../components/Loader/Loader'
+
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
 
@@ -69,6 +72,7 @@ const Alerts = () => {
   const totalPages = Math.ceil(filteredData.length / rowsPerPage)
   const accessToken = Cookies.get('authToken')
   const [selectedD, setSelectedD] = useState()
+  const [error, setError] = useState(null)
 
   const notificationTypes = [
     'deviceMoving',
@@ -90,8 +94,8 @@ const Alerts = () => {
   ]
 
   const getDevices = async () => {
-    setLoading(true)
     try {
+      setLoading(true)
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/device`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -101,10 +105,11 @@ const Alerts = () => {
       const newApiData = response.data.devices
       const deviceNames = newApiData.map((device) => device.name)
       setDevices(deviceNames)
-      // setLoading(false)
-    } catch (error) {
-      console.error('Error fetching data:', error)
       setLoading(false)
+    } catch (error) {
+      setError(error.message)
+      console.error('Error fetching data:', error)
+      // setLoading(false)
     }
   }
 
@@ -115,11 +120,9 @@ const Alerts = () => {
   }))
 
   const fetchNotificationData = async (page = 1) => {
-    setLoading(true)
-    const url = `${import.meta.env.VITE_API_URL}/notifications?page=${page}&limit=1000`
-
     try {
-      const response = await axios.get(url, {
+      setLoading(true)
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/notifications?page=${page}&limit=1000`, {
         headers: {
           Authorization: 'Bearer ' + accessToken,
         },
@@ -134,6 +137,7 @@ const Alerts = () => {
         console.log(deviceIds)
       }
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
     }
@@ -145,10 +149,9 @@ const Alerts = () => {
   }, [rowsPerPage, filterDevice, filterType, searchQuery])
 
   const getAlerts = async (deviceIds) => {
-    const url = `${import.meta.env.VITE_API_URL}/alerts?deviceIds=${deviceIds}&limit=1000&types=`
 
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/alerts?deviceIds=${deviceIds}&limit=1000&types=`, {
         headers: {
           Authorization: 'Bearer ' + accessToken,
         },
@@ -166,7 +169,8 @@ const Alerts = () => {
         setLoading(false)
       }
     } catch (error) {
-      setLoading(false)
+      // setLoading(false)
+      setError(error.message)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
     }
@@ -175,8 +179,7 @@ const Alerts = () => {
   // Function to get address from latitude and longitude
   const getAddressFromLatLng = async (latitude, longitude) => {
     const apiKey = 'CWVeoDxzhkO07kO693u0';
-    // const url = `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`;
-
+    // const url = `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`
     try {
       const response = await axios.get(url);
       const address = response.data?.features?.[0]?.place_name || 'Address not found'; // ✅ Updated to match MapTiler's response structure
@@ -747,6 +750,9 @@ const Alerts = () => {
       onClick: () => handlePageUp(),
     },
   ]
+
+  // if (loading) return <Loader />
+  if (error) return <Page404 />
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">

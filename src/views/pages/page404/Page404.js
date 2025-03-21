@@ -1,41 +1,44 @@
-import React from 'react'
-import {
-  CButton,
-  CCol,
-  CContainer,
-  CFormInput,
-  CInputGroup,
-  CInputGroupText,
-  CRow,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilMagnifyingGlass } from '@coreui/icons'
+import React from "react";
+import { Ghost, Home, ArrowRight } from "lucide-react";
+import "./page404.css"; // Import custom CSS file
 
 const Page404 = () => {
   return (
-    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
-      <CContainer>
-        <CRow className="justify-content-center">
-          <CCol md={6}>
-            <div className="clearfix">
-              <h1 className="float-start display-3 me-4">404</h1>
-              <h4 className="pt-3">Oops! You{"'"}re lost.</h4>
-              <p className="text-body-secondary float-start">
-                The page you are looking for was not found.
-              </p>
-            </div>
-            <CInputGroup className="input-prepend">
-              <CInputGroupText>
-                <CIcon icon={cilMagnifyingGlass} />
-              </CInputGroupText>
-              <CFormInput type="text" placeholder="What are you looking for?" />
-              <CButton color="info">Search</CButton>
-            </CInputGroup>
-          </CCol>
-        </CRow>
-      </CContainer>
-    </div>
-  )
-}
+    <div className="d-flex align-items-center justify-content-center" style={{ marginTop: '65px' }}>
+      <div className="text-center">
+        {/* Ghost Animation */}
+        <div className="position-relative mb-4">
+          <Ghost className="ghost-icon text-primary" />
+          <div className="shadow-circle"></div>
+        </div>
 
-export default Page404
+        {/* Error Message */}
+        <h1 className="display-1 fw-bold text-primary">404</h1>
+        <h2 className="fs-3 fw-semibold text-dark">Page Not Found</h2>
+        <p className="text-muted mb-4">
+          Oops! It seems like you've ventured into uncharted territory. The page
+          you're looking for might have moved or doesn't exist.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+          <a href="/" className="btn btn-primary d-flex align-items-center">
+            <Home className="me-2" />
+            Back to Home
+          </a>
+          <a href="/contact" className="btn btn-outline-secondary d-flex align-items-center">
+            Contact Support
+            <ArrowRight className="ms-2" />
+          </a>
+        </div>
+
+        {/* Additional Help */}
+        <div className="mt-4 text-muted small">
+          <p>Need immediate assistance? Email us at support@example.com</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Page404;

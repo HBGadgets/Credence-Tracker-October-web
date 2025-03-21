@@ -47,6 +47,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { jwtDecode } from 'jwt-decode'
 import ExcelJS from 'exceljs'
 import IconDropdown from '../../../components/ButtonDropdown'
+import Page404 from '../../pages/page404/Page404'
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
 
@@ -284,6 +285,7 @@ const ShowGeofence = ({
 }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
   const [addressCache, setAddressCache] = useState({}) // Cache addresses to avoid multiple API calls
+
 
   console.log('devicessssssssssasdadwssss', devices) // Devices list
 
@@ -1046,6 +1048,8 @@ const GeofenceReports = () => {
 
   const [selectedUserName, setSelectedUserName] = useState('')
   const [putName, setPutName] = useState('')
+  const [error, setError] = useState(null)
+
 
   useEffect(() => {
     console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ', putName)
@@ -1075,6 +1079,7 @@ const GeofenceReports = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error)
       setDevices([])
       setLoading(false)
@@ -1106,6 +1111,7 @@ const GeofenceReports = () => {
       const selectedGroupName = selectedGroup ? selectedGroup.name : ''
       console.log('Selected Group:', selectedGroupName)
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -1169,6 +1175,7 @@ const GeofenceReports = () => {
       setApiData(response.data.data) // Ensure response.data is an array or contains reports
       setStatusLoading(false)
     } catch (error) {
+      setError(error.message)
       setStatusLoading(false)
       console.error('Error submitting form:', error)
     }
@@ -1182,6 +1189,9 @@ const GeofenceReports = () => {
   console.log('Selected From Date:', selectedFromDate)
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
+
+  if (error) return <Page404 />
+
 
   return (
     <div>

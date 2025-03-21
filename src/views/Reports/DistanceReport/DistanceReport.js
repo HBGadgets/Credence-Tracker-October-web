@@ -47,6 +47,7 @@ import { FaRegFilePdf, FaPrint } from 'react-icons/fa6'
 import { PiMicrosoftExcelLogo } from 'react-icons/pi'
 import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
+import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
@@ -968,6 +969,7 @@ const Distance = () => {
   const [groups, setGroups] = useState([])
   const [devices, setDevices] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const accessToken = Cookies.get('authToken')
   const [showMap, setShowMap] = useState(false) //show mapping data
   const [columns] = useState([
@@ -1049,6 +1051,7 @@ const Distance = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error)
       setDevices([])
       setLoading(false)
@@ -1081,6 +1084,7 @@ const Distance = () => {
       const selectedGroupName = selectedGroup ? selectedGroup.name : ''
       console.log('Selected Group:', selectedGroupName)
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -1167,6 +1171,7 @@ const Distance = () => {
         setDistanceLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       setDistanceLoading(false)
       console.error('Error submitting form:', error)
     }
@@ -1180,6 +1185,9 @@ const Distance = () => {
   console.log('Selected From Date:', selectedFromDate)
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
+
+  if (error) return <Page404 />
+
 
   return (
     <>

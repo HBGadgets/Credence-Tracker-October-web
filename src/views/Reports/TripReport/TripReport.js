@@ -42,6 +42,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { jwtDecode } from 'jwt-decode'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
+import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
@@ -1350,6 +1351,7 @@ const Trips = () => {
   const [selectedColumns, setSelectedColumns] = useState([])
   const [showMap, setShowMap] = useState(false) //show mapping data
   const token = Cookies.get('authToken') //token
+  const [error, setError] = useState(null)
 
   const [apiData, setApiData] = useState() //data from api
 
@@ -1385,6 +1387,7 @@ const Trips = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error)
       setDevices([])
       setLoading(false)
@@ -1417,6 +1420,7 @@ const Trips = () => {
       const selectedGroupName = selectedGroup ? selectedGroup.name : ''
       console.log('Selected Group:', selectedGroupName)
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error
@@ -1508,6 +1512,7 @@ const Trips = () => {
       // Assuming the data returned is what you want to display in the table
       console.log('Form submitted with data:', body)
     } catch (error) {
+      setError(error.message)
       setStatusLoading(false)
       console.error('Error submitting form:', error)
     }
@@ -1532,6 +1537,8 @@ const Trips = () => {
   console.log('Selected From Date:', selectedFromDate)
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
+
+  if (error) return <Page404 />
 
   return (
     <>

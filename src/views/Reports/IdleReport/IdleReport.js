@@ -47,6 +47,7 @@ import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
 import toast, { Toaster } from 'react-hot-toast'
 import { jwtDecode } from 'jwt-decode'
+import Page404 from '../../pages/page404/Page404'
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
 
@@ -1273,6 +1274,7 @@ const Ideal = () => {
   const [groups, setGroups] = useState([])
   const [devices, setDevices] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const [showMap, setShowMap] = useState(false) //show mapping data
   const accessToken = Cookies.get('authToken')
   const [statusLoading, setStatusLoading] = useState(false)
@@ -1316,6 +1318,7 @@ const Ideal = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error)
       setDevices([])
       setLoading(false)
@@ -1349,6 +1352,7 @@ const Ideal = () => {
       const selectedGroupName = selectedGroup ? selectedGroup.name : ''
       console.log('Selected Group:', selectedGroupName)
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -1446,7 +1450,8 @@ const Ideal = () => {
       // Assuming the data returned is what you want to display in the table
       console.log('Form submitted with data:', body)
     } catch (error) {
-      setStatusLoading(false)
+      setError(error.message)
+      // setStatusLoading(false)
       console.error('Error submitting form:', error)
     }
   }
@@ -1459,6 +1464,9 @@ const Ideal = () => {
   console.log('Selected From Date:', selectedFromDate)
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
+
+  if (error) return <Page404 />
+
 
   return (
     <>

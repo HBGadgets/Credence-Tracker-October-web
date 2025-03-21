@@ -48,6 +48,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { jwtDecode } from 'jwt-decode'
 import IconDropdown from '../../../components/ButtonDropdown'
 import { saveAs } from 'file-saver'
+import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
@@ -1185,6 +1186,7 @@ const Stops = () => {
   const [groups, setGroups] = useState([])
   const [devices, setDevices] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const [statusLoading, setStatusLoading] = useState(false)
   const [columns] = useState([
     'Start Time',
@@ -1233,6 +1235,7 @@ const Stops = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error)
       setDevices([])
       setLoading(false)
@@ -1261,6 +1264,7 @@ const Stops = () => {
         console.log('all groups')
       }
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -1341,6 +1345,7 @@ const Stops = () => {
       // Assuming the data returned is what you want to display in the table
       console.log('Form submitted with data:', body)
     } catch (error) {
+      setError(error.message)
       setStatusLoading(false)
       console.error('Error submitting form:', error)
     }
@@ -1354,6 +1359,9 @@ const Stops = () => {
   console.log('Selected From Date:', selectedFromDate)
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
+
+  if (error) return <Page404 />
+
 
   return (
     <div>
