@@ -1445,17 +1445,23 @@ const Devices = () => {
                         : null
                     }
                     onChange={(selectedOption) => {
-                      const selectedUserId = selectedOption?.value || null
+                      const selectedUserId = selectedOption?.value || null;
                       const selectedUsernameValue =
                         selectedOption?.label ||
                         users?.find((user) => user._id === selectedUserId)?.username ||
-                        ''
+                        '';
 
-                      setSelectedUser(selectedUserId)
-                      setSelectedUsername(selectedUsernameValue)
+                      // Set selected user
+                      setSelectedUser(selectedUserId);
+                      setSelectedUsername(selectedUsernameValue);
 
-                      console.log('Selected User ID:', selectedUserId)
-                      console.log('Selected Username:', selectedUsernameValue)
+                      // Reset selected group when user changes
+                      setSelectedGroup(null);
+                      setSelectedGroupName('');
+
+                      console.log('Selected User ID:', selectedUserId);
+                      console.log('Selected Username:', selectedUsernameValue);
+                      console.log('Group Reset: Selected Group Cleared');
                     }}
                     isLoading={fillLoading}
                   />
@@ -1480,17 +1486,17 @@ const Devices = () => {
                         : null
                     }
                     onChange={(selectedOption) => {
-                      const selectedGroupId = selectedOption?.value || null
+                      const selectedGroupId = selectedOption?.value || null;
                       const selectedGroupNameValue =
                         selectedOption?.label ||
                         groups.find((group) => group._id === selectedGroupId)?.name ||
-                        ''
+                        '';
 
-                      setSelectedGroup(selectedGroupId)
-                      setSelectedGroupName(selectedGroupNameValue)
+                      setSelectedGroup(selectedGroupId);
+                      setSelectedGroupName(selectedGroupNameValue);
 
-                      console.log('Selected Group ID:', selectedGroupId)
-                      console.log('Selected Group Name:', selectedGroupNameValue)
+                      console.log('Selected Group ID:', selectedGroupId);
+                      console.log('Selected Group Name:', selectedGroupNameValue);
                     }}
                     isLoading={fillLoading}
                   />

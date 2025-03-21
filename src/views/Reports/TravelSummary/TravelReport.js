@@ -1649,7 +1649,12 @@ const ShowSummary = ({
                                       {/**SN */}
                                       {/**Report Date */}
                                       <CTableDataCell className="text-center">
-                                        {new Date(trip.date).toLocaleDateString()}
+                                        {new Date(trip.date).toLocaleDateString('en-GB', {
+                                          day: '2-digit',
+                                          month: '2-digit',
+                                          year: 'numeric',
+                                        })}
+
                                       </CTableDataCell>
                                       {/**Ignition Start*/}
                                       <CTableDataCell className="text-center">

@@ -582,7 +582,15 @@ const Gmap = ({ data, centerMap, polydata }) => {
         zoom={zoom}
         mapTypeId={mapType} // Set the map type based on state
         options={{
-          fullscreenControl: false, // Enable fullscreen button
+          fullscreenControl: false, // Disable fullscreen button
+          zoomControl: false, // Disable zoom controls
+          mapTypeControl: false, // Disable map type selector
+          streetViewControl: false, // Disable street view
+          rotateControl: false, // Disable rotate control
+          scaleControl: false, // Disable scale control
+          keyboardShortcuts: false, // Disable keyboard shortcuts
+          draggable: true, // Keeps map draggable
+          disableDefaultUI: true, // Disables all UI elements
         }}
       >
         {/* Render geofences if available */}

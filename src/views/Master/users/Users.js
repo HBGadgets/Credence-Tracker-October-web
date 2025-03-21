@@ -315,16 +315,38 @@ const Users = () => {
   }, [])
 
   // Handle input changes
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target
+
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }))
+
+  //   console.log('this is value: ', formData)
+  // }
+
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+    // Check if the field is "mobile" and ensure only numeric values with a max length of 10
+    if (name === "mobile") {
+      if (/^\d{0,10}$/.test(value)) {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
 
-    console.log('this is value: ', formData)
-  }
+    console.log('this is value: ', name, value);
+  };
+
 
   // Handle permission changes
   const handlePermissionChange = (e) => {
@@ -363,18 +385,6 @@ const Users = () => {
 
   // Handle form submission
   const handleSubmit = async () => {
-    // const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/
-    // const phonePattern = /^[0-9]{10}$/
-
-    // if (!emailPattern.test(formData.email)) {
-    //   toast.error('Please enter a valid email address')
-    //   return
-    // }
-
-    // if (!phonePattern.test(formData.mobile)) {
-    //   toast.error('Please enter a valid 10-digit phone number')
-    //   return
-    // }
 
     const dataToSubmit = {
       username: formData.username,
@@ -399,7 +409,6 @@ const Users = () => {
         toast.success('User is created successfully')
         fetchUserData()
         setAddModalOpen(false)
-        //setCurrentStep(0)
         setFormData({
           username: '',
           email: '',
@@ -436,7 +445,7 @@ const Users = () => {
       let errorMessage = 'An error occurred'
 
       if (error.response) {
-        errorMessage = error.response.data.message || error.response.data || 'An error occurred'
+        errorMessage = 'Password filed is missing'
       } else if (error.request) {
         errorMessage = 'Network error: Please try again later'
       }
@@ -1700,6 +1709,8 @@ const Users = () => {
         </div>
       </div>
 
+      {/* ADD MODAL CART */}
+
       <Modal open={addModalOpen} onClose={handleModalClose}>
         <Box
           sx={{
@@ -1721,18 +1732,7 @@ const Users = () => {
               <CloseIcon />
             </IconButton>
           </div>
-
-          {/* Step-by-step form with progress indicator */}
           <div>
-            {/* <Stepper activeStep={currentStep} alternativeLabel>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper> */}
-
-            {/* {currentStep === 0 && ( */}
             <div
               className="mt-3"
               style={{
@@ -1759,15 +1759,23 @@ const Users = () => {
                   ),
                 }}
               />
+
               <TextField
                 label="Email Address"
-                type="email"
+                type="email" // Ensures email input format
                 variant="outlined"
                 name="email"
                 value={formData.email !== undefined ? formData.email : ''}
                 onChange={handleInputChange}
+                onBlur={() => setTouched((prev) => ({ ...prev, email: true }))} // Mark as touched when leaving field
                 sx={{ marginBottom: '10px' }}
                 fullWidth
+                error={formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)} // Only validates if input exists
+                helperText={
+                  formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+                    ? "Enter a valid email address"
+                    : ""
+                }
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -1777,16 +1785,18 @@ const Users = () => {
                 }}
               />
 
+
               <TextField
                 label="Mobile Number"
                 variant="outlined"
                 name="mobile"
-                type="phone"
+                type="tel" // "tel" for better mobile support
                 value={formData.mobile !== undefined ? formData.mobile : ''}
                 onChange={handleInputChange}
                 sx={{ marginBottom: '10px' }}
                 fullWidth
-                required
+                error={formData.mobile.length > 0 && formData.mobile.length !== 10} // Red border if not 10 digits
+                helperText={formData.mobile.length > 0 && formData.mobile.length !== 10 ? "Mobile number must be 10 digits" : ""}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -1794,7 +1804,14 @@ const Users = () => {
                     </InputAdornment>
                   ),
                 }}
+                inputProps={{
+                  maxLength: 10, // Restrict input to 10 characters
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*'
+                }}
               />
+
+
               <TextField
                 label="Password"
                 variant="outlined"
@@ -1814,47 +1831,6 @@ const Users = () => {
                 }}
               />
 
-              {/* // Form control with "Add New Group" option */}
-              {/* <FormControl fullWidth sx={{ marginBottom: 2 }} key={"group"}>
-                  <InputLabel>Groups</InputLabel>
-                  <Select
-                    name="groupsAssigned"
-                    value={formData.groupsAssigned || []}
-                    onChange={(e) => {
-                      const value = e.target.value; */}
-
-              {/* // Check if "Add New Group" option is selected
-                      if (value.includes("new")) { */}
-              {/* // Remove "new" from the selected values
-                        const newValue = value.filter((item) => item !== "new");
-                        handleInputChange({
-                          target: {
-                            name: e.target.name,
-                            value: newValue,
-                          },
-                        });
-
-                        // Open the "Add New Group" dialog
-                        handleNewGroup();
-                      } else {
-                        handleInputChange(e);
-                      }
-                    }}
-                    label="Groups"
-                    multiple
-                  >
-                    <MenuItem value="new" sx={{ fontStyle: "italic" }}>
-                      <IoMdAddCircle />Add New Group
-                    </MenuItem>
-
-                    {groups.map((group) => (
-                      <MenuItem key={group._id} value={group._id}>
-                        {group.name}
-                      </MenuItem>
-                    ))}
-
-                  </Select>
-                </FormControl> */}
 
               <Autocomplete
                 multiple
@@ -2151,20 +2127,6 @@ const Users = () => {
 
             {/* Navigation buttons */}
             <div className="d-flex justify-content-between" style={{ marginTop: '20px' }}>
-              {/* {currentStep > 0 && (
-                <Button onClick={handleBack} variant="outlined">
-                  Back
-                </Button>
-              )}
-              {currentStep < steps.length - 1 ? (
-                <Button onClick={handleNext} variant="contained" color="primary">
-                  Next
-                </Button>
-              ) : (
-                <Button onClick={handleSubmit} variant="contained" color="primary">
-                  Submit
-                </Button>
-              )} */}
               <Button
                 onClick={handleSubmit}
                 variant="contained"
@@ -2179,6 +2141,7 @@ const Users = () => {
       </Modal>
 
       {/* Edit model */}
+
       <Modal open={editModalOpen} onClose={handleModalClose}>
         <Box
           sx={{
@@ -2239,15 +2202,23 @@ const Users = () => {
                   ),
                 }}
               />
+
               <TextField
                 label="Email Address"
-                type="email"
+                type="email" // Ensures email input format
                 variant="outlined"
                 name="email"
                 value={formData.email !== undefined ? formData.email : ''}
                 onChange={handleInputChange}
+                onBlur={() => setTouched((prev) => ({ ...prev, email: true }))} // Mark as touched when leaving field
                 sx={{ marginBottom: '10px' }}
                 fullWidth
+                error={formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)} // Only validates if input exists
+                helperText={
+                  formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+                    ? "Enter a valid email address"
+                    : ""
+                }
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -2261,12 +2232,13 @@ const Users = () => {
                 label="Mobile Number"
                 variant="outlined"
                 name="mobile"
-                type="number"
+                type="tel" // "tel" for better mobile support
                 value={formData.mobile !== undefined ? formData.mobile : ''}
                 onChange={handleInputChange}
                 sx={{ marginBottom: '10px' }}
                 fullWidth
-                required
+                error={formData.mobile.length > 0 && formData.mobile.length !== 10} // Red border if not 10 digits
+                helperText={formData.mobile.length > 0 && formData.mobile.length !== 10 ? "Mobile number must be 10 digits" : ""}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -2274,7 +2246,13 @@ const Users = () => {
                     </InputAdornment>
                   ),
                 }}
+                inputProps={{
+                  maxLength: 10, // Restrict input to 10 characters
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*'
+                }}
               />
+
               <TextField
                 label="Password"
                 variant="outlined"

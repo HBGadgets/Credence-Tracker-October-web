@@ -1119,22 +1119,22 @@ const StopTable = ({
                         ? `${row.latitude}, ${row.longitude}`
                         : 'Fetching coordinates...'
                     ) : column === 'Start Time' ? (
-                      new Date(new Date(row.arrivalTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString([], {
-                        year: 'numeric',
-                        month: '2-digit',
+                      new Date(new Date(row.arrivalTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString('en-GB', {
                         day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric', // Changed to full year (yyyy)
                         hour: '2-digit',
                         minute: '2-digit',
-                        hour12: false,
+                        hour12: false, // 24-hour format
                       })
                     ) : column === 'End Time' ? (
-                      new Date(new Date(row.departureTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString([], {
-                        year: 'numeric',
-                        month: '2-digit',
+                      new Date(new Date(row.departureTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString('en-GB', {
                         day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric', // Ensures full year (yyyy)
                         hour: '2-digit',
                         minute: '2-digit',
-                        hour12: false,
+                        hour12: false, // Ensures 24-hour format
                       })
                     ) : column === 'Device Name' ? (
                       row.device?.name || '--'
