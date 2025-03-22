@@ -543,7 +543,19 @@ const Dashboard = () => {
   //     try {
   //       const devices = dispatch(fetchDevices())
   //       const missingDevices = []
+  // useEffect(() => {
+  //   const findDevicesWithoutPositions = async () => {
+  //     try {
+  //       const devices = dispatch(fetchDevices())
+  //       const missingDevices = []
 
+  //       // Iterate through devices and check if they have positions
+  //       for (const device of devices) {
+  //         const positions = filteredVehicles
+  //         if (positions.length === 0) {
+  //           missingDevices.push(device)
+  //         }
+  //       }
   //       // Iterate through devices and check if they have positions
   //       for (const device of devices) {
   //         const positions = filteredVehicles
@@ -558,7 +570,16 @@ const Dashboard = () => {
   //       setLoading(false)
   //     }
   //   }
+  //       setDevicesWithoutPositions(missingDevices)
+  //       setLoading(false)
+  //     } catch (error) {
+  //       setLoading(false)
+  //     }
+  //   }
 
+  //   // Call the function to find devices without positions
+  //   findDevicesWithoutPositions()
+  // }, [filteredVehicles])
   //   // Call the function to find devices without positions
   //   findDevicesWithoutPositions()
   // }, [filteredVehicles])
@@ -771,6 +792,8 @@ const Dashboard = () => {
 
                 {/* New Vehicles */}
                 {/* <CCol
+                {/* New Vehicles */}
+                {/* <CCol
                   xs={12}
                   md={1}
                   xl={2}
@@ -793,6 +816,7 @@ const Dashboard = () => {
                       <img style={{ width: '3.5rem' }} src={carBlue} alt="New Vehicles" />
                     </div>
                   </div>
+                </CCol> */}
                 </CCol> */}
 
                 {/* Inactive Vehicles */}
@@ -847,10 +871,10 @@ const Dashboard = () => {
                               value={
                                 selectedUser
                                   ? {
-                                      value: selectedUser,
-                                      label: users.find((user) => user._id === selectedUser)
-                                        ?.username,
-                                    }
+                                    value: selectedUser,
+                                    label: users.find((user) => user._id === selectedUser)
+                                      ?.username,
+                                  }
                                   : null
                               }
                               onChange={(selectedOption) => setSelectedUser(selectedOption?.value)}
@@ -870,10 +894,10 @@ const Dashboard = () => {
                               value={
                                 selectedGroup
                                   ? {
-                                      value: selectedGroup,
-                                      label: groups.find((group) => group._id === selectedGroup)
-                                        ?.name,
-                                    }
+                                    value: selectedGroup,
+                                    label: groups.find((group) => group._id === selectedGroup)
+                                      ?.name,
+                                  }
                                   : null
                               }
                               onChange={(selectedOption) => setSelectedGroup(selectedOption?.value)}

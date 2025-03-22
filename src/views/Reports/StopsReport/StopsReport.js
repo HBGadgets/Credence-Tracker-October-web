@@ -48,6 +48,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { jwtDecode } from 'jwt-decode'
 import IconDropdown from '../../../components/ButtonDropdown'
 import { saveAs } from 'file-saver'
+import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
@@ -187,7 +188,7 @@ const SearchStop = ({
         <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
       </CCol>
       <CCol md={2}>
-        <CFormLabel htmlFor="devices">Devices</CFormLabel>
+        <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
         {/* <CFormSelect
           id="devices"
           required
@@ -211,10 +212,10 @@ const SearchStop = ({
           id="devices"
           options={
             loading
-              ? [{ value: '', label: 'Loading devices...', isDisabled: true }]
+              ? [{ value: '', label: 'Loading Vehicles...', isDisabled: true }]
               : devices?.length > 0
                 ? devices.map((device) => ({ value: device.deviceId, label: device.name }))
-                : [{ value: '', label: 'No Device in this Group', isDisabled: true }]
+                : [{ value: '', label: 'No Vehicles in this Group', isDisabled: true }]
           }
           value={
             formData.Devices
@@ -225,11 +226,11 @@ const SearchStop = ({
               : null
           }
           onChange={(selectedOption) => handleInputChange('Devices', selectedOption?.value)}
-          placeholder="Choose a device..."
+          placeholder="Choose a Vehicles..."
           isLoading={loading} // Show a loading spinner while fetching devices
         />
 
-        <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
+        <CFormFeedback invalid>Please provide a valid Vehicles.</CFormFeedback>
       </CCol>
       <CCol md={2}>
         <CFormLabel htmlFor="columns">Columns</CFormLabel>
@@ -1119,22 +1120,22 @@ const StopTable = ({
                         ? `${row.latitude}, ${row.longitude}`
                         : 'Fetching coordinates...'
                     ) : column === 'Start Time' ? (
-                      new Date(new Date(row.arrivalTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString([], {
-                        year: 'numeric',
-                        month: '2-digit',
+                      new Date(new Date(row.arrivalTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString('en-GB', {
                         day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric', // Changed to full year (yyyy)
                         hour: '2-digit',
                         minute: '2-digit',
-                        hour12: false,
+                        hour12: false, // 24-hour format
                       })
                     ) : column === 'End Time' ? (
-                      new Date(new Date(row.departureTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString([], {
-                        year: 'numeric',
-                        month: '2-digit',
+                      new Date(new Date(row.departureTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString('en-GB', {
                         day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric', // Ensures full year (yyyy)
                         hour: '2-digit',
                         minute: '2-digit',
-                        hour12: false,
+                        hour12: false, // Ensures 24-hour format
                       })
                     ) : column === 'Device Name' ? (
                       row.device?.name || '--'
@@ -1185,6 +1186,7 @@ const Stops = () => {
   const [groups, setGroups] = useState([])
   const [devices, setDevices] = useState([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const [statusLoading, setStatusLoading] = useState(false)
   const [columns] = useState([
     'Start Time',
@@ -1233,6 +1235,7 @@ const Stops = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error)
       setDevices([])
       setLoading(false)
@@ -1261,6 +1264,7 @@ const Stops = () => {
         console.log('all groups')
       }
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -1341,6 +1345,7 @@ const Stops = () => {
       // Assuming the data returned is what you want to display in the table
       console.log('Form submitted with data:', body)
     } catch (error) {
+      setError(error.message)
       setStatusLoading(false)
       console.error('Error submitting form:', error)
     }
@@ -1354,6 +1359,9 @@ const Stops = () => {
   console.log('Selected From Date:', selectedFromDate)
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
+
+  if (error) return <Page404 />
+
 
   return (
     <div>

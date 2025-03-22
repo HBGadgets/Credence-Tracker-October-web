@@ -1094,7 +1094,7 @@ const Geofences = () => {
         <input
           type="search"
           className="form-control"
-          placeholder="search here..."
+          placeholder="search Geofence Name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -1111,7 +1111,7 @@ const Geofences = () => {
                       <input
                         type="search"
                         className="form-control"
-                        placeholder="Search here..."
+                        placeholder="Search Geofence Name..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
@@ -1758,7 +1758,7 @@ const Geofences = () => {
                 options={deviceOptions}
                 onChange={handleDeviceChange}
                 value={selectedDevices}
-                placeholder="Select devices"
+                placeholder="Select Vehicles"
                 styles={{
                   container: (base) => ({
                     ...base,
@@ -2184,7 +2184,7 @@ const Geofences = () => {
               options={deviceOptions}
               onChange={handleDeviceChange}
               value={selectedDevices}
-              placeholder="Select devices"
+              placeholder="Select Vehicles"
               styles={{
                 container: (base) => ({
                   ...base,

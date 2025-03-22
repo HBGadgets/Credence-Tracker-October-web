@@ -26,6 +26,7 @@ import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
 import { cilDelete, cilMenu } from '@coreui/icons'
+import Loader2 from './Loader2/Loader2'
 
 // const getUserRole = () => {
 //   const navigate = useNavigate()
@@ -93,7 +94,7 @@ const AppSidebar = () => {
       unfoldable={sidebarShow}
       visible={sidebarShow}
       onVisibleChange={(visible) => {
-        dispatch({ type: 'set', sidebarShow: visible })
+        dispatch({ type: 'set', payload: { sidebarShow: visible } })
       }}
     >
       <CSidebarHeader className="borderless-bottom">
@@ -102,11 +103,13 @@ const AppSidebar = () => {
 
           {/* <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} /> */}
           <img src={logo} alt="Logo" className="sidebar-brand-narrow" height={25} width={60} />
+          {/* <Loader2 /> */}
+
         </CSidebarBrand>
         <CCloseButton
           className="d-lg-none"
           dark
-          onClick={() => dispatch({ type: 'set', sidebarShow: false })}
+          onClick={() => dispatch({ type: 'set', payload: { sidebarShow: false } })}
         />
       </CSidebarHeader>
       {navigatingNav && <AppSidebarNav items={navigatingNav} />}

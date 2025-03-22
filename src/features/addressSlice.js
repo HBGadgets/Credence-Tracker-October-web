@@ -9,7 +9,11 @@ const addressSlice = createSlice({
     initialState,
     reducers: {
         setNewAddress: (state, action) => {
-            state.newAddress = action.payload
+            // Ensure payload is a serializable object (deep clone it)
+            const safePayload = JSON.parse(JSON.stringify(action.payload))
+
+            // Merge new addresses instead of replacing state
+            state.newAddress = { ...state.newAddress, ...safePayload }
         },
     },
 })

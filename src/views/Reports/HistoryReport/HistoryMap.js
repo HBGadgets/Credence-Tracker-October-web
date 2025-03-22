@@ -586,9 +586,9 @@ const HistoryMap = ({
           center={
             filteredData && positions && currentPositionIndex
               ? [
-                  positions[currentPositionIndex]?.latitude,
-                  positions[currentPositionIndex]?.longitude,
-                ]
+                positions[currentPositionIndex]?.latitude,
+                positions[currentPositionIndex]?.longitude,
+              ]
               : [21.1458, 79.0882]
           }
           zoom={zoomLevel}
@@ -611,7 +611,7 @@ const HistoryMap = ({
               isSatelliteView
                 ? 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
                 : // Satellite View
-                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' // Normal View
+                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' // Normal View
             }
             attribution="&copy; Credence Tracker, HB Gadget Solutions Nagpur"
           />
@@ -748,7 +748,7 @@ const HistoryMap = ({
                 <div className="bolder">Speed : </div>
                 <div className="lighter">
                   {fetch && positions
-                    ? Math.round(positions[currentPositionIndex]?.speed * 1.6)
+                    ? Math.round(positions[currentPositionIndex]?.speed)
                     : '0'}{' '}
                   km/hr
                 </div>

@@ -89,7 +89,7 @@ export const Selector = ({ setFilteredData, filteredData, fillDevices }) => {
         isMulti
         value={selectedOptions}
         onChange={handleChange}
-        placeholder="Select devices"
+        placeholder="Select Vehicles"
         styles={{
           control: (base) => ({
             ...base,

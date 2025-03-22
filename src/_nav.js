@@ -106,7 +106,7 @@ const _nav = (role, decodedToken) => {
           items: [
             {
               component: CNavItem,
-              name: 'Devices',
+              name: 'Vehicles',
 
               to: '/devices',
               icon: (
@@ -404,7 +404,7 @@ const _nav = (role, decodedToken) => {
           items: [
             devices && {
               component: CNavItem,
-              name: 'Devices',
+              name: 'Vehicles',
               to: '/devices',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (

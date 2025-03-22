@@ -148,7 +148,7 @@ const Devices = () => {
 
   const columns = [
     { Header: 'Device Id', accessor: '_id' },
-    { Header: 'Device Name', accessor: 'name' }, // Maps to 'name'
+    { Header: 'Vehicles  Name', accessor: 'name' }, // Maps to 'name'
     { Header: 'IMEI No.', accessor: 'uniqueId' }, // Maps to 'uniqueId'
     { Header: 'Sim', accessor: 'sim' }, // Maps to 'sim'
     { Header: 'Speed', accessor: 'speed' }, // Maps to 'speed'
@@ -287,7 +287,7 @@ const Devices = () => {
     try {
       if (decodedToken.superadmin) {
         const username = 'hbtrack'
-        const password = '123456@'
+        const password = '123456'
         const authtoken = btoa(`${username}:${password}`)
 
         const [oldApiResponse, newApiResponse] = await Promise.all([
@@ -466,7 +466,7 @@ const Devices = () => {
       // API call
       const accessToken = Cookies.get('authToken')
       const username = 'hbtrack'
-      const password = '123456@'
+      const password = '123456'
       const token1 = btoa(`${username}:${password}`)
       const oldPutApi = `${import.meta.env.VITE_API_POSITION}/api/devices`
       const newPutApi = `${import.meta.env.VITE_API_URL}/device`
@@ -571,7 +571,7 @@ const Devices = () => {
 
     const accessToken = Cookies.get('authToken')
     const username = 'hbtrack'
-    const password = '123456@'
+    const password = '123456'
     const token1 = btoa(`${username}:${password}`)
     const oldDeleteApi = `${import.meta.env.VITE_API_POSITION}/api/devices`
     const newDeleteApi = `${import.meta.env.VITE_API_URL}/device`
@@ -630,7 +630,7 @@ const Devices = () => {
   }
 
   // ######################################################################
-  // ######################  getting other field data ###############################
+  // ######################  Getting other field data ###############################
   useEffect(() => {
     const fetchUsers = async () => {
       console.log('Fetching users...')
@@ -755,6 +755,7 @@ const Devices = () => {
   }, [])
 
   // ################################################################
+  // Handle input
 
   const handleInputChange = (event) => {
     const { name, value } = event.target
@@ -937,7 +938,7 @@ const Devices = () => {
   const selectedDeviceName = selectedDevice ? selectedDevice.name : ''
 
   useEffect(() => {
-    console.log('Selected Device Name:', selectedDeviceName)
+    console.log('Selected Vehicle Name:', selectedDeviceName)
   }, [selectedDeviceName]) // Log when the selected device changes
 
   // Dropdown icons downloads section
@@ -1059,7 +1060,7 @@ const Devices = () => {
 
       // Initialize workbook and worksheet
       const workbook = new ExcelJS.Workbook()
-      const worksheet = workbook.addWorksheet('Devices Report')
+      const worksheet = workbook.addWorksheet('Vehicle Report')
 
       // Add title and metadata
       const addHeaderSection = () => {
@@ -1075,7 +1076,7 @@ const Devices = () => {
         worksheet.mergeCells('A1:I1')
 
         // Report title
-        const subtitleRow = worksheet.addRow(['Devices Report'])
+        const subtitleRow = worksheet.addRow(['Vehicle Report'])
         subtitleRow.font = {
           ...CONFIG.styles.titleFont,
           size: 14,
@@ -1154,7 +1155,7 @@ const Devices = () => {
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       })
-      const filename = `Devices_Report_${new Date().toISOString().split('T')[0]}.xlsx`
+      const filename = `Vehicles_Report_${new Date().toISOString().split('T')[0]}.xlsx`
       saveAs(blob, filename)
       toast.success('Excel file downloaded successfully')
     } catch (error) {
@@ -1289,14 +1290,14 @@ const Devices = () => {
         return isNaN(date)
           ? '--'
           : date
-              .toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })
-              .replace(',', '')
+            .toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+            .replace(',', '')
       }
 
       const formatCoordinates = (coords) => {
@@ -1311,7 +1312,7 @@ const Devices = () => {
       // Title and date
       doc.setFontSize(24)
       doc.setFont(CONFIG.fonts.primary, 'bold')
-      doc.text('Devices Report', CONFIG.layout.margin, 35)
+      doc.text('Vehicle Report', CONFIG.layout.margin, 35)
 
       const currentDate = new Date().toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -1397,7 +1398,7 @@ const Devices = () => {
       addFooter()
 
       // Save PDF
-      const filename = `Devices_Report_${new Date().toISOString().split('T')[0]}.pdf`
+      const filename = `Vehicle_Report_${new Date().toISOString().split('T')[0]}.pdf`
       doc.save(filename)
       toast.success('PDF downloaded successfully')
     } catch (error) {
@@ -1438,23 +1439,29 @@ const Devices = () => {
                     value={
                       selectedUser
                         ? {
-                            value: selectedUser,
-                            label: users?.find((user) => user._id === selectedUser)?.username || '',
-                          }
+                          value: selectedUser,
+                          label: users?.find((user) => user._id === selectedUser)?.username || '',
+                        }
                         : null
                     }
                     onChange={(selectedOption) => {
-                      const selectedUserId = selectedOption?.value || null
+                      const selectedUserId = selectedOption?.value || null;
                       const selectedUsernameValue =
                         selectedOption?.label ||
                         users?.find((user) => user._id === selectedUserId)?.username ||
-                        ''
+                        '';
 
-                      setSelectedUser(selectedUserId)
-                      setSelectedUsername(selectedUsernameValue)
+                      // Set selected user
+                      setSelectedUser(selectedUserId);
+                      setSelectedUsername(selectedUsernameValue);
 
-                      console.log('Selected User ID:', selectedUserId)
-                      console.log('Selected Username:', selectedUsernameValue)
+                      // Reset selected group when user changes
+                      setSelectedGroup(null);
+                      setSelectedGroupName('');
+
+                      console.log('Selected User ID:', selectedUserId);
+                      console.log('Selected Username:', selectedUsernameValue);
+                      console.log('Group Reset: Selected Group Cleared');
                     }}
                     isLoading={fillLoading}
                   />
@@ -1473,23 +1480,23 @@ const Devices = () => {
                     value={
                       selectedGroup
                         ? {
-                            value: selectedGroup,
-                            label: groups.find((group) => group._id === selectedGroup)?.name,
-                          }
+                          value: selectedGroup,
+                          label: groups.find((group) => group._id === selectedGroup)?.name,
+                        }
                         : null
                     }
                     onChange={(selectedOption) => {
-                      const selectedGroupId = selectedOption?.value || null
+                      const selectedGroupId = selectedOption?.value || null;
                       const selectedGroupNameValue =
                         selectedOption?.label ||
                         groups.find((group) => group._id === selectedGroupId)?.name ||
-                        ''
+                        '';
 
-                      setSelectedGroup(selectedGroupId)
-                      setSelectedGroupName(selectedGroupNameValue)
+                      setSelectedGroup(selectedGroupId);
+                      setSelectedGroupName(selectedGroupNameValue);
 
-                      console.log('Selected Group ID:', selectedGroupId)
-                      console.log('Selected Group Name:', selectedGroupNameValue)
+                      console.log('Selected Group ID:', selectedGroupId);
+                      console.log('Selected Group Name:', selectedGroupNameValue);
                     }}
                     isLoading={fillLoading}
                   />
@@ -1528,7 +1535,7 @@ const Devices = () => {
                         type="search"
                         className="form-control border"
                         style={{ height: '40px' }}
-                        placeholder="Search for Device"
+                        placeholder="Search for Vehicles"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleKeyDown}
@@ -1549,7 +1556,7 @@ const Devices = () => {
                       className="btn text-white"
                       style={{ backgroundColor: '#0a2d63' }}
                     >
-                      Add Device
+                      Add Vehicle
                     </button>
                   )}
                 </div>

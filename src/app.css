@@ -70,7 +70,7 @@
 
 /* Customize scrollbar for Webkit-based browsers (Chrome, Safari, Edge) */
 .table-responsive::-webkit-scrollbar {
-  height: 4px !important;
+  height: 8px !important;
   /* Make the scrollbar height thin */
 }
 

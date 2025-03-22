@@ -816,7 +816,7 @@ const Notification = () => {
                     type="search"
                     className="form-control border"
                     style={{ height: '40px' }}
-                    placeholder="Search for Device"
+                    placeholder="Search for Vehicles"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -872,7 +872,7 @@ const Notification = () => {
                         style={{ backgroundColor: '#0a2d63', cursor: 'pointer' }}
                         onClick={() => handleSort('deviceName')}
                       >
-                        <strong>Device Name</strong>
+                        <strong>Vehicles Name</strong>
                         {sortBy === 'deviceName' && (sortOrder === 'asc' ? ' ↑' : ' ↓')}
                       </CTableHeaderCell>
 

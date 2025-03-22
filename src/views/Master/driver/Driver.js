@@ -817,7 +817,7 @@ const Driver = () => {
                     type="search"
                     className="form-control border"
                     style={{ height: '40px' }}
-                    placeholder="Search for Device"
+                    placeholder="Search for Drivers"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
