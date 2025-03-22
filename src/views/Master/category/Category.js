@@ -60,6 +60,7 @@ import { FaRegFilePdf, FaPrint } from 'react-icons/fa6'
 import { PiMicrosoftExcelLogo } from 'react-icons/pi'
 import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
+import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
@@ -72,6 +73,7 @@ const Category = () => {
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [data, setData] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [limit, setLimit] = useState(10)
@@ -110,10 +112,8 @@ const Category = () => {
   // ##################### getting data  ###################
   const fetchCategoryData = async (page = 1) => {
     const accessToken = Cookies.get('authToken')
-    const url = `${import.meta.env.VITE_API_URL}/category`
-
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/category`, {
         headers: {
           Authorization: 'Bearer ' + accessToken,
         },
@@ -125,6 +125,7 @@ const Category = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -183,6 +184,7 @@ const Category = () => {
         setAddModalOpen(false)
       }
     } catch (error) {
+      setError(error.message)
       toast.error('An error occured')
       throw error.response ? error.response.data : new Error('An error occurred')
     }
@@ -213,6 +215,7 @@ const Category = () => {
         setEditModalOpen(false)
       }
     } catch (error) {
+      setError(error.message)
       toast.error('An error occured')
       throw error.response ? error.response.data : new Error('An error occurred')
     }
@@ -247,6 +250,7 @@ const Category = () => {
         fetchCategoryData()
       }
     } catch (error) {
+      setError(error.message)
       toast.error('An error occurred')
       throw error.response ? error.response.data : new Error('An error occurred')
     }
@@ -715,6 +719,7 @@ const Category = () => {
     document.body.style.zoom = '100%'
   }
 
+  if (error) return <Page404 />
 
 
   return (

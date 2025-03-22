@@ -66,6 +66,7 @@ import { FaArrowUp } from 'react-icons/fa'
 import { jwtDecode } from 'jwt-decode'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
+import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 
@@ -79,6 +80,7 @@ const Driver = () => {
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [data, setData] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [limit, setLimit] = useState(10)
@@ -133,10 +135,9 @@ const Driver = () => {
   // ##################### getting data  ###################
   const fetchDriverData = async (page = 1) => {
     const accessToken = Cookies.get('authToken')
-    const url = `${import.meta.env.VITE_API_URL}/driver?page=${page}&limit=${limit}&search=${searchQuery}`
 
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/driver?page=${page}&limit=${limit}&search=${searchQuery}`, {
         headers: {
           Authorization: 'Bearer ' + accessToken,
         },
@@ -150,6 +151,7 @@ const Driver = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -232,6 +234,7 @@ const Driver = () => {
         setAddModalOpen(false)
       }
     } catch (error) {
+      setError(error.message)
       toast.error("This didn't work.")
       throw error.response ? error.response.data : new Error('An error occurred')
     }
@@ -279,6 +282,7 @@ const Driver = () => {
         setEditModalOpen(false)
       }
     } catch (error) {
+      // setError(error.message)
       toast.error("This didn't work.")
       throw error.response ? error.response.data : new Error('An error occurred')
     }
@@ -315,6 +319,7 @@ const Driver = () => {
         fetchDriverData()
       }
     } catch (error) {
+      setError(error.message)
       toast.error('An error occurred')
       throw error.response ? error.response.data : new Error('An error occurred')
     }
@@ -348,6 +353,7 @@ const Driver = () => {
 
         setDevices(mappedDevices) // Assuming the data returned contains device info
       } catch (error) {
+        setError(error.message)
         console.error('Error fetching devices:', error)
       }
     }
@@ -782,6 +788,8 @@ const Driver = () => {
     document.head.removeChild(style)
     document.body.style.zoom = '100%'
   }
+
+  if (error) return <Page404 />
 
 
   return (

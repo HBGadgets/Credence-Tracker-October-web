@@ -83,6 +83,7 @@ import { PiMicrosoftExcelLogo } from 'react-icons/pi'
 import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
 import IconDropdown from '../../../components/ButtonDropdown'
+import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 
@@ -94,6 +95,7 @@ const Users = () => {
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [data, setData] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [limit, setLimit] = useState(10)
@@ -219,6 +221,7 @@ const Users = () => {
       console.log('groups: ', data.groups)
       setGroups(data.groups) // Assuming the API returns { groups: [...] }
     } catch (error) {
+      setError(error.message)
       console.log(error)
     }
   }
@@ -605,6 +608,7 @@ const Users = () => {
       }
     } catch (error) {
       // Handle the error
+      setError(error.message)
       console.error(error.response ? error.response.data : 'An error occurred')
     }
   }
@@ -641,6 +645,7 @@ const Users = () => {
       console.log('Fetched groups: ', data.groups)
       setGroups(data.groups) // Update the groups state with fetched data
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching groups:', error)
       toast.error('Failed to fetch groups')
     }
@@ -1226,6 +1231,7 @@ const Users = () => {
     }
   }
 
+  if (error) return <Page404 />
 
 
   return (

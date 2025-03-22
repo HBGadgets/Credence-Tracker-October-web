@@ -817,7 +817,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </CCol> */}
-                </CCol> */}
+                {/* </CCol> */}
 
                 {/* Inactive Vehicles */}
                 <CCol

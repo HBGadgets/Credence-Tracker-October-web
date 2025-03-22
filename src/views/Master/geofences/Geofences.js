@@ -77,6 +77,7 @@ import { FaArrowUp } from 'react-icons/fa'
 import { jwtDecode } from 'jwt-decode'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
+import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 
@@ -88,6 +89,7 @@ const Geofences = () => {
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [data, setData] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [limit, setLimit] = useState(8)
@@ -321,15 +323,6 @@ const Geofences = () => {
     setIsDrawing(false) // Disable drawing mode
   }
 
-  // const onMapClick = (event) => {
-  //   const newCoords = {
-  //     lat: event.latLng.lat(),
-  //     lng: event.latLng.lng(),
-  //   }
-  //   setPolygonCoords((prev) => [...prev, newCoords]) // Add new coordinates to the polygon
-  //   setSelectedLocation(newCoords)
-  // }
-
   // Handle radius input change
   const handleRadiusChange = (e) => {
     const newRadius = e.target.value === '' ? null : Number(e.target.value) // Handle empty input
@@ -371,6 +364,7 @@ const Geofences = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -1086,6 +1080,9 @@ const Geofences = () => {
       toast.error(error.message || 'Failed to export PDF')
     }
   }
+
+  if (error) return <Page404 />
+
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">

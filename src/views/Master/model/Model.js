@@ -57,6 +57,7 @@ import { saveAs } from 'file-saver';
 
 
 import { jwtDecode } from 'jwt-decode'
+import Page404 from '../../pages/page404/Page404'
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
 
@@ -71,9 +72,7 @@ const Model = () => {
   const [formData, setFormData] = useState({})
   const [currentItemId, setCurrentItemId] = useState(null)
   const [loading, setLoading] = useState(false)
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+  const [error, setError] = useState(null)
 
   const token = Cookies.get('authToken') //
 
@@ -106,6 +105,7 @@ const Model = () => {
       setFilteredData(response.data.models) // Set to response.data.models
       console.log('Fetched Data: ', response.data.models) // Log the fetched data
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error.response ? error.response.data : error.message)
       setFilteredData([]) // Ensure it's set to an array on error
     } finally {
@@ -185,6 +185,7 @@ const Model = () => {
 
       toast.success('Successfully Added Model!') // Show success alert
     } catch (error) {
+      setError(error.message)
       console.error('Error adding category:', error)
       toast.error("This didn't work.") // Show error alert
     }
@@ -218,6 +219,7 @@ const Model = () => {
       fetchData() // Optional: Fetch fresh data
       toast.success('Successfully Edited Model!') // Show success alert
     } catch (error) {
+      setError(error.message)
       console.error('Error updating category:', error)
       toast.error("This didn't work.") // Show error alert
     }
@@ -237,6 +239,7 @@ const Model = () => {
         setFilteredData(filteredData.filter((item) => item._id !== id))
         toast.error('Record deleted successfully')
       } catch (error) {
+        setError(error.message)
         console.error('Error deleting record:', error)
         toast.error('Failed to delete the record')
       }
@@ -703,6 +706,7 @@ const Model = () => {
     document.body.style.zoom = '100%'
   }
 
+  if (error) return <Page404 />
 
 
   return (
@@ -717,16 +721,7 @@ const Model = () => {
             <CCardHeader className="grand d-flex justify-content-between align-items-center">
               <strong>Model</strong>
               <div className="d-flex gap-3 justify-content-center align-items-center">
-                {/* <div className="me-3 d-none d-md-block">
-                  <input
-                    type="search"
-                    className="form-control"
-                    placeholder="Search for Models"
-                    variant="outlined"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                  />
-                </div> */}
+
                 <div className="input-group">
                   <InputBase
                     type="search"
@@ -759,9 +754,6 @@ const Model = () => {
                 height: 'auto', // Set the desired height
                 overflowX: 'auto', // Enable horizontal scrollbar
                 overflowY: 'auto', // Enable vertical scrollbar if needed
-                // marginBottom: '10px',
-                // borderRadius: '10px',
-                // border: '1px solid black',
               }}
             >
               <CCardBody>
@@ -902,19 +894,6 @@ const Model = () => {
           </CCard>
         </CCol>
       </CRow>
-
-      {/* <CDropdown className="position-fixed bottom-0 end-0 m-3">
-        <CDropdownToggle
-          color="secondary"
-          style={{ borderRadius: '50%', padding: '10px', height: '48px', width: '48px' }}
-        >
-          <CIcon icon={cilSettings} />
-        </CDropdownToggle>
-        <CDropdownMenu>
-          <CDropdownItem onClick={exportToPDF}>PDF</CDropdownItem>
-          <CDropdownItem onClick={exportToExcel}>Excel</CDropdownItem>
-        </CDropdownMenu>
-      </CDropdown> */}
 
       <div className="position-fixed bottom-0 end-0 mb-5 m-3 z-5">
         <IconDropdown items={dropdownItems} />

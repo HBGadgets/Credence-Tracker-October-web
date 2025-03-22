@@ -70,6 +70,7 @@ import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
+import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 
@@ -80,6 +81,7 @@ const Devices = () => {
   const [editModalOpen, setEditModalOpen] = useState(false) // Modal for adding a new row
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [limit, setLimit] = useState(20)
   const [currentItems, setCurrentItems] = useState([])
@@ -372,11 +374,13 @@ const Devices = () => {
 
           setData(deviceData)
         } else {
+          setError(error.message)
           console.error('Expected an array but got:', response.data)
           toast.error('Unexpected data format received.')
         }
       }
     } catch (error) {
+      setError(error.message)
       console.error('Fetch data error:', error)
       toast.error('An error occurred while fetching data.')
     } finally {
@@ -672,6 +676,7 @@ const Devices = () => {
         console.log('groups: ', data.groups)
         setGroups(data.groups) // Assuming the API returns { groups: [...] }
       } catch (error) {
+        setError(error.message)
         console.log(error)
       }
     }
@@ -1406,6 +1411,9 @@ const Devices = () => {
       toast.error(error.message || 'Failed to export PDF')
     }
   }
+
+  if (error) return <Page404 />
+
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">

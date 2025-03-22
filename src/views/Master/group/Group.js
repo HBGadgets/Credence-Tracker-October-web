@@ -63,6 +63,7 @@ import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
 import { jwtDecode } from 'jwt-decode'
 import IconDropdown from '../../../components/ButtonDropdown'
+import Page404 from '../../pages/page404/Page404'
 
 
 const accessToken = Cookies.get('authToken')
@@ -75,6 +76,7 @@ const Group = () => {
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [data, setData] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [limit, setLimit] = useState(10)
@@ -115,10 +117,9 @@ const Group = () => {
   // ##################### getting data  ###################
   const fetchGroupData = async (page = 1) => {
     const accessToken = Cookies.get('authToken')
-    const url = `${import.meta.env.VITE_API_URL}/group?page=${page}&limit=${limit}&search=${searchQuery}`
 
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/group?page=${page}&limit=${limit}&search=${searchQuery}`, {
         headers: {
           Authorization: 'Bearer ' + accessToken,
         },
@@ -132,6 +133,7 @@ const Group = () => {
         setLoading(false)
       }
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -190,6 +192,7 @@ const Group = () => {
         setAddModalOpen(false)
       }
     } catch (error) {
+      setError(error.message)
       toast.error('An error occured')
       throw error.response ? error.response.data : new Error('An error occurred')
     }
@@ -220,6 +223,7 @@ const Group = () => {
         setEditModalOpen(false)
       }
     } catch (error) {
+      setError(error.message)
       toast.error('An error occured')
       throw error.response ? error.response.data : new Error('An error occurred')
     }
@@ -255,6 +259,7 @@ const Group = () => {
         fetchGroupData()
       }
     } catch (error) {
+      setError(error.message)
       toast.error('An error occurred')
       throw error.response ? error.response.data : new Error('An error occurred')
     }
@@ -699,6 +704,7 @@ const Group = () => {
     }
   }
 
+  if (error) return <Page404 />
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">
@@ -719,15 +725,7 @@ const Group = () => {
             <CCardHeader className="d-flex justify-content-between align-items-center">
               <strong>Group</strong>
               <div className="d-flex">
-                {/* <div className="me-3 d-none d-md-block">
-                  <input
-                    type="search"
-                    className="form-control"
-                    placeholder="Search for Group"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div> */}
+
                 <div className="me-3 d-none d-md-block">
                   <div className="input-group">
                     <InputBase
@@ -764,9 +762,7 @@ const Group = () => {
                 height: 'auto', // Set the desired height
                 overflowX: 'auto', // Enable horizontal scrollbar
                 overflowY: 'auto', // Enable vertical scrollbar if needed
-                // marginBottom: '10px',
-                // borderRadius: '10px',
-                // border: '1px solid black',
+
               }}
             >
               <CCardBody>

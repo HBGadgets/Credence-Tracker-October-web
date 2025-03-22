@@ -70,6 +70,7 @@ import { PiMicrosoftExcelLogo } from 'react-icons/pi'
 import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
 import { jwtDecode } from 'jwt-decode'
+import Page404 from '../../pages/page404/Page404'
 
 
 const accessToken = Cookies.get('authToken')
@@ -102,6 +103,7 @@ const Notification = () => {
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [formData, setFormData] = useState({})
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [data, setData] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [limit, setLimit] = useState(10)
@@ -156,6 +158,7 @@ const Notification = () => {
         setGroups(response.data.groups)
       }
     } catch (error) {
+      setError(error.message)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
     }
@@ -167,10 +170,8 @@ const Notification = () => {
 
   // ##################### getting data  ###################
   const fetchNotificationData = async (page = 1) => {
-    const url = `${import.meta.env.VITE_API_URL}/notifications?page=${page}&limit=${limit}&search=${searchQuery}`
-
     try {
-      const response = await axios.get(url, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/notifications?page=${page}&limit=${limit}&search=${searchQuery}`, {
         headers: {
           Authorization: 'Bearer ' + accessToken,
         },
@@ -187,6 +188,7 @@ const Notification = () => {
         console.log(('setdevicesalreadyadded', devicesAlreadyAdded))
       }
     } catch (error) {
+      setError(error.message)
       setLoading(false)
       console.error('Error fetching data:', error)
       throw error // Re-throw the error for further handling if needed
@@ -198,12 +200,6 @@ const Notification = () => {
     if (!searchQuery) {
       setFilteredData(data) // No query, show all drivers
     } else {
-      // const filtered = data.filter(
-      //   (notification) =>
-      //     notification.deviceId?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      //     notification.type?.name.toLowerCase().includes(searchQuery.toLowerCase())
-      // );
-
       //changed the code as it was getting crashed while searching
       const filtered = data.filter((notification) => {
         const deviceName = notification.deviceId?.name || '' // Default to empty string if undefined
@@ -234,6 +230,7 @@ const Notification = () => {
         setDevices(response.data.data)
         console.log('devices es form me aa rhi he', devices)
       } else {
+        setError(error.message)
         setDevices([])
       }
     } catch (error) {
@@ -293,6 +290,7 @@ const Notification = () => {
         setAddModalOpen(false)
       }
     } catch (error) {
+      setError(error.message)
       throw error.response ? error.response.data : new Error('An error occurred')
     }
   }
@@ -323,6 +321,7 @@ const Notification = () => {
         setEditModalOpen(false)
       }
     } catch (error) {
+      setError(error.message)
       throw error.response ? error.response.data : new Error('An error occurred')
     }
   }
@@ -357,6 +356,7 @@ const Notification = () => {
         fetchNotificationData()
       }
     } catch (error) {
+      setError(error.message)
       throw error.response ? error.response.data : new Error('An error occurred')
     }
   }
@@ -782,6 +782,8 @@ const Notification = () => {
     },
   ]
 
+  if (error) return <Page404 />
+
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">
@@ -802,15 +804,6 @@ const Notification = () => {
             <CCardHeader className="grand d-flex justify-content-between align-items-center">
               <strong>Notification</strong>
               <div className="d-flex gap-3">
-                {/* <div className="me-3 d-none d-md-block">
-                  <input
-                    type="search"
-                    className="form-control"
-                    placeholder="Search for Notifications"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div> */}
                 <div className="input-group">
                   <InputBase
                     type="search"
@@ -845,9 +838,6 @@ const Notification = () => {
                 height: 'auto', // Set the desired height
                 overflowX: 'auto', // Enable horizontal scrollbar
                 overflowY: 'auto', // Enable vertical scrollbar if needed
-                // marginBottom: '10px',
-                // borderRadius: '10px',
-                // border: '1px solid black',
               }}
             >
               <CCardBody>
@@ -1083,56 +1073,7 @@ const Notification = () => {
               onSubmit={handleAddNotification}
               style={{ display: 'flex', flexDirection: 'column' }}
             >
-              {/* <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                <InputLabel>Select Group</InputLabel>
-                <Select
-                  name="groups"
-                  onChange={(e) => getDevices(e.target.value)}
-                  label="select group..."
-                >
-                  {groups.map((group) => (
-                    <MenuItem key={group._id} value={group._id}>
-                      {group.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl> */}
-              {/* <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                <InputLabel>Devices</InputLabel>
-                <Select
-                  name="devices"
-                  value={formData.deviceId || []}
-                  onChange={(e) => setFormData({ ...formData, deviceId: e.target.value })}
-                  label="Select Devices..."
-                  multiple
-                >
-                  {devices.length > 0 ? (
-                    devices?.map((device) => (
-                      <MenuItem key={device._id} value={device._id}>
-                        {device.name}
-                      </MenuItem>
-                    ))
-                  ) : (
-                    <MenuItem>No device available</MenuItem>
-                  )}
-                </Select>
-              </FormControl> */}
-              {/* <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                <InputLabel>Notification Type</InputLabel>
-                <Select
-                  name="type"
-                  value={formData.type || []}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  label="Select Notification Type..."
-                  multiple
-                >
-                  {notificationTypes.map((Ntype) => (
-                    <MenuItem key={Ntype} value={Ntype}>
-                      {Ntype}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl> */}
+
               <FormControl fullWidth sx={{ marginBottom: 4 }}>
                 <Autocomplete
                   options={groups} // List of devices
@@ -1252,16 +1193,7 @@ const Notification = () => {
                       }}
                     />
                   )}
-                  // renderOption={(props, option, { selected }) => (
-                  //   <li {...props}>
-                  //     <Checkbox
-                  //       style={{ marginRight: 8 }}
-                  //       checked={selected}
-                  //     />
-                  //     <ListItemText primary={option.name} />
-                  //   </li>
 
-                  // )}
                   renderOption={(props, option, { selected }) => {
                     const isDisabled = devicesAlreadyAdded.includes(option.name)
                     {
@@ -1272,23 +1204,17 @@ const Notification = () => {
                           'isDisabled',
                           isDisabled,
                         ))()
-                    } // Check if option.name is in devicesAlreadyAdded
+                    }
                     return (
                       <li
                         {...props}
-                      // aria-disabled={isDisabled}
                       >
                         <Checkbox
                           style={{ marginRight: 8 }}
                           checked={selected}
-                        //disabled={isDisabled} // Disable the checkbox if condition is met
                         />
                         <ListItemText
                           primary={option.name}
-                        // style={{
-                        //   textDecoration: isDisabled ? "line-through" : "none", // Optional: Style disabled options
-                        //   color: isDisabled ? "gray" : "inherit",
-                        // }}
                         />
                       </li>
                     )
@@ -1444,22 +1370,6 @@ const Notification = () => {
                   }}
                 />
               </FormControl>
-              {/* <FormControl fullWidth sx={{ marginBottom: 2 }}>
-                <InputLabel>Notification Type</InputLabel>
-                <Select
-                  name="type"
-                  value={formData.type || []}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  label="Select Notification Type..."
-                  multiple
-                >
-                  {notificationTypes.map((Ntype) => (
-                    <MenuItem key={Ntype} value={Ntype}>
-                      {Ntype}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl> */}
 
               <FormControl fullWidth sx={{ marginBottom: 2, marginTop: 5 }}>
                 <InputLabel>Notification Type</InputLabel>
