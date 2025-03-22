@@ -13,7 +13,7 @@ export const getUsers = async () => {
       Authorization: `Bearer ${accessToken}`,
     },
   })
-  console.log('serssss', response.data.users)
+  // console.log('serssss', response.data.users)
   return response.data.users
 }
 
@@ -35,10 +35,10 @@ export const getDevices = async (groupId) => {
       },
     },
   )
-  console.log(
-    'response.data===================================================================',
-    response.data,
-  )
+  // console.log(
+  //   'response.data===================================================================',
+  //   response.data,
+  // )
   return response.data.data
 }
 

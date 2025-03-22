@@ -41,6 +41,7 @@ import { MdDashboard } from 'react-icons/md'
 import { Select, Slider } from '@mui/material'
 import zIndex from '@mui/material/styles/zIndex'
 import toast, { Toaster } from 'react-hot-toast'
+import { RefreshCw } from 'lucide-react'
 
 const accessToken = Cookies.get('authToken')
 
@@ -140,9 +141,10 @@ const MapController = ({ individualSalesMan, previousPosition, polylineRef, auto
 }
 
 const IndividualTrack = () => {
+  const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [autoFocusEnabled, setAutoFocusEnabled] = useState(true)
   const { deviceId, category, name } = useParams()
-  const { vehicleData, loading, error } = useVehicleTracker(deviceId)
+  const { vehicleData, loading, error, timerCount, showTimer } = useVehicleTracker(deviceId)
   const [individualSalesMan, setIndividualSalesMan] = useState(null)
   const [address, setAddress] = useState(null)
   const previousPosition = useRef(null) // Ref to store the previous position
@@ -368,9 +370,6 @@ const IndividualTrack = () => {
       setActiveGeofences(active)
     }
   }, [individualSalesMan, geofences, polygonData])
-
-  console.log('Active Geofences:', activeGeofences)
-  console.log('SETTING GEOFENCE', geofences)
 
   const navigate = useNavigate()
   const iconImage = (item, category) => useGetVehicleIcon(item, category)
@@ -810,6 +809,48 @@ const IndividualTrack = () => {
       <div className="position-fixed bottom-0 end-0 mb-5 m-3 z-5" style={{ zIndex: '1000' }}>
         <IconDropdown items={dropdownItems} />
       </div>
+      {/* Timer Popup */}
+      {showTimer && (
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(5px)',
+            color: 'black',
+            WebkitBackdropFilter: 'blur(10px)',
+            padding: '8px 25px',
+            borderRadius: '10px',
+            zIndex: 1000,
+            boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
+            fontSize: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            position: 'absolute',
+            top: '90px',
+            right: '90vh',
+          }}
+        >
+          <RefreshCw
+            style={{
+              animation: 'spin 1s linear infinite',
+            }}
+            size={15}
+          />
+          <style>
+            {`
+            @keyframes spin {
+              from {
+                transform: rotate(0deg);
+              }
+              to {
+                transform: rotate(360deg);
+              }
+            }
+          `}
+          </style>
+          Refresh in {timerCount} seconds
+        </div>
+      )}
     </>
   )
 }

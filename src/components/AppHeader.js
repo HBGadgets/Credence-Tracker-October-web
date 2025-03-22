@@ -71,7 +71,7 @@ const AppHeader = () => {
   const sidebarShow = useSelector((state) => state.sidebar.sidebarShow)
   const { filteredVehicles } = useSelector((state) => state.liveFeatures)
   const toggle = useSelector((state) => state.navbar)
-  console.log(toggle, 'nave baajdasjdjasdkjashd')
+  // console.log(toggle, 'nave baajdasjdjasdkjashd')
   const [filter, setFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -148,25 +148,59 @@ const AppHeader = () => {
 
   const token = Cookies.get('authToken')
   const decodedToken = token ? jwtDecode(token) : null
-  const socket = io(`${import.meta.env.VITE_API_URL}`)
   const userId = decodedToken && decodedToken.id
   const [notifications, setNotifications] = useState([])
 
-  const notificationSocket = () => {
-    const audio = new Audio(notificationSound)
-    console.log('this is notification function and i am waiting for notification')
-    socket.emit('registerUser', userId)
-    socket.on('alert', (data) => {
-      console.log('Alert', data)
-      audio.play()
-      setNotifications((prevNotifications) => [...prevNotifications, data])
-    })
-  }
-
   useEffect(() => {
-    console.log('this is notification socket code')
-    notificationSocket()
-  }, [])
+    console.log('Initializing socket connection...')
+    const audio = new Audio(notificationSound)
+    let socket
+
+    if (userId) {
+      // Only connect if we have a valid user ID
+      try {
+        socket = io(`${import.meta.env.VITE_API_URL}`, {
+          transports: ['websocket'],
+          withCredentials: true,
+          reconnection: true,
+          reconnectionAttempts: 5,
+          reconnectionDelay: 3000,
+        })
+
+        // Connection event handlers
+        socket.on('connect', () => {
+          console.log('Socket connected! ID:', socket.id)
+          socket.emit('registerUser', userId)
+        })
+
+        socket.on('connect_error', (err) => {
+          console.error('Connection error:', err.message)
+        })
+
+        socket.on('disconnect', (reason) => {
+          console.log('Socket disconnected:', reason)
+        })
+
+        // Alert handler
+        socket.on('alert', (data) => {
+          console.log('Received alert:', data)
+          audio.play()
+          setNotifications((prev) => [...prev, data])
+        })
+      } catch (err) {
+        console.error('Socket initialization error:', err)
+      }
+    } else {
+      console.log('Skipping socket connection - no user ID')
+    }
+
+    return () => {
+      if (socket) {
+        console.log('Cleaning up socket connection')
+        socket.disconnect()
+      }
+    }
+  }, [userId]) // Only re-run if userId changes
 
   // Reducer of side bar nav open
 
@@ -262,67 +296,11 @@ const AppHeader = () => {
         >
           {/* <CIcon icon={cilMenu} size="lg" /> */}
         </CHeaderToggler>
-        <CHeaderNav className="d-none d-md-flex">
-          {/* <CNavItem>
-            <CNavLink id='header-dashboard' to="/dashboard" as={NavLink}>
-              <img src={logo} alt="Logo" className="sidebar-brand-full" height={50} width={200} style={{ marginInlineStart: '-30px' }} />
-            </CNavLink>
-          </CNavItem> */}
-        </CHeaderNav>
-        {/**Prev */}
-        {/* <CHeaderNav className="ms-auto">
-          <button className="nav-btn" onClick={() => handleHome()}>
-            <FaHome className="nav-icon" /> Home
-          </button>
-        </CHeaderNav>
+        <CHeaderNav className="d-none d-md-flex"></CHeaderNav>
 
-        <CHeaderNav className="ms-auto">
-          <button className="nav-btn" onClick={() => handleMaster()}>
-            <FaAddressCard className="nav-icon" /> Master
-          </button>
-        </CHeaderNav>
-
-        <CHeaderNav className="ms-auto">
-          <button className="nav-btn" onClick={() => handleReports()}>
-            <FaChartBar className="nav-icon" /> Reports
-          </button>
-        </CHeaderNav>
-
-        <CHeaderNav className="ms-auto">
-          {role === 'superadmin' && (
-            <button className="nav-btn" onClick={() => handleExpense()}>
-              <TbReportSearch className="nav-icon" /> Expense Management
-            </button>
-          )}
-        </CHeaderNav> */}
-
-        {/**CURRENT */}
         <CTabs className="ms-auto">
-          <CTabList variant="underline">
-            {/* <CTab onClick={handleHome} className="text-white" itemKey={1}>
-              <FaHome className="me-2" /> Home
-            </CTab>
-            <div className="vr mx-3 bg-white"></div>
-            <CTab onClick={handleMaster} className="text-white" itemKey={2}>
-              <FaAddressCard className="me-2" /> Master
-            </CTab>
-            <div className="vr mx-3 bg-white"></div>
-            <CTab onClick={handleReports} className="text-white" itemKey={3}>
-              <FaChartBar className="me-2" /> Reports
-            </CTab> */}
-
-            {/* {role === 'superadmin' && (
-              <CTab onClick={handleExpense} className="text-white" itemKey={4}>
-                <TbReportSearch className="me-2" /> Supports
-              </CTab>
-            )} */}
-          </CTabList>
+          <CTabList variant="underline"></CTabList>
         </CTabs>
-        {/* <CHeaderNav className="ms-auto">
-          <button className="nav-btn" onClick={() => handleSupports()}>
-            <MdOutlineSupportAgent className="nav-icon" /> Supports
-          </button>
-        </CHeaderNav> */}
 
         <style jsx>{`
           .nav-btn {
@@ -363,15 +341,6 @@ const AppHeader = () => {
           }
         `}</style>
 
-        {/* <CHeaderNav className="ms-auto">
-          <NotificationDropdown notifications={notifications} />
-        </CHeaderNav>
-        <li className="nav-item">
-          <div className="vr h-100 text-body bg-white text-opacity-75"></div>
-        </li>
-        <CHeaderNav>
-          <AppHeaderDropdown />
-        </CHeaderNav> */}
         <CHeaderNav className="ms-auto">
           <NotificationDropdown notifications={notifications} />
           <div className="vr mx-3 bg-white"></div>
