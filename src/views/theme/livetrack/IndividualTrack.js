@@ -30,7 +30,7 @@ import useVehicleImage from '../../Reports/HistoryReport/useVehicleImage'
 import { IoMdSpeedometer } from 'react-icons/io'
 import { HiOutlineStatusOnline } from 'react-icons/hi'
 import { RxLapTimer } from 'react-icons/rx'
-import { IoLocationSharp } from 'react-icons/io5'
+import { TbTrafficLights, TbTrafficLightsOff } from 'react-icons/tb'
 
 import dayjs from 'dayjs'
 import { FaSatellite } from 'react-icons/fa'
@@ -42,6 +42,7 @@ import { Select, Slider } from '@mui/material'
 import zIndex from '@mui/material/styles/zIndex'
 import toast, { Toaster } from 'react-hot-toast'
 import { RefreshCw } from 'lucide-react'
+import PopupContent from './Popup'
 
 const accessToken = Cookies.get('authToken')
 
@@ -141,6 +142,7 @@ const MapController = ({ individualSalesMan, previousPosition, polylineRef, auto
 }
 
 const IndividualTrack = () => {
+  const [showTraffic, setShowTraffic] = useState(false)
   const [isSocketConnected, setIsSocketConnected] = useState(false)
   const [autoFocusEnabled, setAutoFocusEnabled] = useState(true)
   const { deviceId, category, name } = useParams()
@@ -271,12 +273,12 @@ const IndividualTrack = () => {
       try {
         const apiKey = 'huWGT6bXG3aRcdvLhkca' // Replace with your actual MapTiler API key
         const response = await axios.get(
-          `https://api.maptiler.com/geocoding/${individualSalesMan?.longitude},${individualSalesMan?.latitude}.json?key=${apiKey}`,
+          `https://api.maptiler.com/geocoding/${individualSalesMan?.longitude},${individualSalesMan?.latitude}.json?key=${apiKey}&language=en`, // Added language parameter
         )
-        if (response.data.features.length <= 5) {
-          setAddress(response.data.features[0].place_name_en)
+        if (response.data.features.length > 0) {
+          setAddress(response.data.features[0].place_name) // Use place_name instead of place_name_en
         } else {
-          setAddress(response.data.features[1].place_name_en)
+          setAddress('Address not found')
         }
       } catch (error) {
         console.error('Error fetching the address:', error)
@@ -491,6 +493,13 @@ const IndividualTrack = () => {
               >
                 <BsFillGeoFill size={12} />
               </button>
+              <button
+                onClick={() => setShowTraffic(!showTraffic)}
+                className="btn toggle-geofence-view"
+                style={{ position: 'absolute', top: '240px', left: '10px', zIndex: 1000 }}
+              >
+                {showTraffic ? <TbTrafficLightsOff /> : <TbTrafficLights />}
+              </button>
               <TileLayer
                 url={
                   isSatelliteView
@@ -499,6 +508,13 @@ const IndividualTrack = () => {
                 }
                 attribution="&copy; Credence Tracker, HB Gadget Solutions Nagpur"
               />
+              {/* Traffic Layer */}
+              {showTraffic && (
+                <TileLayer
+                  url="https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=WI92B5fNrRuw3y9wnNVFbF10gosmx1h2"
+                  attribution="Traffic data © 2024 TomTom"
+                />
+              )}
 
               {/* Attach our click handler to the map */}
               {enableAddGeofence && (
@@ -701,96 +717,13 @@ const IndividualTrack = () => {
                   icon={iconImage(individualSalesMan, category)}
                   duration={2000}
                 >
+                  {/* POPUPCONTENT */}
                   <Popup>
-                    <div className="toolTip">
-                      <span style={{ textAlign: 'center', fontSize: '0.9rem' }}>
-                        <strong>{name ? name : 'User Name'}</strong>
-                      </span>
-                      <hr
-                        style={{
-                          width: '100%',
-                          height: '3px',
-                          marginBottom: '0px',
-                          marginTop: '5px',
-                          borderRadius: '5px',
-                          backgroundColor: '#000',
-                        }}
-                      />
-                      <div className="toolTipContent">
-                        <div>
-                          <strong>
-                            <RxLapTimer size={17} color="#FF7A00" />
-                          </strong>{' '}
-                          {dayjs(individualSalesMan.lastUpdate).format('DD-MM-YYYY HH:mm')}
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'start',
-                            gap: '10px',
-                          }}
-                        >
-                          <div>
-                            <strong>
-                              <IoMdSpeedometer size={17} color="#FF7A00" />
-                            </strong>{' '}
-                            {(individualSalesMan?.speed).toFixed(2)} km/h{' '}
-                          </div>
-                        </div>
-                        <div>
-                          <strong>
-                            <HiOutlineStatusOnline size={17} color="#FF7A00" />
-                          </strong>{' '}
-                          {(() => {
-                            const sp = individualSalesMan.speed
-                            const ig = individualSalesMan.attributes.ignition
-                            if (sp < 1 && ig === false) {
-                              return 'Stopped'
-                            }
-                            if (sp < 2 && ig === true) {
-                              return 'Idle'
-                            }
-                            if (sp > 2 && sp < 60 && ig === true) {
-                              return 'Running'
-                            }
-                            if (sp > 60 && ig === true) {
-                              return 'Over Speed'
-                            } else {
-                              return 'Inactive'
-                            }
-                          })()}
-                        </div>
-
-                        <span>
-                          <strong>
-                            <IoLocationSharp size={17} color="#FF7A00" />
-                          </strong>{' '}
-                          {'Loading...'}
-                        </span>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '10px',
-                          }}
-                        >
-                          <button
-                            className="btn"
-                            style={{
-                              width: '100%',
-                              color: 'white',
-                              fontSize: '0.8rem',
-                              backgroundColor: '#000000',
-                            }}
-                            onClick={() => handleClickOnTrack(individualSalesMan)}
-                          >
-                            View History
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    <PopupContent
+                      individualSalesMan={individualSalesMan}
+                      address={address}
+                      handleClickOnTrack={handleClickOnTrack}
+                    />
                   </Popup>
                 </ReactLeafletDriftMarker>
               )}

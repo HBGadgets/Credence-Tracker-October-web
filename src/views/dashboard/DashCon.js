@@ -348,29 +348,24 @@ const Dashboard = () => {
   const visibleColumns = useSelector((state) => state.columnVisibility)
 
   const fetchAddress = async (vehicleId, longitude, latitude) => {
-    // Prevent fetching if already available
-    if (address[vehicleId]) return
-
     try {
       const apiKey = 'huWGT6bXG3aRcdvLhkca' // Replace with your actual MapTiler API key
       const response = await axios.get(
         `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`,
       )
 
-      const newAddress =
-        response.data.features.length > 1
+      // console.log(response)
+      const address =
+        response.data.features.length <= 5
           ? response.data.features[0].place_name_en
-          : response.data.features[1]?.place_name_en || 'Unknown'
+          : response.data.features[1].place_name_en
 
-      // Update only if address is different
-      setAddress((prevAddresses) => {
-        if (prevAddresses[vehicleId] === newAddress) {
-          return prevAddresses // No change, avoid re-render
-        }
-        return { ...prevAddresses, [vehicleId]: newAddress }
-      })
+      setAddress((prevAddresses) => ({
+        ...prevAddresses,
+        [vehicleId]: address, // Update the specific vehicle's address
+      }))
     } catch (error) {
-      console.error('Error fetching the address:', error)
+      // console.error('Error fetching the address:', error)
       setAddress((prevAddresses) => ({
         ...prevAddresses,
         [vehicleId]: 'Error fetching address',
@@ -389,16 +384,14 @@ const Dashboard = () => {
   }, [address])
 
   useEffect(() => {
+    // console.log("filtered vehicle", filteredVehicles);
     filteredVehicles.forEach((vehicle) => {
-      if (
-        vehicle?.deviceId &&
-        vehicle.longitude &&
-        vehicle.latitude &&
-        !address[vehicle.deviceId]
-      ) {
+      if (vehicle?.deviceId && vehicle.longitude && vehicle.latitude && !address[vehicle.id]) {
+        // Fetch address only if it's not already fetched for this vehicle
         fetchAddress(vehicle.deviceId, vehicle.longitude, vehicle.latitude)
       }
     })
+    // console.log(address)
   }, [filteredVehicles])
 
   const headerRef = useRef()
@@ -536,32 +529,32 @@ const Dashboard = () => {
     }, 2000) // Simulate a 2-second delay for fetching data
   }, [])
 
-  // const [devicesWithoutPositions, setDevicesWithoutPositions] = useState([])
+  const [devicesWithoutPositions, setDevicesWithoutPositions] = useState([])
 
-  // useEffect(() => {
-  //   const findDevicesWithoutPositions = async () => {
-  //     try {
-  //       const devices = dispatch(fetchDevices())
-  //       const missingDevices = []
+  useEffect(() => {
+    const findDevicesWithoutPositions = async () => {
+      try {
+        const devices = devices
+        const missingDevices = []
 
-  //       // Iterate through devices and check if they have positions
-  //       for (const device of devices) {
-  //         const positions = filteredVehicles
-  //         if (positions.length === 0) {
-  //           missingDevices.push(device)
-  //         }
-  //       }
+        // Iterate through devices and check if they have positions
+        for (const device of devices) {
+          const positions = filteredVehicles
+          if (positions.length === 0) {
+            missingDevices.push(device)
+          }
+        }
 
-  //       setDevicesWithoutPositions(missingDevices)
-  //       setLoading(false)
-  //     } catch (error) {
-  //       setLoading(false)
-  //     }
-  //   }
+        setDevicesWithoutPositions(missingDevices)
+        setLoading(false)
+      } catch (error) {
+        setLoading(false)
+      }
+    }
 
-  //   // Call the function to find devices without positions
-  //   findDevicesWithoutPositions()
-  // }, [filteredVehicles])
+    // Call the function to find devices without positions
+    findDevicesWithoutPositions()
+  }, [filteredVehicles])
 
   // sorting login
   const getSortValue = (item, key) => {
@@ -769,8 +762,7 @@ const Dashboard = () => {
                   </div>
                 </CCol>
 
-                {/* New Vehicles */}
-                {/* <CCol
+                <CCol
                   xs={12}
                   md={1}
                   xl={2}
@@ -793,7 +785,7 @@ const Dashboard = () => {
                       <img style={{ width: '3.5rem' }} src={carBlue} alt="New Vehicles" />
                     </div>
                   </div>
-                </CCol> */}
+                </CCol>
 
                 {/* Inactive Vehicles */}
                 <CCol
