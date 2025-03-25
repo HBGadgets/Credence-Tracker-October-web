@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import MarkerClusterGroup from 'react-leaflet-cluster'
-
+import { MdHistory } from 'react-icons/md'
+import { CiLocationArrow1 } from 'react-icons/ci'
 import { FaSearchLocation } from 'react-icons/fa'
 import { IoMdSpeedometer } from 'react-icons/io'
 import { HiOutlineStatusOnline } from 'react-icons/hi'
@@ -184,13 +185,26 @@ const StatusDetail = ({ speed, ignition }) => {
 
 const ActionButtons = ({ onTrack, onHistory }) => (
   <div style={buttonContainerStyle}>
-    <Button onClick={onTrack} label="Live Track" />
-    <Button onClick={onHistory} label="History" />
+    <Button 
+      onClick={onTrack} 
+      label={<CiLocationArrow1 size={14} />} 
+      title="Live Track"  // Add tooltip text
+    />
+    <Button 
+      onClick={onHistory} 
+      label={<MdHistory size={14} />} 
+      title="History Track"  // Add tooltip text
+    />
   </div>
 )
 
-const Button = ({ onClick, label }) => (
-  <button className="btn" style={buttonStyle} onClick={onClick}>
+const Button = ({ onClick, label, title }) => (
+  <button 
+    className="btn" 
+    style={buttonStyle} 
+    onClick={onClick}
+    title={title}  // Add title attribute here
+  >
     {label}
   </button>
 )
