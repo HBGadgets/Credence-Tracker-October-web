@@ -17,109 +17,11 @@ import { useSelector } from 'react-redux'
 import { IoLocationSharp } from 'react-icons/io5'
 import { GiSpeedometer } from 'react-icons/gi'
 import useGetVehicleIcon from '../Reports/HistoryReport/useGetVehicleIcon'
+
 import PropTypes from 'prop-types'
 
-// Create a separate component for PopupContent
-const PopupContent = memo(function PopupContent({
-  vehicle,
-  newAddress,
-  handleClickOnTrack,
-  handleClickOnHistoryTrack,
-}) {
-  return (
-    <div className="toolTip">
-      <span style={{ textAlign: 'center', fontSize: '0.9rem' }}>
-        <strong> {vehicle.name}</strong>
-      </span>
-      <hr
-        style={{
-          width: '100%',
-          height: '3px',
-          marginBottom: '0px',
-          marginTop: '5px',
-          borderRadius: '5px',
-          backgroundColor: '#000',
-        }}
-      />
-      <div className="toolTipContent">
-        <div>
-          <strong>
-            <RxLapTimer size={17} color="#FF7A00" />
-          </strong>
-          {dayjs(vehicle.lastUpdate).format('YYYY-MM-DD HH:mm')}
-        </div>
-        <div
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: '10px' }}
-        >
-          <div>
-            <strong>
-              <IoMdSpeedometer size={17} color="#FF7A00" />
-            </strong>
-            {vehicle.speed.toFixed(2)} km/h
-          </div>
-        </div>
-        <div>
-          <strong>
-            <HiOutlineStatusOnline size={17} color="#FF7A00" />
-          </strong>
-          {(() => {
-            const sp = vehicle.speed
-            const ig = vehicle.attributes.ignition
-            if (sp < 1 && ig === false) return 'Stopped'
-            if (sp < 2 && ig === false) return 'Idle'
-            if (sp > 2 && sp < 60 && ig === true) return 'Running'
-            if (sp > 60 && ig === true) return 'Over Speed'
-            return 'Inactive'
-          })()}
-        </div>
-        <span>
-          <strong>
-            <IoLocationSharp size={17} color="#FF7A00" />
-          </strong>
-          {newAddress[vehicle.deviceId] || 'Loading...'}
-        </span>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px',
-            width: '100%',
-          }}
-        >
-          <button
-            className="btn"
-            style={{
-              width: '100%',
-              color: 'white',
-              fontSize: '0.6rem',
-              backgroundColor: '#000000',
-            }}
-            onClick={() => handleClickOnTrack(vehicle)}
-          >
-            Live Track
-          </button>
-          <button
-            className="btn"
-            style={{
-              width: '100%',
-              color: 'white',
-              fontSize: '0.6rem',
-              backgroundColor: '#000000',
-            }}
-            onClick={() => handleClickOnHistoryTrack(vehicle)}
-          >
-            History
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-})
-
-// Memoized Marker component
 const VehicleMarker = memo(
-  ({ vehicle, newAddress, handleClickOnTrack, handleClickOnHistoryTrack }) => {
+  ({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => {
     const icon = useGetVehicleIcon(vehicle, vehicle.category)
 
     return (
@@ -127,7 +29,7 @@ const VehicleMarker = memo(
         <Popup>
           <PopupContent
             vehicle={vehicle}
-            newAddress={newAddress}
+            address={address}
             handleClickOnTrack={handleClickOnTrack}
             handleClickOnHistoryTrack={handleClickOnHistoryTrack}
           />
@@ -136,6 +38,31 @@ const VehicleMarker = memo(
     )
   },
 )
+
+VehicleMarker.displayName = 'VehicleMarker'
+
+// Create a separate component for PopupContent
+const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => (
+  <div className="toolTip">
+    <span style={{ textAlign: 'center', fontSize: '0.9rem' }}>
+      <strong>{vehicle.name}</strong>
+    </span>
+    <hr style={hrStyle} />
+    <div className="toolTipContent">
+      <DetailItem
+        icon={<RxLapTimer />}
+        text={dayjs(vehicle.lastUpdate).format('YYYY-MM-DD HH:mm')}
+      />
+      <SpeedDetail speed={vehicle.speed} />
+      <StatusDetail speed={vehicle.speed} ignition={vehicle.attributes.ignition} />
+      <DetailItem icon={<IoLocationSharp />} text={address || 'Loading...'} />
+      <ActionButtons
+        onTrack={() => handleClickOnTrack(vehicle)}
+        onHistory={() => handleClickOnHistoryTrack(vehicle)}
+      />
+    </div>
+  </div>
+))
 
 const FlyToMapCenter = ({ mapCenter }) => {
   const map = useMap()
@@ -149,9 +76,14 @@ const FlyToMapCenter = ({ mapCenter }) => {
   return null
 }
 
-const MainMap = ({ filteredVehicles, mapCenter, markerRefs }) => {
+const MainMap = ({ filteredVehicles, mapCenter }) => {
   const { newAddress } = useSelector((state) => state.address)
   const navigate = useNavigate()
+
+  const stableVehicles = useMemo(
+    () => filteredVehicles,
+    [JSON.stringify(filteredVehicles?.map((v) => v.deviceId))],
+  )
 
   const handleClickOnTrack = useCallback(
     (vehicle) => {
@@ -167,16 +99,26 @@ const MainMap = ({ filteredVehicles, mapCenter, markerRefs }) => {
     [navigate],
   )
 
-  // Keep only one useEffect for debugging
   useEffect(() => {
-    // console.log('Filtered vehicles updated:', filteredVehicles)
+    console.log('filtered vehicle', filteredVehicles)
   }, [filteredVehicles])
+
+  useEffect(() => {
+    console.log('filtered vehicle', filteredVehicles)
+  }, [filteredVehicles])
+
+  // const iconImage = (category, item) => useGetVehicleIcon(item, category)
+  const iconImage = useMemo(() => (category, item) => useGetVehicleIcon(item, category), [])
+  const getIcon = useCallback((category, item) => {
+    return useGetVehicleIcon(item, category)
+  }, [])
 
   return (
     <MapContainer
       center={[21.1458, 79.0882]}
       zoom={10}
       scrollWheelZoom={true}
+      preferCanvas={true}
       style={{
         height: '550px',
         width: '100%',
@@ -191,11 +133,11 @@ const MainMap = ({ filteredVehicles, mapCenter, markerRefs }) => {
       />
       <FlyToMapCenter mapCenter={mapCenter} />
       <MarkerClusterGroup>
-        {filteredVehicles?.map((vehicle) => (
+        {stableVehicles?.map((vehicle) => (
           <VehicleMarker
             key={vehicle.deviceId}
             vehicle={vehicle}
-            newAddress={newAddress}
+            address={newAddress[vehicle.deviceId]}
             handleClickOnTrack={handleClickOnTrack}
             handleClickOnHistoryTrack={handleClickOnHistoryTrack}
           />
@@ -205,24 +147,83 @@ const MainMap = ({ filteredVehicles, mapCenter, markerRefs }) => {
   )
 }
 
-VehicleMarker.displayName = 'VehicleMarker'
+const DetailItem = ({ icon, text }) => (
+  <div>
+    <strong>{React.cloneElement(icon, { size: 17, color: '#FF7A00' })}</strong>
+    {text}
+  </div>
+)
 
-VehicleMarker.propTypes = {
-  vehicle: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    lastUpdate: PropTypes.string.isRequired,
-    speed: PropTypes.number.isRequired,
-    attributes: PropTypes.shape({
-      ignition: PropTypes.bool.isRequired,
-    }).isRequired,
-    category: PropTypes.string.isRequired,
-    latitude: PropTypes.number.isRequired,
-    longitude: PropTypes.number.isRequired,
-    deviceId: PropTypes.string.isRequired,
-  }).isRequired,
-  newAddress: PropTypes.object.isRequired,
-  handleClickOnTrack: PropTypes.func.isRequired,
-  handleClickOnHistoryTrack: PropTypes.func.isRequired,
+const SpeedDetail = ({ speed }) => (
+  <div>
+    <strong>
+      <GiSpeedometer size={17} color="#FF7A00" />
+    </strong>
+    {speed.toFixed(2)} km/h
+  </div>
+)
+
+const StatusDetail = ({ speed, ignition }) => {
+  const status = useMemo(() => {
+    if (speed < 1 && !ignition) return 'Stopped'
+    if (speed < 2 && !ignition) return 'Idle'
+    if (speed > 2 && speed < 60 && ignition) return 'Running'
+    if (speed > 60 && ignition) return 'Over Speed'
+    return 'Inactive'
+  }, [speed, ignition])
+
+  return (
+    <div>
+      <strong>
+        <HiOutlineStatusOnline size={17} color="#FF7A00" />
+      </strong>
+      {status}
+    </div>
+  )
 }
 
-export default MainMap
+const ActionButtons = ({ onTrack, onHistory }) => (
+  <div style={buttonContainerStyle}>
+    <Button onClick={onTrack} label="Live Track" />
+    <Button onClick={onHistory} label="History" />
+  </div>
+)
+
+const Button = ({ onClick, label }) => (
+  <button className="btn" style={buttonStyle} onClick={onClick}>
+    {label}
+  </button>
+)
+
+// Styles
+const mapStyle = {
+  height: '550px',
+  width: '100%',
+  borderRadius: '15px',
+  border: '2px solid gray',
+  zIndex: 0,
+}
+
+const hrStyle = {
+  width: '100%',
+  height: '3px',
+  margin: '5px 0',
+  borderRadius: '5px',
+  backgroundColor: '#000',
+}
+
+const buttonContainerStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '10px',
+  width: '100%',
+}
+
+const buttonStyle = {
+  width: '100%',
+  color: 'white',
+  fontSize: '0.6rem',
+  backgroundColor: '#000000',
+}
+
+export default React.memo(MainMap)
