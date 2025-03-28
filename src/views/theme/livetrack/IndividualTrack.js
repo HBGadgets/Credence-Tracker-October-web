@@ -43,6 +43,7 @@ import zIndex from '@mui/material/styles/zIndex'
 import toast, { Toaster } from 'react-hot-toast'
 import { RefreshCw } from 'lucide-react'
 import PopupContent from './Popup'
+import NetworkStatusOverlay from './NetworkStatusOverlay'
 
 const accessToken = Cookies.get('authToken')
 
@@ -461,6 +462,7 @@ const IndividualTrack = () => {
   return (
     <>
       <Toaster />
+      <NetworkStatusOverlay position="top-right" isOnline={false} />
       <div className="row gutter-0">
         <div className="col-12 position-relative">
           <div className="individualMap position-relative border border-5 ">
