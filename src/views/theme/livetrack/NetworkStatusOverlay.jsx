@@ -1,44 +1,41 @@
-import { useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useState } from 'react'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
-export default function NetworkStatusOverlay({
-  position = "top-right",
-  isOnline: propIsOnline,
-}) {
-  const [internalIsOnline, setInternalIsOnline] = useState(navigator.onLine);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
+export default function NetworkStatusOverlay({ position = 'top-right', isOnline: propIsOnline }) {
+  const [internalIsOnline, setInternalIsOnline] = useState(navigator.onLine)
+  const [lastUpdated, setLastUpdated] = useState(new Date())
 
-  const isOnline = propIsOnline !== undefined ? propIsOnline : internalIsOnline;
+  const isOnline = propIsOnline !== undefined ? propIsOnline : internalIsOnline
 
   const positionStyles = {
-    "top-left": { top: "1rem", left: "1rem" },
-    "top-right": { top: "1rem", right: "1rem" },
-    "bottom-left": { bottom: "1rem", left: "1rem" },
-    "bottom-right": { bottom: "1rem", right: "1rem" },
-    "center": { top: "30%", left: "50%", transform: "translate(-50%, -50%)" }, // Centered position
-  };
+    'top-left': { top: '1rem', left: '1rem' },
+    'top-right': { top: '1rem', right: '1rem' },
+    'bottom-left': { bottom: '1rem', left: '1rem' },
+    'bottom-right': { bottom: '1rem', right: '1rem' },
+    center: { top: '30%', left: '50%', transform: 'translate(-50%, -50%)' }, // Centered position
+  }
 
   useEffect(() => {
-    if (propIsOnline !== undefined) return;
+    if (propIsOnline !== undefined) return
 
     const handleOnline = () => {
-      setInternalIsOnline(true);
-      setLastUpdated(new Date());
-    };
+      setInternalIsOnline(true)
+      setLastUpdated(new Date())
+    }
 
     const handleOffline = () => {
-      setInternalIsOnline(false);
-      setLastUpdated(new Date());
-    };
+      setInternalIsOnline(false)
+      setLastUpdated(new Date())
+    }
 
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
 
     return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, [propIsOnline]);
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [propIsOnline])
 
   const getNetworkIcon = () => {
     if (!isOnline) {
@@ -49,30 +46,28 @@ export default function NetworkStatusOverlay({
           <div className="wifi-circle third"></div>
           <div className="wifi-circle fourth"></div>
         </div>
-      );
+      )
     }
-    return null;
-  };
+    return null
+  }
 
   const getStatusText = () => {
-    return isOnline ? "Online" : "Offline"; // Fixed missing return value
-  };
+    return isOnline ? 'Online' : 'Offline' // Fixed missing return value
+  }
 
   return isOnline === false ? ( // Removed incorrect {}
     <div className="position-absolute z-index-50" style={positionStyles[position]}>
       <div
         className="rounded overflow-hidden"
         style={{
-          backdropFilter: "blur(12px)",
-          backgroundColor: "rgba(255, 255, 255, 0.7)",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-          boxShadow: "0 0.5rem 1rem rgba(0, 0, 0, 0.15)",
+          backdropFilter: 'blur(12px)',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 0.5rem 1rem rgba(0, 0, 0, 0.15)',
         }}
       >
         <div className="p-3 d-flex align-items-center gap-3">
-          <div style={{ position: "relative", width: 24, height: 24 }}>
-            {getNetworkIcon()}
-          </div>
+          <div style={{ position: 'relative', width: 24, height: 24 }}>{getNetworkIcon()}</div>
           <span>{getStatusText()}</span>
         </div>
       </div>
@@ -136,5 +131,5 @@ export default function NetworkStatusOverlay({
         `}
       </style>
     </div>
-  ) : null; // Properly handle the case when online
+  ) : null // Properly handle the case when online
 }

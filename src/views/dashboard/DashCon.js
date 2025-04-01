@@ -249,7 +249,7 @@ const Dashboard = () => {
     }
   }
 
-  const defaultImage = carGray;
+  const defaultImage = carGray
 
   const selectImage = (category, item) => {
     const cate = getCategory(category)
@@ -314,37 +314,29 @@ const Dashboard = () => {
       },
     }
 
-    // Get category-specific images or fallback to car
-    const categoryImages = imageMap[cate] || imageMap.car;
-
-
-    // Safely handle undefined position or attributes
     if (!item || !item.attributes) {
-      // Handle the case where position or attributes are undefined
-      return categoryImages.gray // Return a gray or default image
+      return imageMap[cate]?.gray || carGray // Default to gray
     }
 
-    const ignition = item.attributes.ignition
+    const { ignition } = item.attributes
     const speed = item.speed || 0
-    const isStale = !timeDiffIsLessThan35Hours(item.lastUpdate);
+    const isActive = timeDiffIsLessThan35Hours(item.lastUpdate)
 
-    if (isStale) return categoryImages.gray;
-
-    let statusColor = 'gray';
-
-    if (!ignition && speed < 1 && timeDiffIsLessThan35Hours(item.lastUpdate)) {
-      image = imageMap[cate].red
-    } else if (ignition && speed > 2 && speed < 60 && timeDiffIsLessThan35Hours(item.lastUpdate)) {
-      image = imageMap[cate].green
-    } else if (ignition && speed < 2 && timeDiffIsLessThan35Hours(item.lastUpdate)) {
-      image = imageMap[cate].yellow
-    } else if (ignition && speed > 60 && timeDiffIsLessThan35Hours(item.lastUpdate)) {
-      image = imageMap[cate].orange
-    } else if (!timeDiffIsLessThan35Hours(item.lastUpdate)) {
-      image = imageMap[cate].gray
+    if (!isActive) {
+      image = imageMap[cate].gray // Inactive (gray)
+    } else if (!ignition && speed < 1) {
+      image = imageMap[cate].red // Stopped (red)
+    } else if (ignition) {
+      if (speed > 60) {
+        image = imageMap[cate].orange // Overspeed (orange)
+      } else if (speed >= 2) {
+        image = imageMap[cate].green // Running (green)
+      } else {
+        image = imageMap[cate].yellow // Idle (yellow)
+      }
     }
 
-    return image || defaultImage // Return a default image if no match found
+    return image || carGray // Fallback to gray
   }
 
   const navigate = useNavigate()
@@ -851,10 +843,10 @@ const Dashboard = () => {
                               value={
                                 selectedUser
                                   ? {
-                                    value: selectedUser,
-                                    label: users.find((user) => user._id === selectedUser)
-                                      ?.username,
-                                  }
+                                      value: selectedUser,
+                                      label: users.find((user) => user._id === selectedUser)
+                                        ?.username,
+                                    }
                                   : null
                               }
                               onChange={(selectedOption) => setSelectedUser(selectedOption?.value)}
@@ -874,10 +866,10 @@ const Dashboard = () => {
                               value={
                                 selectedGroup
                                   ? {
-                                    value: selectedGroup,
-                                    label: groups.find((group) => group._id === selectedGroup)
-                                      ?.name,
-                                  }
+                                      value: selectedGroup,
+                                      label: groups.find((group) => group._id === selectedGroup)
+                                        ?.name,
+                                    }
                                   : null
                               }
                               onChange={(selectedOption) => setSelectedGroup(selectedOption?.value)}

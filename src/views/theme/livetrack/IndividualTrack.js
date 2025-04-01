@@ -33,7 +33,7 @@ import { RxLapTimer } from 'react-icons/rx'
 import { TbTrafficLights, TbTrafficLightsOff } from 'react-icons/tb'
 
 import dayjs from 'dayjs'
-import { FaSatellite } from 'react-icons/fa'
+import { FaSatellite, FaStreetView } from 'react-icons/fa'
 import Cookies from 'js-cookie'
 import IconDropdown from '../../../components/ButtonDropdown'
 import { HiOutlineLogout } from 'react-icons/hi'
@@ -459,6 +459,7 @@ const IndividualTrack = () => {
       console.log(error.message)
     }
   }
+
   return (
     <>
       <Toaster />
@@ -476,47 +477,130 @@ const IndividualTrack = () => {
                 borderRadius: '5px',
               }}
             >
-              <div className="toggle-map-view" onClick={toggleMapView}>
-                <FaSatellite />
-              </div>
-              <button
-                title={autoFocusEnabled ? 'Disable auto-focus' : 'Enable auto-focus'}
-                onClick={() => setAutoFocusEnabled(!autoFocusEnabled)}
-                className="toggle-auto-focus-view btn"
-                style={{ backgroundColor: autoFocusEnabled ? '#1976d2' : '#666' }}
-              >
-                🎯
-              </button>
+              <div>
+                <button
+                  title="Toggle Satellite View"
+                  onClick={toggleMapView}
+                  className="btn toggle-map-view"
+                  style={{
+                    position: 'absolute',
+                    top: '160px',
+                    left: '10px',
+                    zIndex: 1000,
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0',
+                  }}
+                >
+                  <FaSatellite size={14} />
+                </button>
 
-              <button
-                className="btn toggle-geofence-view"
-                onClick={() => setEnableAddGeofence(() => !enableAddGeofence)}
-                title={enableAddGeofence ? 'Disable Add Geofence' : 'Enable Add Geofence'}
-              >
-                <BsFillGeoFill size={12} />
-              </button>
-              <button
-                onClick={() => setShowTraffic(!showTraffic)}
-                className="btn toggle-geofence-view"
-                style={{ position: 'absolute', top: '240px', left: '10px', zIndex: 1000 }}
-              >
-                {showTraffic ? <TbTrafficLightsOff /> : <TbTrafficLights />}
-              </button>
-              <TileLayer
-                url={
-                  isSatelliteView
-                    ? 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}' // Satellite View
-                    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' // Normal View
-                }
-                attribution="&copy; Credence Tracker, HB Gadget Solutions Nagpur"
-              />
-              {/* Traffic Layer */}
-              {showTraffic && (
+                <button
+                  title={autoFocusEnabled ? 'Disable auto-focus' : 'Enable auto-focus'}
+                  onClick={() => setAutoFocusEnabled(!autoFocusEnabled)}
+                  className="btn toggle-auto-focus-view"
+                  style={{
+                    position: 'absolute',
+                    top: '200px',
+                    left: '10px',
+                    zIndex: 1000,
+                    backgroundColor: autoFocusEnabled ? '#1976d2' : '#666',
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0',
+                    fontSize: '14px',
+                  }}
+                >
+                  🎯
+                </button>
+
+                <button
+                  className="btn toggle-geofence-view"
+                  onClick={() => setEnableAddGeofence(!enableAddGeofence)}
+                  title={enableAddGeofence ? 'Disable Add Geofence' : 'Enable Add Geofence'}
+                  style={{
+                    position: 'absolute',
+                    top: '240px',
+                    left: '10px',
+                    zIndex: 1000,
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0',
+                  }}
+                >
+                  <BsFillGeoFill size={14} />
+                </button>
+
+                <button
+                  onClick={() => setShowTraffic(!showTraffic)}
+                  className="btn toggle-geofence-view"
+                  title="Toggle Traffic View"
+                  style={{
+                    position: 'absolute',
+                    top: '280px',
+                    left: '10px',
+                    zIndex: 1000,
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0',
+                  }}
+                >
+                  {showTraffic ? <TbTrafficLightsOff size={14} /> : <TbTrafficLights size={14} />}
+                </button>
+
                 <TileLayer
-                  url="https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=WI92B5fNrRuw3y9wnNVFbF10gosmx1h2"
-                  attribution="Traffic data © 2024 TomTom"
+                  url={
+                    isSatelliteView
+                      ? 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
+                      : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                  }
+                  attribution="&copy; Credence Tracker, HB Gadget Solutions Nagpur"
                 />
-              )}
+
+                {showTraffic && (
+                  <TileLayer
+                    url="https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=WI92B5fNrRuw3y9wnNVFbF10gosmx1h2"
+                    attribution="Traffic data © 2024 TomTom"
+                  />
+                )}
+
+                <a
+                  className="btn toggle-geofence-view"
+                  style={{
+                    position: 'absolute',
+                    top: '320px',
+                    left: '10px',
+                    zIndex: 1000,
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0',
+                    backgroundColor: 'white',
+                    borderRadius: '4px',
+                    textDecoration: 'none',
+                  }}
+                  href={`http://maps.google.com/maps?q=&layer=c&cbll=${individualSalesMan?.latitude},${individualSalesMan?.longitude}&cbp=11,0,0,0,0`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Street View"
+                >
+                  <FaStreetView size={14} color="black" />
+                </a>
+              </div>
 
               {/* Attach our click handler to the map */}
               {enableAddGeofence && (

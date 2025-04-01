@@ -185,25 +185,25 @@ const StatusDetail = ({ speed, ignition }) => {
 
 const ActionButtons = ({ onTrack, onHistory }) => (
   <div style={buttonContainerStyle}>
-    <Button 
-      onClick={onTrack} 
-      label={<CiLocationArrow1 size={14} />} 
-      title="Live Track"  // Add tooltip text
+    <Button
+      onClick={onTrack}
+      label={<CiLocationArrow1 size={14} />}
+      title="Live Track" // Add tooltip text
     />
-    <Button 
-      onClick={onHistory} 
-      label={<MdHistory size={14} />} 
-      title="History Track"  // Add tooltip text
+    <Button
+      onClick={onHistory}
+      label={<MdHistory size={14} />}
+      title="History Track" // Add tooltip text
     />
   </div>
 )
 
 const Button = ({ onClick, label, title }) => (
-  <button 
-    className="btn" 
-    style={buttonStyle} 
+  <button
+    className="btn"
+    style={buttonStyle}
     onClick={onClick}
-    title={title}  // Add title attribute here
+    title={title} // Add title attribute here
   >
     {label}
   </button>

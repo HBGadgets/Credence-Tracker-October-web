@@ -117,34 +117,47 @@ function timeDiffIsLessThan35Hours(lastUpdate) {
   return now.diff(lastUpdateTime, 'hour') <= maxDiffInHours
 }
 const useGetVehicleIcon = (vehicle, cat) => {
-  const speed = vehicle?.speed
-  const ignition = vehicle?.attributes?.ignition
-  const course = vehicle?.course || 0
   const category = getCategory(cat?.toLowerCase())
-
-  // Select the category of icons
   const selectedCategory = mapIcons[category] || mapIcons['default']
 
-  // Determine the icon URL based on speed and ignition status
-  let iconUrl
-  if (speed <= 2.0 && ignition && timeDiffIsLessThan35Hours(vehicle?.lastUpdate)) {
-    //idle
-    iconUrl = selectedCategory['yellow']
-  } else if (
-    speed > 2.0 &&
-    speed < 60 &&
-    ignition &&
-    timeDiffIsLessThan35Hours(vehicle?.lastUpdate)
-  ) {
-    iconUrl = selectedCategory['green'] // running
-  } else if (speed > 60.0 && ignition && timeDiffIsLessThan35Hours(vehicle?.lastUpdate)) {
-    iconUrl = selectedCategory['orange'] // overspeed
-  } else if (speed <= 1.0 && !ignition && timeDiffIsLessThan35Hours(vehicle?.lastUpdate)) {
-    iconUrl = selectedCategory['red'] // stop
-  } else if (!timeDiffIsLessThan35Hours(vehicle?.lastUpdate)) {
-    iconUrl = selectedCategory['gray'] // inactive
+  // Handle missing vehicle or attributes
+  if (!vehicle || !vehicle.attributes) {
+    const iconUrl = selectedCategory?.gray || mapIcons.default.gray
+    return createDivIcon(iconUrl, 0)
   }
 
+  const { ignition } = vehicle.attributes
+  const speed = vehicle.speed || 0
+  const course = vehicle.course || 0
+  const isActive = timeDiffIsLessThan35Hours(vehicle.lastUpdate)
+
+  let iconUrl
+
+  if (!isActive) {
+    iconUrl = selectedCategory.gray // Inactive (gray)
+  } else if (!ignition && speed < 1) {
+    iconUrl = selectedCategory.red // Stopped (red)
+  } else if (ignition) {
+    if (speed > 60) {
+      iconUrl = selectedCategory.orange // Overspeed (orange)
+    } else if (speed >= 2) {
+      iconUrl = selectedCategory.green // Running (green)
+    } else {
+      iconUrl = selectedCategory.yellow // Idle (yellow)
+    }
+  } else {
+    // Moving without ignition
+    iconUrl = selectedCategory.gray
+  }
+
+  // Fallback to gray if no icon was selected
+  iconUrl = iconUrl || selectedCategory.gray || mapIcons.default.gray
+
+  return createDivIcon(iconUrl, course)
+}
+
+// Helper function to create the div icon
+const createDivIcon = (iconUrl, course) => {
   return L.divIcon({
     html: `<img src="${iconUrl}" style="transform: rotate(${course}deg); width: 48px; height: 48px;" />`,
     iconSize: [48, 48],

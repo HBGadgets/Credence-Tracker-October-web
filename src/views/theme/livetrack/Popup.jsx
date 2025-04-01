@@ -119,21 +119,7 @@ function PopupContent({ individualSalesMan, address, handleClickOnTrack }) {
             >
               <MdHistory size={14} />
             </button>
-            <a
-              className="btn"
-              style={{
-                flex: 1,
-                color: 'white',
-                fontSize: '0.8rem',
-                backgroundColor: '#000000',
-              }}
-              href={`http://maps.google.com/maps?q=&layer=c&cbll=${individualSalesMan?.latitude},${individualSalesMan?.longitude}&cbp=11,0,0,0,0`}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Street View"
-            >
-              <FaStreetView size={14} />
-            </a>
+
             <button
               className="btn"
               style={{
