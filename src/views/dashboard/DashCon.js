@@ -249,6 +249,8 @@ const Dashboard = () => {
     }
   }
 
+  const defaultImage = carGray;
+
   const selectImage = (category, item) => {
     const cate = getCategory(category)
     let image
@@ -312,14 +314,23 @@ const Dashboard = () => {
       },
     }
 
+    // Get category-specific images or fallback to car
+    const categoryImages = imageMap[cate] || imageMap.car;
+
+
     // Safely handle undefined position or attributes
     if (!item || !item.attributes) {
       // Handle the case where position or attributes are undefined
-      return imageMap[cate]?.gray || car // Return a gray or default image
+      return categoryImages.gray // Return a gray or default image
     }
 
     const ignition = item.attributes.ignition
     const speed = item.speed || 0
+    const isStale = !timeDiffIsLessThan35Hours(item.lastUpdate);
+
+    if (isStale) return categoryImages.gray;
+
+    let statusColor = 'gray';
 
     if (!ignition && speed < 1 && timeDiffIsLessThan35Hours(item.lastUpdate)) {
       image = imageMap[cate].red
@@ -333,8 +344,9 @@ const Dashboard = () => {
       image = imageMap[cate].gray
     }
 
-    return image || car // Return a default image if no match found
+    return image || defaultImage // Return a default image if no match found
   }
+
   const navigate = useNavigate()
   const handleClickOnTrack = (vehicle) => {
     console.log('track clicked')

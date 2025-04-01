@@ -15,6 +15,7 @@ export default function NetworkStatusOverlay({
     "top-right": { top: "1rem", right: "1rem" },
     "bottom-left": { bottom: "1rem", left: "1rem" },
     "bottom-right": { bottom: "1rem", right: "1rem" },
+    "center": { top: "30%", left: "50%", transform: "translate(-50%, -50%)" }, // Centered position
   };
 
   useEffect(() => {

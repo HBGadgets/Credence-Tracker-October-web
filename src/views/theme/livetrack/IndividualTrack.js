@@ -462,7 +462,7 @@ const IndividualTrack = () => {
   return (
     <>
       <Toaster />
-      <NetworkStatusOverlay position="top-right" isOnline={false} />
+      <NetworkStatusOverlay position="center" isOnline={individualSalesMan?.network} />
       <div className="row gutter-0">
         <div className="col-12 position-relative">
           <div className="individualMap position-relative border border-5 ">
