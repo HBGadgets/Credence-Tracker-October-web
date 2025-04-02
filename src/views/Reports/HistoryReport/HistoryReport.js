@@ -102,7 +102,7 @@ const HistoryReport = () => {
           </CCard>
         </CCol>
       </CRow>
-      {!historyOn && (
+      {!historyOn ? (
         <CRow className="pt-3 gutter-0">
           <CCol xs={12} md={12} className="px-4">
             <CCard className="mb-4 p-0 shadow-lg rounded">
@@ -135,7 +135,7 @@ const HistoryReport = () => {
                   </div>
 
                   {/* Searchable device select using react-select */}
-                  <div style={{ width: "20rem" }}>
+                  <div style={{ width: '20rem' }}>
                     <CFormLabel htmlFor="device">Vehicles</CFormLabel>
                     <Select
                       id="device-select"
@@ -146,20 +146,20 @@ const HistoryReport = () => {
                       styles={{
                         menuList: (base) => ({
                           ...base,
-                          maxHeight: "200px", // Restrict max height
-                          overflowY: "scroll", // Enable scrolling
-                          "&::-webkit-scrollbar": {
-                            width: "8px", // Scrollbar width
+                          maxHeight: '200px', // Restrict max height
+                          overflowY: 'scroll', // Enable scrolling
+                          '&::-webkit-scrollbar': {
+                            width: '8px', // Scrollbar width
                           },
-                          "&::-webkit-scrollbar-track": {
-                            background: "#f1f1f1", // Track color
+                          '&::-webkit-scrollbar-track': {
+                            background: '#f1f1f1', // Track color
                           },
-                          "&::-webkit-scrollbar-thumb": {
-                            background: "#888", // Scrollbar color
-                            borderRadius: "4px",
+                          '&::-webkit-scrollbar-thumb': {
+                            background: '#888', // Scrollbar color
+                            borderRadius: '4px',
                           },
-                          "&::-webkit-scrollbar-thumb:hover": {
-                            background: "#555", // Hover effect
+                          '&::-webkit-scrollbar-thumb:hover': {
+                            background: '#555', // Hover effect
                           },
                         }),
                       }}
@@ -180,6 +180,22 @@ const HistoryReport = () => {
                     Show
                   </CButton>
                 </CForm>
+              </CCardBody>
+            </CCard>
+          </CCol>
+        </CRow>
+      ) : (
+        <CRow className="pt-3 gutter-0">
+          <CCol xs={12} md={12} className="px-4">
+            <CCard className="mb-4 p-0 shadow-lg rounded">
+              <CCardHeader
+                className="d-flex justify-content-between align-items-center text-white"
+                style={{ backgroundColor: '#0a2d63' }}
+              >
+                <strong>History Report</strong>
+              </CCardHeader>
+              <CCardBody>
+                <div className="text-center py-4">History data is not available</div>
               </CCardBody>
             </CCard>
           </CCol>
