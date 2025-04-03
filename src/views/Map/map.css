@@ -39,3 +39,17 @@
 .leaflet-control {
   float: right !important;
 }
+
+.popupContentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  /* width: 300px; */
+  margin: auto;
+}
+
+.popupContentGrid div {
+  height: 50px;
+  display: flex;
+  font-weight: bold;
+}

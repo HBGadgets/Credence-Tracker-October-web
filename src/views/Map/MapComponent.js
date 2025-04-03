@@ -14,16 +14,21 @@ import './map.css'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
-
 import { IoLocationSharp } from 'react-icons/io5'
 import { GiSpeedometer } from 'react-icons/gi'
 import useGetVehicleIcon from '../Reports/HistoryReport/useGetVehicleIcon'
-
 import PropTypes from 'prop-types'
-
+import Sedan from '../../assets/PopupAssests/Sedan.svg'
+import Time from '../../assets/PopupAssests/Time Span.svg'
+import Speed from '../../assets/PopupAssests/Speed.svg'
+import GasStation from '../../assets/PopupAssests/Gas Station.svg'
+import MaskGroup from '../../assets/PopupAssests/Mask Group.svg'
+import InternetAnenna from '../../assets/PopupAssests/Internet Anenna.svg'
 const VehicleMarker = memo(
   ({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => {
     const icon = useGetVehicleIcon(vehicle, vehicle.category)
+
+    console.log('vehicle', vehicle)
 
     return (
       <Marker position={[vehicle.latitude, vehicle.longitude]} icon={icon}>
@@ -43,27 +48,144 @@ const VehicleMarker = memo(
 VehicleMarker.displayName = 'VehicleMarker'
 
 // Create a separate component for PopupContent
-const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => (
-  <div className="toolTip">
-    <span style={{ textAlign: 'center', fontSize: '0.9rem' }}>
-      <strong>{vehicle.name}</strong>
-    </span>
-    <hr style={hrStyle} />
-    <div className="toolTipContent">
-      <DetailItem
-        icon={<RxLapTimer />}
-        text={dayjs(vehicle.lastUpdate).format('YYYY-MM-DD HH:mm')}
-      />
-      <SpeedDetail speed={vehicle.speed} />
-      <StatusDetail speed={vehicle.speed} ignition={vehicle.attributes.ignition} />
-      <DetailItem icon={<IoLocationSharp />} text={address || 'Loading...'} />
-      <ActionButtons
-        onTrack={() => handleClickOnTrack(vehicle)}
-        onHistory={() => handleClickOnHistoryTrack(vehicle)}
-      />
+// const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => (
+//   // <div
+//   //   style={{
+//   //     width: '300px',
+//   //     height: '300px',
+//   //     borderRadius: '11px',
+//   //     background: '#FFF',
+//   //   }}
+//   // >
+//   //   <div>
+//   //     <span style={{ textAlign: 'center', fontSize: '0.9rem' }}>
+//   //       <strong>{vehicle.name}</strong>
+//   //     </span>
+//   //   </div>
+//   //   {/* <hr style={hrStyle} /> */}
+//   //   <div className="toolTipContent">
+//   //     <DetailItem
+//   //       icon={<RxLapTimer />}
+//   //       text={dayjs(vehicle.lastUpdate).format('YYYY-MM-DD HH:mm')}
+//   //     />
+//   //     <SpeedDetail speed={vehicle.speed} />
+//   //     <StatusDetail speed={vehicle.speed} ignition={vehicle.attributes.ignition} />
+//   //     <DetailItem icon={<IoLocationSharp />} text={address || 'Loading...'} />
+//   //     <ActionButtons
+//   //       onTrack={() => handleClickOnTrack(vehicle)}
+//   //       onHistory={() => handleClickOnHistoryTrack(vehicle)}
+//   //     />
+//   //   </div>
+//   // </div>
+//   <div>
+//     <div className="d-flex align-items-center">
+//       <div>
+//         <img src={Sedan} alt="Sedan" />
+//       </div>
+//       <div>
+//         <strong>{vehicle.name}</strong>
+//       </div>
+//     </div>
+//     <div className="popupContentGrid">
+//       <div>
+//         <div>
+//           <img src={Time} />
+//           {vehicle.lastUpdate}
+//         </div>
+//       </div>
+//       <div>2</div>
+//       <div>
+//         <div>
+//           <img src={MaskGroup} />
+//           {vehicle.speed.toFixed(2)} km/h
+//         </div>
+//       </div>
+//       <div>4</div>
+//       <div>5</div>
+//       <div>6</div>
+//     </div>
+//   </div>
+// ))
+
+const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => {
+  const formatTimestamp = (utcTimestamp) => {
+    return dayjs(utcTimestamp).add(5, 'hour').add(30, 'minute').format('YYYY - MM - DD    HH:mm')
+  }
+
+  return (
+    <div>
+      <div className="d-flex align-items-center">
+        <div>
+          <img src={Sedan} alt="Sedan" />
+        </div>
+        <div>
+          <strong>{vehicle.name}</strong>
+        </div>
+      </div>
+      <div className="popupContentGrid">
+        <div>
+          <div>
+            <img src={Time} alt="Time" />
+            {formatTimestamp(vehicle.lastUpdate)}
+          </div>
+        </div>
+        <div>
+          <div>
+            <img src={GasStation} alt="Petrol" />
+            {vehicle.fuelConsumption}
+          </div>
+        </div>
+        <div>
+          <div>
+            <img src={MaskGroup} alt="Speed" />
+            {vehicle.speed.toFixed(2)} km/h
+          </div>
+        </div>
+        <div>
+          <div>
+            <img src={Speed} alt="Mileage" />
+            {vehicle.speed.toFixed(2)} km/h
+          </div>
+        </div>
+        <div>
+          <div>
+            <img src={InternetAnenna} alt="Mileage" />
+            {vehicle.speed.toFixed(2)} km/h
+          </div>
+        </div>
+        <div>6</div>
+      </div>
+      <div className="toolTipContent">
+        <DetailItem icon={<RxLapTimer />} text={formatTimestamp(vehicle.lastUpdate)} />
+        <SpeedDetail speed={vehicle.speed} />
+        <StatusDetail speed={vehicle.speed} ignition={vehicle.attributes.ignition} />
+        <DetailItem icon={<IoLocationSharp />} text={address || 'Loading...'} />
+        <ActionButtons
+          onTrack={() => handleClickOnTrack(vehicle)}
+          onHistory={() => handleClickOnHistoryTrack(vehicle)}
+        />
+      </div>
     </div>
-  </div>
-))
+  )
+})
+
+PopupContent.displayName = 'PopupContent'
+
+PopupContent.propTypes = {
+  vehicle: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    lastUpdate: PropTypes.string.isRequired,
+    speed: PropTypes.number.isRequired,
+    attributes: PropTypes.shape({
+      ignition: PropTypes.bool.isRequired,
+    }).isRequired,
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
+  }).isRequired,
+  address: PropTypes.string,
+  handleClickOnTrack: PropTypes.func.isRequired,
+  handleClickOnHistoryTrack: PropTypes.func.isRequired,
+}
 
 const FlyToMapCenter = ({ mapCenter }) => {
   const map = useMap()
