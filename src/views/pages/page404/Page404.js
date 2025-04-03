@@ -13,8 +13,8 @@ const Page404 = () => {
         </div>
 
         {/* Error Message */}
-        <h1 className="display-1 fw-bold text-primary">404</h1>
-        <h2 className="fs-3 fw-semibold text-dark">Page Not Found</h2>
+        <h1 className="display-1 fw-bold text-primary">Check Internet Connection</h1>
+        <h2 className="fs-3 fw-semibold text-dark">Page Not Found(404)</h2>
         <p className="text-muted mb-4">
           Oops! It seems like you've ventured into uncharted territory. The page
           you're looking for might have moved or doesn't exist.
@@ -34,7 +34,7 @@ const Page404 = () => {
 
         {/* Additional Help */}
         <div className="mt-4 text-muted small">
-          <p>Need immediate assistance? Email us at support@example.com</p>
+          <p>Need immediate assistance? Email us at  credencetraker@gmail.com</p>
         </div>
       </div>
     </div>

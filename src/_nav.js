@@ -91,7 +91,7 @@ const _nav = (role, decodedToken) => {
           name: 'All Menu',
         },
         {
-          component: CNavGroup,
+          component: CNavItem,
           name: 'Master',
 
           icon: (
@@ -106,7 +106,11 @@ const _nav = (role, decodedToken) => {
           items: [
             {
               component: CNavItem,
-              name: 'Vehicles',
+              name: (
+                <span style={{ color: '#FFFFFF', transition: 'color 0.3s' }}>
+                  Vehilces
+                </span>
+              ),
 
               to: '/devices',
               icon: (
@@ -117,7 +121,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Users',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Users</span>
+              ),
 
               to: '/users',
               icon: (
@@ -128,7 +134,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Group',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Groups</span>
+              ),
 
               to: '/group',
               icon: (
@@ -139,7 +147,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Geofences',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Geofences</span>
+              ),
               to: '/geofences',
 
               icon: (
@@ -150,7 +160,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Driver',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Drivers</span>
+              ),
               to: '/driver',
 
               icon: (
@@ -161,7 +173,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Notifications',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Notifications</span>
+              ),
               to: '/notifications',
 
               icon: (
@@ -172,7 +186,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Maintenance',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Maintenances</span>
+              ),
               to: '/maintenance',
 
               icon: (
@@ -183,7 +199,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Category',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Categorys</span>
+              ),
               to: '/category',
 
               icon: (
@@ -194,7 +212,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Model',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Models</span>
+              ),
               to: '/model',
 
               icon: (
@@ -216,7 +236,7 @@ const _nav = (role, decodedToken) => {
           ],
         },
         {
-          component: CNavGroup,
+          component: CNavItem,
           name: 'Report',
 
           icon: (
@@ -227,7 +247,9 @@ const _nav = (role, decodedToken) => {
           items: [
             {
               component: CNavItem,
-              name: 'Status Reports',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Status Reports</span>
+              ),
               to: '/statusreports',
 
               icon: (
@@ -238,7 +260,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Distance Reports',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Distances Reports</span>
+              ),
               to: '/distancereports',
 
               icon: (
@@ -249,7 +273,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'History',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>History Reports</span>
+              ),
               to: '/history',
 
               icon: (
@@ -260,7 +286,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Stops',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Stops Reports</span>
+              ),
               to: '/stops',
 
               icon: (
@@ -271,7 +299,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Travel Summary',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Travels Summarys</span>
+              ),
               to: '/travelsreport',
 
               icon: (
@@ -282,7 +312,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Trips Report',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Trips Reports</span>
+              ),
               to: '/tripsreport',
 
               icon: (
@@ -293,7 +325,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Idle Report',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Idles Reports</span>
+              ),
               to: '/idlereport',
 
               icon: (
@@ -315,7 +349,9 @@ const _nav = (role, decodedToken) => {
             // },
             {
               component: CNavItem,
-              name: 'Alerts/Events',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Alerts/Events</span>
+              ),
               to: '/alerts-events',
 
               icon: (
@@ -337,7 +373,9 @@ const _nav = (role, decodedToken) => {
             // },
             {
               component: CNavItem,
-              name: 'Geofence Report',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Geofences Reports</span>
+              ),
               to: '/geofencereport',
 
               icon: (
@@ -349,7 +387,7 @@ const _nav = (role, decodedToken) => {
           ],
         },
         {
-          component: CNavGroup,
+          component: CNavItem,
           name: 'Supports',
 
           icon: (
@@ -363,7 +401,9 @@ const _nav = (role, decodedToken) => {
             // { component: CNavItem, name: 'Inventory', to: '/inventory-management' },
             {
               component: CNavItem,
-              name: 'Raise Ticket',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Raise Tickets</span>
+              ),
               to: '/raise-ticket',
               icon: (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -373,7 +413,9 @@ const _nav = (role, decodedToken) => {
             },
             {
               component: CNavItem,
-              name: 'Answered Ticket',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Answer Tickets</span>
+              ),
               to: '/answer-ticket',
               icon: (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -390,7 +432,7 @@ const _nav = (role, decodedToken) => {
           name: 'All Menu',
         },
         (devices || users || groups || geofence || driver || notification || maintenance) && {
-          component: CNavGroup,
+          component: CNavItem,
           name: 'Master',
           visible: true, // This can be a boolean or controlled by a state.
           icon: (
@@ -404,7 +446,9 @@ const _nav = (role, decodedToken) => {
           items: [
             devices && {
               component: CNavItem,
-              name: 'Vehicles',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Vehicles</span>
+              ),
               to: '/devices',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -415,7 +459,9 @@ const _nav = (role, decodedToken) => {
             },
             users && {
               component: CNavItem,
-              name: 'Users',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Users</span>
+              ),
               to: '/users',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -426,7 +472,9 @@ const _nav = (role, decodedToken) => {
             },
             groups && {
               component: CNavItem,
-              name: 'Group',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Groups</span>
+              ),
               to: '/group',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -437,7 +485,9 @@ const _nav = (role, decodedToken) => {
             },
             geofence && {
               component: CNavItem,
-              name: 'Geofences',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Geofences</span>
+              ),
               to: '/geofences',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -448,7 +498,9 @@ const _nav = (role, decodedToken) => {
             },
             driver && {
               component: CNavItem,
-              name: 'Driver',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Drivers</span>
+              ),
               to: '/driver',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -459,7 +511,9 @@ const _nav = (role, decodedToken) => {
             },
             notification && {
               component: CNavItem,
-              name: 'Notifications',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Notifcations</span>
+              ),
               to: '/notifications',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -470,7 +524,9 @@ const _nav = (role, decodedToken) => {
             },
             maintenance && {
               component: CNavItem,
-              name: 'Maintenance',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Maintenances</span>
+              ),
               to: '/maintenance',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -492,7 +548,7 @@ const _nav = (role, decodedToken) => {
           dayreport ||
           vehicle ||
           geofenceReport) && {
-          component: CNavGroup,
+          component: CNavItem,
           name: 'Report',
           visible: true, // This can be a boolean or controlled by a state.
           icon: (
@@ -506,7 +562,9 @@ const _nav = (role, decodedToken) => {
           items: [
             status && {
               component: CNavItem,
-              name: 'Status Reports',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Status Reports</span>
+              ),
               to: '/statusreports',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -517,7 +575,9 @@ const _nav = (role, decodedToken) => {
             },
             distance && {
               component: CNavItem,
-              name: 'Distance Reports',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Distances Reports</span>
+              ),
               to: '/distancereports',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -528,7 +588,9 @@ const _nav = (role, decodedToken) => {
             },
             history && {
               component: CNavItem,
-              name: 'History',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>History Reports</span>
+              ),
               to: '/history',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -539,7 +601,9 @@ const _nav = (role, decodedToken) => {
             },
             stop && {
               component: CNavItem,
-              name: 'Stops',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Stops Reports</span>
+              ),
               to: '/stops',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -550,7 +614,9 @@ const _nav = (role, decodedToken) => {
             },
             travel && {
               component: CNavItem,
-              name: 'Travels Summary',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Travels Summarys</span>
+              ),
               to: '/travelsreport',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -561,7 +627,9 @@ const _nav = (role, decodedToken) => {
             },
             trips && {
               component: CNavItem,
-              name: 'Trips Report',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Trips Reports</span>
+              ),
               to: '/tripsreport',
 
               icon: (
@@ -572,7 +640,9 @@ const _nav = (role, decodedToken) => {
             },
             idle && {
               component: CNavItem,
-              name: 'Idle Report',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Idles Reports</span>
+              ),
               to: '/idlereport',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -583,7 +653,9 @@ const _nav = (role, decodedToken) => {
             },
             alerts && {
               component: CNavItem,
-              name: 'Alerts/Events',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Alerts/Events</span>
+              ),
               to: '/alerts-events',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -594,7 +666,9 @@ const _nav = (role, decodedToken) => {
             },
             geofenceReport && {
               component: CNavItem,
-              name: 'Geofence Report',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Geofences Reports</span>
+              ),
               to: '/geofencereport',
               visible: true, // This can be a boolean or controlled by a state.
               icon: (
@@ -606,7 +680,7 @@ const _nav = (role, decodedToken) => {
           ].filter(Boolean),
         },
         {
-          component: CNavGroup,
+          component: CNavItem,
           name: 'Supports',
           visible: true, // This can be a boolean or controlled by a state.
           icon: (
@@ -620,7 +694,9 @@ const _nav = (role, decodedToken) => {
           items: [
             {
               component: CNavItem,
-              name: 'Raise Ticket',
+              name: (
+                <span style={{ color: '#FFFFFF' }}>Rasie Tickets</span>
+              ),
               to: '/raise-ticket',
               icon: (
                 <div style={{ display: 'flex', alignItems: 'center' }}>

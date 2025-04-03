@@ -1434,7 +1434,7 @@ const Devices = () => {
         <CCol xs>
           <CCard className="mb-4">
             <CCardHeader className="grand d-flex justify-content-between align-items-center">
-              <strong>Device</strong>
+              <strong>Vehicles</strong>
               <div className="d-flex flex-wrap align-items-center gap-3">
                 <div className="d-flex flex-wrap gap-3">
                   <Sselect

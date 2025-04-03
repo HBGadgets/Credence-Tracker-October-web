@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   CContainer,
@@ -62,8 +62,12 @@ import { FaAddressCard, FaChartBar, FaCog, FaHome } from 'react-icons/fa'
 import { TbReportSearch } from 'react-icons/tb'
 import { MdOutlineSupportAgent } from 'react-icons/md'
 import { CircleUserRound } from 'lucide-react'
+import { Dropdown } from 'bootstrap'
+import { AppSidebarNav } from './AppSidebarNav';
+import navigation from '../_nav';
 
 const AppHeader = () => {
+  const navigate = useNavigate();
   const headerRef = useRef()
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
 
@@ -74,6 +78,8 @@ const AppHeader = () => {
   // console.log(toggle, 'nave baajdasjdjasdkjashd')
   const [filter, setFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [openDropdown, setOpenDropdown] = useState(null); //open dropdown state
+  const [navigatingNav, setNavigatingNav] = useState([]); // navigation state componets
 
   useEffect(() => {
     document.addEventListener('scroll', () => {
@@ -202,74 +208,83 @@ const AppHeader = () => {
     }
   }, [userId]) // Only re-run if userId changes
 
+
+  // Fetch navigation based on user role
+  useEffect(() => {
+    const token = Cookies.get("authToken");
+    if (!token) {
+      navigate("/login");
+    } else {
+      const decoded = jwtDecode(token);
+      const role = decoded.superadmin ? "superadmin" : "user";
+      setNavigatingNav(navigation(role, decoded)); // Fetch sidebar items
+    }
+  }, [navigate]);
+
+  // Handle change for dropdown
+
+  const handleDropdownToggle = (menu) => {
+    setOpenDropdown((prev) => (prev === menu ? null : menu));
+  };
+
+  const handleTabClick = (key) => {
+    dispatch({ type: "set", sidebarShow: true });
+    dispatch(setToggleSidebar({ home: false, master: false, reports: false, support: false, [key]: true }));
+    handleDropdownToggle(key);
+  };
+
   // Reducer of side bar nav open
 
+  // Sidebar reducer handlers
   const handleHome = () => {
-    dispatch({ type: 'set', sidebarShow: true })
-    dispatch(
-      setToggleSidebar({
-        home: true,
-        master: false,
-        reports: false,
-        expense: false,
-        support: false,
-      }),
-    )
-    if (toggle.home) {
-      dispatch({ type: 'set', sidebarShow: !sidebarShow })
-    }
-  }
-  const handleMaster = () => {
-    dispatch({ type: 'set', sidebarShow: true })
-    dispatch(
-      setToggleSidebar({
-        home: false,
-        master: true,
-        reports: false,
-        expense: false,
-        support: false,
-      }),
-    )
-    if (toggle.master) {
-      dispatch({ type: 'set', sidebarShow: !sidebarShow })
-    }
-  }
-  const handleReports = () => {
-    dispatch({ type: 'set', sidebarShow: true })
-    dispatch(
-      setToggleSidebar({
-        home: false,
-        master: false,
-        reports: true,
-        expense: false,
-        support: false,
-      }),
-    )
-    if (toggle.reports) {
-      dispatch({ type: 'set', sidebarShow: !sidebarShow })
-    }
-  }
+    navigate("/dashboard");
+  };
 
-  const handleExpense = () => {
-    if (role === 'superadmin') {
-      // Ensure this variable is determined earlier in your code
-      dispatch({ type: 'set', sidebarShow: true })
-      dispatch(
-        setToggleSidebar({
-          home: false,
-          master: false,
-          reports: false,
-          expense: true,
-          support: false,
-        }),
-      )
-      if (toggle.expense) {
-        dispatch({ type: 'set', sidebarShow: !sidebarShow })
-      }
-    } else {
-      console.log('Access denied: Only superadmin can access this functionality.')
-    }
-  }
+  // const handleMaster = () => {
+  //   dispatch({ type: "set", sidebarShow: true });
+  //   dispatch(
+  //     setToggleSidebar({ home: false, master: true, reports: false, expense: false, support: false })
+  //   );
+  //   handleDropdownToggle("master");
+  // };
+
+  // const handleReports = () => {
+  //   dispatch({ type: "set", sidebarShow: true });
+  //   dispatch(
+  //     setToggleSidebar({ home: false, master: false, reports: true, expense: false, support: false })
+  //   );
+  //   handleDropdownToggle("reports");
+  // };
+
+  // const handleSupports = () => {
+  //   dispatch({ type: "set", sidebarShow: true });
+  //   dispatch(
+  //     setToggleSidebar({ home: false, master: false, reports: false, expense: false, support: true })
+  //   );
+  //   handleDropdownToggle("support");
+  // };
+
+  // const handleExpense = () => {
+  //   if (role === 'superadmin') {
+  //     // Ensure this variable is determined earlier in your code
+  //     dispatch({ type: 'set', sidebarShow: true })
+  //     dispatch(
+  //       setToggleSidebar({
+  //         home: false,
+  //         master: false,
+  //         reports: false,
+  //         expense: true,
+  //         support: false,
+  //       }),
+  //     )
+  //     if (toggle.expense) {
+  //       dispatch({ type: 'set', sidebarShow: !sidebarShow })
+  //     }
+  //   } else {
+  //     console.log('Access denied: Only superadmin can access this functionality.')
+  //   }
+  // }
+
 
   // Determine role based on token
   // const decodedToken1 = jwtDecode(token)
@@ -280,10 +295,6 @@ const AppHeader = () => {
     role = 'user'
   }
 
-  // const handleSupports = () => {
-  //   dispatch({ type: 'set', sidebarShow: true })
-  //   dispatch(setToggleSidebar({ home: false, master: false, reports: false, expense: false, support: true }))
-  // }
 
   // #########################################################
 
@@ -296,11 +307,95 @@ const AppHeader = () => {
         >
           {/* <CIcon icon={cilMenu} size="lg" /> */}
         </CHeaderToggler>
-        <CHeaderNav className="d-none d-md-flex"></CHeaderNav>
 
+        <CHeaderNav className="d-none d-md-flex align-items-center">
+          <CNavItem className="me-3">
+            <img
+              src={logo}
+              alt="Company Logo"
+              className="sidebar-brand-full"
+              height={50}
+              width={200}
+              style={{ marginLeft: "-20px", objectFit: "contain" }}
+            />
+          </CNavItem>
+        </CHeaderNav>
+
+        {/**CURRENT */}
         <CTabs className="ms-auto">
-          <CTabList variant="underline"></CTabList>
+          <CTabList className="d-flex align-items-center gap-3">
+            {/* Home Tab */}
+            <CTab onClick={handleHome} itemKey="home" className="text-white">
+              <CNavLink
+                id="header-dashboard"
+                to="/dashboard"
+                as={NavLink}
+                className="text-white text-decoration-none d-flex align-items-center px-3 py-2 rounded"
+                activeClassName="bg-primary text-light"
+              >
+                <FaHome className="me-2" /> Home
+              </CNavLink>
+            </CTab>
+
+            <div className="vr mx-2 bg-white"></div>
+
+            {/* Master Dropdown */}
+            <CDropdown visible={openDropdown === "master"} itemKey="master" className="position-relative">
+              <CDropdownToggle
+                onClick={() => handleTabClick("master")}
+                className="text-white bg-transparent border-0 d-flex align-items-center px-3 py-2 rounded dropdown-toggle"
+              >
+                <FaAddressCard className="me-2" /> Master
+              </CDropdownToggle>
+              <CDropdownMenu className="dropdown-fixed custom-dropdown">
+                {navigatingNav.length > 0 ? (
+                  <AppSidebarNav items={navigatingNav} />
+                ) : (
+                  <div className="px-3 py-2 text-white">No items available</div>
+                )}
+              </CDropdownMenu>
+            </CDropdown>
+
+            <div className="vr mx-2 bg-white"></div>
+
+            {/* Reports Dropdown */}
+            <CDropdown visible={openDropdown === "reports"} itemKey="reports" className="position-relative">
+              <CDropdownToggle
+                onClick={() => handleTabClick("reports")}
+                className="text-white bg-transparent border-0 d-flex align-items-center px-3 py-2 rounded dropdown-toggle"
+              >
+                <FaChartBar className="me-2" /> Reports
+              </CDropdownToggle>
+              <CDropdownMenu className="dropdown-fixed custom-dropdown">
+                {navigatingNav.length > 0 ? (
+                  <AppSidebarNav items={navigatingNav} />
+                ) : (
+                  <div className="px-3 py-2 text-white">No items available</div>
+                )}
+              </CDropdownMenu>
+            </CDropdown>
+
+            <div className="vr mx-2 bg-white"></div>
+
+            {/* Support Dropdown */}
+            <CDropdown visible={openDropdown === "support"} itemKey="support" className="position-relative">
+              <CDropdownToggle
+                onClick={() => handleTabClick("support")}
+                className="text-white bg-transparent border-0 d-flex align-items-center px-3 py-2 rounded dropdown-toggle"
+              >
+                <TbReportSearch className="me-2" /> Support
+              </CDropdownToggle>
+              <CDropdownMenu className="dropdown-fixed custom-dropdown">
+                {navigatingNav.length > 0 ? (
+                  <AppSidebarNav items={navigatingNav} />
+                ) : (
+                  <div className="px-3 py-2 text-white">No items available</div>
+                )}
+              </CDropdownMenu>
+            </CDropdown>
+          </CTabList>
         </CTabs>
+
 
         <style jsx>{`
           .nav-btn {
@@ -339,6 +434,7 @@ const AppHeader = () => {
           .nav-btn:active {
             transform: scale(0.98); /* Slight shrink effect when active */
           }
+            
         `}</style>
 
         <CHeaderNav className="ms-auto">
