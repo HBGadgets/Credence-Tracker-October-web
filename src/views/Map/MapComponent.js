@@ -23,7 +23,9 @@ import Time from '../../assets/PopupAssests/Time Span.svg'
 import Speed from '../../assets/PopupAssests/Speed.svg'
 import GasStation from '../../assets/PopupAssests/Gas Station.svg'
 import MaskGroup from '../../assets/PopupAssests/Mask Group.svg'
-import InternetAnenna from '../../assets/PopupAssests/Internet Anenna.svg'
+import InternetAnenna from '../../assets/PopupAssests/Internet Antenna.svg'
+import Wifi from '../../assets/PopupAssests/Wi-Fi.svg'
+import PlaceMarker from '../../assets/PopupAssests/Place Marker.svg'
 const VehicleMarker = memo(
   ({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => {
     const icon = useGetVehicleIcon(vehicle, vehicle.category)
@@ -32,7 +34,7 @@ const VehicleMarker = memo(
 
     return (
       <Marker position={[vehicle.latitude, vehicle.longitude]} icon={icon}>
-        <Popup>
+        <Popup style={{ border: 'none', boxShadow: 'none' }}>
           <PopupContent
             vehicle={vehicle}
             address={address}
@@ -109,12 +111,12 @@ VehicleMarker.displayName = 'VehicleMarker'
 
 const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => {
   const formatTimestamp = (utcTimestamp) => {
-    return dayjs(utcTimestamp).add(5, 'hour').add(30, 'minute').format('YYYY - MM - DD    HH:mm')
+    return dayjs(utcTimestamp).add(5, 'hour').add(30, 'minute').format('YYYY-MM-DD hh:mm A')
   }
 
   return (
     <div>
-      <div className="d-flex align-items-center">
+      <div className="d-flex align-items-center gap-2 mb-2" style={{ border: '0' }}>
         <div>
           <img src={Sedan} alt="Sedan" />
         </div>
@@ -122,40 +124,53 @@ const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOn
           <strong>{vehicle.name}</strong>
         </div>
       </div>
-      <div className="popupContentGrid">
-        <div>
+      <div>
+        <div className="popupContentGrid mb-2">
           <div>
-            <img src={Time} alt="Time" />
-            {formatTimestamp(vehicle.lastUpdate)}
+            <div className="d-flex align-items-center gap-2">
+              <img src={Time} alt="Time" style={{ width: '20px', height: '20px' }} />
+              {formatTimestamp(vehicle.lastUpdate)}
+            </div>
+          </div>
+          <div>
+            <div className="d-flex align-items-center gap-2">
+              <img src={GasStation} alt="Petrol" style={{ width: '20px', height: '20px' }} />
+              {vehicle.fuelConsumption}
+            </div>
+          </div>
+          <div>
+            <div className="d-flex align-items-center gap-2">
+              <img src={MaskGroup} alt="Speed" style={{ width: '20px', height: '20px' }} />
+              {vehicle.speed.toFixed(2)} km/h
+            </div>
+          </div>
+          <div>
+            <div className="d-flex align-items-center gap-2">
+              <img src={Speed} alt="Mileage" style={{ width: '20px', height: '20px' }} />
+              {vehicle.speed.toFixed(2)} km/h
+            </div>
+          </div>
+          <div>
+            <div className="d-flex align-items-center gap-2">
+              <img src={InternetAnenna} alt="Mileage" style={{ width: '20px', height: '20px' }} />
+              {vehicle.speed.toFixed(2)} km/h
+            </div>
+          </div>
+          <div>
+            <div className="d-flex align-items-center gap-2">
+              <img src={Wifi} alt="Mileage" style={{ width: '20px', height: '20px' }} />
+              {vehicle.speed.toFixed(2)} km/h
+            </div>
           </div>
         </div>
         <div>
-          <div>
-            <img src={GasStation} alt="Petrol" />
-            {vehicle.fuelConsumption}
+          <div className="d-flex align-items-center gap-2" style={{ color: '#8E8E8E' }}>
+            <img src={PlaceMarker} alt="Petrol" style={{ width: '20px', height: '20px' }} />
+            {address || 'Loading...'}
           </div>
         </div>
-        <div>
-          <div>
-            <img src={MaskGroup} alt="Speed" />
-            {vehicle.speed.toFixed(2)} km/h
-          </div>
-        </div>
-        <div>
-          <div>
-            <img src={Speed} alt="Mileage" />
-            {vehicle.speed.toFixed(2)} km/h
-          </div>
-        </div>
-        <div>
-          <div>
-            <img src={InternetAnenna} alt="Mileage" />
-            {vehicle.speed.toFixed(2)} km/h
-          </div>
-        </div>
-        <div>6</div>
       </div>
-      <div className="toolTipContent">
+      {/* <div className="toolTipContent">
         <DetailItem icon={<RxLapTimer />} text={formatTimestamp(vehicle.lastUpdate)} />
         <SpeedDetail speed={vehicle.speed} />
         <StatusDetail speed={vehicle.speed} ignition={vehicle.attributes.ignition} />
@@ -164,7 +179,7 @@ const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOn
           onTrack={() => handleClickOnTrack(vehicle)}
           onHistory={() => handleClickOnHistoryTrack(vehicle)}
         />
-      </div>
+      </div> */}
     </div>
   )
 })
