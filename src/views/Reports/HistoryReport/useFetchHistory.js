@@ -1,8 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-const useHistoryData = (url, { period, from, to, deviceId }, fetch) => {
+export const useFetchHistory = (url, { period, from, to, deviceId }, fetch) => {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -32,21 +33,27 @@ const useHistoryData = (url, { period, from, to, deviceId }, fetch) => {
           }
 
           const params = {
-            period: period,
+            period,
             from: convertToISTWithOffset(from), // Convert `from` to UTC with offset
             to: convertToISTWithOffset(to), // Convert `to` to UTC with offset
             deviceId,
           }
 
-          // Make the GET request with query parameter
-          const response = await axios.get(url, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
+          const response = await axios.post(
+            url,
+            {
+              period,
+              from: convertToISTWithOffset(from),
+              to: convertToISTWithOffset(to),
+              deviceId,
             },
-            params,
-          })
-
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
+            },
+          )
           console.log('fetching stop at his data')
 
           if (response.status === 200) {
@@ -68,5 +75,3 @@ const useHistoryData = (url, { period, from, to, deviceId }, fetch) => {
 
   return { data, loading, error }
 }
-
-export default useHistoryData

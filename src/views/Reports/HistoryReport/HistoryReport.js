@@ -11,6 +11,7 @@ import {
   CFormInput,
   CRow,
   CFormLabel,
+  CFormSelect,
 } from '@coreui/react'
 
 import { fetchDevices } from '../../../features/deviceSlice.js'
@@ -27,6 +28,7 @@ const HistoryReport = () => {
   const { deviceId: urlDeviceId, category, name } = useParams() // Retrieve params from URL
   const [fromDateTime, setFromDateTime] = useState('')
   const [toDateTime, setToDateTime] = useState('')
+  const [period, setPeriod] = useState('')
   const [deviceId, setDeviceId] = useState(urlDeviceId || '')
   const [fetch, setFetch] = useState(false)
   const [historyOn, setHistoryOn] = useState(false)
@@ -56,12 +58,29 @@ const HistoryReport = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (fromDateTime === '' || toDateTime === '' || deviceId === '') {
-      alert('Please fill all fields')
-    } else if (validateDateRange(fromDateTime, toDateTime)) {
-      setHistoryOn(true)
-      setFetch(true)
+
+    // Check required fields based on period selection
+    const isCustomPeriod = period === 'Custom'
+    const missingFields = []
+
+    if (!period) missingFields.push('period')
+    if (isCustomPeriod && !fromDateTime) missingFields.push('from date-time')
+    if (isCustomPeriod && !toDateTime) missingFields.push('to date-time')
+    if (!deviceId) missingFields.push('vehicle')
+
+    if (missingFields.length > 0) {
+      alert(`Please fill the following fields: ${missingFields.join(', ')}`)
+      return
     }
+
+    // Validate date range only for custom periods
+    if (isCustomPeriod) {
+      if (!validateDateRange(fromDateTime, toDateTime)) return
+    }
+
+    // Start the history playback for all valid cases
+    setHistoryOn(true)
+    setFetch(true)
   }
 
   const dispatch = useDispatch()
@@ -88,6 +107,7 @@ const HistoryReport = () => {
           <CCard className="p-0 mb-4 shadow-sm">
             <CCardBody>
               <HistoryMap
+                period={period}
                 fromDateTime={fromDateTime}
                 toDateTime={toDateTime}
                 deviceId={deviceId}
@@ -102,7 +122,7 @@ const HistoryReport = () => {
           </CCard>
         </CCol>
       </CRow>
-      {!historyOn ? (
+      {!historyOn && (
         <CRow className="pt-3 gutter-0">
           <CCol xs={12} md={12} className="px-4">
             <CCard className="mb-4 p-0 shadow-lg rounded">
@@ -114,25 +134,45 @@ const HistoryReport = () => {
               </CCardHeader>
               <CCardBody>
                 <CForm style={{ display: 'flex', gap: '4rem' }} onSubmit={handleSubmit}>
+                  {/* Period Selection Dropdown */}
                   <div style={{ width: '20rem' }}>
-                    <CFormLabel htmlFor="fromDateTime">From Date-Time</CFormLabel>
-                    <CFormInput
-                      type="datetime-local"
-                      id="fromDateTime"
-                      value={fromDateTime}
-                      onChange={(e) => setFromDateTime(e.target.value)}
-                    />
+                    <CFormLabel htmlFor="period">Select Date Range</CFormLabel>
+                    <CFormSelect
+                      id="period"
+                      value={period}
+                      onChange={(e) => setPeriod(e.target.value)}
+                    >
+                      <option value="">Select a period</option>
+                      <option value="Today">Today</option>
+                      <option value="Yesterday">Yesterday</option>
+                      <option value="Last Seven Days">Last Seven Days</option>
+                      <option value="Custom">Custom</option>
+                    </CFormSelect>
                   </div>
 
-                  <div style={{ width: '20rem' }}>
-                    <CFormLabel htmlFor="toDateTime">To Date-Time</CFormLabel>
-                    <CFormInput
-                      type="datetime-local"
-                      id="toDateTime"
-                      value={toDateTime}
-                      onChange={(e) => setToDateTime(e.target.value)}
-                    />
-                  </div>
+                  {period === 'Custom' && (
+                    <>
+                      <div style={{ width: '20rem' }}>
+                        <CFormLabel htmlFor="fromDateTime">From Date-Time</CFormLabel>
+                        <CFormInput
+                          type="datetime-local"
+                          id="fromDateTime"
+                          value={fromDateTime}
+                          onChange={(e) => setFromDateTime(e.target.value)}
+                        />
+                      </div>
+
+                      <div style={{ width: '20rem' }}>
+                        <CFormLabel htmlFor="toDateTime">To Date-Time</CFormLabel>
+                        <CFormInput
+                          type="datetime-local"
+                          id="toDateTime"
+                          value={toDateTime}
+                          onChange={(e) => setToDateTime(e.target.value)}
+                        />
+                      </div>
+                    </>
+                  )}
 
                   {/* Searchable device select using react-select */}
                   <div style={{ width: '20rem' }}>
@@ -180,22 +220,6 @@ const HistoryReport = () => {
                     Show
                   </CButton>
                 </CForm>
-              </CCardBody>
-            </CCard>
-          </CCol>
-        </CRow>
-      ) : (
-        <CRow className="pt-3 gutter-0">
-          <CCol xs={12} md={12} className="px-4">
-            <CCard className="mb-4 p-0 shadow-lg rounded">
-              <CCardHeader
-                className="d-flex justify-content-between align-items-center text-white"
-                style={{ backgroundColor: '#0a2d63' }}
-              >
-                <strong>History Report</strong>
-              </CCardHeader>
-              <CCardBody>
-                <div className="text-center py-4">History data is not available</div>
               </CCardBody>
             </CCard>
           </CCol>

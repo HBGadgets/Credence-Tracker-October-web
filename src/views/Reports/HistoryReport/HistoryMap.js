@@ -30,6 +30,7 @@ import {
 import { Scrollbars } from 'react-custom-scrollbars-2'
 import SlidingSideMenu from './SlidingSideMenu'
 import axios from 'axios'
+import { useFetchHistory } from './useFetchHistory.js'
 
 // Register Chart.js components
 ChartJS.register(LineElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement)
@@ -80,6 +81,7 @@ const greenFlagIcon = L.icon({
   popupAnchor: [0, -32], // Popup position relative to the icon
 })
 const HistoryMap = ({
+  period,
   fromDateTime,
   toDateTime,
   deviceId,
@@ -90,36 +92,24 @@ const HistoryMap = ({
   category,
   name,
 }) => {
-  const { data, loading } = useHistoryData(
+  const { data, loading } = useFetchHistory(
     `${import.meta.env.VITE_API_URL}/history/device-history-playback`,
-    { deviceId, from: fromDateTime, to: toDateTime },
-    fetch,
-  )
-  const { data: stopData } = useHistoryData(
-    `${import.meta.env.VITE_API_URL}/history/device-stopage`,
-    { deviceId, from: fromDateTime, to: toDateTime },
-    fetch,
-  )
-  const { data: tripData } = useHistoryData(
-    `${import.meta.env.VITE_API_URL}/history/show-only-device-trips-startingpoint-endingpoint`,
-    { deviceId, from: fromDateTime, to: toDateTime },
+    { deviceId, period: period, from: fromDateTime, to: toDateTime },
     fetch,
   )
 
-  console.log('PLAYBACK DATA######################################', data)
-  console.log(
-    'TRIP DATA ######################################################################',
-    tripData,
+  const { data: stopData } = useHistoryData(
+    `${import.meta.env.VITE_API_URL}/history/device-stopage`,
+    { deviceId, period: period, from: fromDateTime, to: toDateTime },
+    fetch,
   )
-  // console.log('return data' + stopData)
-  // console.log(
-  //   'HISTORY PLAY BACK DATE######################################################################################',
-  //   fromDateTime,
-  // )
-  // console.log(
-  //   'HISTORY PLAY BACK DATE######################################################################################',
-  //   toDateTime,
-  // )
+
+  const { data: tripData } = useHistoryData(
+    `${import.meta.env.VITE_API_URL}/history/show-only-device-trips-startingpoint-endingpoint`,
+    { deviceId, period: period, from: fromDateTime, to: toDateTime },
+    fetch,
+  )
+
   const [positions, setPositions] = useState([])
   const [stopages, setStopages] = useState(stopData?.finalDeviceDataByStopage || [])
   const [showStopages, setShowStopages] = useState(true)
@@ -236,26 +226,6 @@ const HistoryMap = ({
     return R * c // Distance in km
   }
 
-  console.log(data, 'BEFORE DEVICEHISTORY DATA#############################################')
-  // Filter data using useMemo for optimization
-  // const filteredData = useMemo(() => {
-  //   if (!data?.deviceHistory?.length) return []
-  //   return data.deviceHistory.reduce((acc, current, i) => {
-  //     if (
-  //       i === 0 ||
-  //       haversineDistance(
-  //         acc[acc.length - 1].latitude,
-  //         acc[acc.length - 1].longitude,
-  //         current.latitude,
-  //         current.longitude,
-  //       ) >= 0.5
-  //     ) {
-  //       acc.push(current)
-  //     }
-  //     return acc
-  //   }, [])
-  // }, [data])
-
   const handleFilterData = (positions) => {
     setFilteredPositions(positions)
   }
@@ -265,8 +235,6 @@ const HistoryMap = ({
     if (!data?.deviceHistory?.length) return []
     return data.deviceHistory
   }, [data])
-
-  console.log(filteredData, 'AFTER DEVICEHISTORY DATA#############################################')
 
   // Update positions when data changes
   useEffect(() => {
@@ -586,9 +554,9 @@ const HistoryMap = ({
           center={
             filteredData && positions && currentPositionIndex
               ? [
-                positions[currentPositionIndex]?.latitude,
-                positions[currentPositionIndex]?.longitude,
-              ]
+                  positions[currentPositionIndex]?.latitude,
+                  positions[currentPositionIndex]?.longitude,
+                ]
               : [21.1458, 79.0882]
           }
           zoom={zoomLevel}
@@ -611,7 +579,7 @@ const HistoryMap = ({
               isSatelliteView
                 ? 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
                 : // Satellite View
-                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' // Normal View
+                  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' // Normal View
             }
             attribution="&copy; Credence Tracker, HB Gadget Solutions Nagpur"
           />
@@ -747,9 +715,7 @@ const HistoryMap = ({
               <div className="divide fixedWidth">
                 <div className="bolder">Speed : </div>
                 <div className="lighter">
-                  {fetch && positions
-                    ? Math.round(positions[currentPositionIndex]?.speed)
-                    : '0'}{' '}
+                  {fetch && positions ? Math.round(positions[currentPositionIndex]?.speed) : '0'}{' '}
                   km/hr
                 </div>
               </div>
