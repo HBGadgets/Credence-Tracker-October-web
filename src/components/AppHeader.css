@@ -15,10 +15,10 @@
 
 /* Custom hover color for CDropdownItem */
 .custom-dropdown-item:hover {
-  background-color: white;
-  /* Gray color on hover */
-  color: black;
-  /* Text color for better contrast */
+  background-color: #0c3d8c !important;
+  /* Slightly lighter blue for hover */
+  color: white !important;
+  /* Ensures text remains white */
 }
 
 .custom-dropdown-item.active {
@@ -87,4 +87,3 @@
   background-color: #0c3d8c !important;
   /* Slightly lighter blue for hover */
 }
-

@@ -38,6 +38,7 @@ import {
   filterByDevices,
   setVehicles,
   changeVehicles,
+  filterNewVehicles,
 } from '../../features/LivetrackingDataSlice.js'
 import { fetchDevices } from '../../features/deviceSlice.js'
 import { setNewAddress } from '../../features/addressSlice.js'
@@ -144,9 +145,6 @@ const Dashboard = () => {
 
   // Fetch live vehicles when the component mounts
   useEffect(() => {
-    console.log('Before initializing socket')
-    console.log('Credentials:', credentials)
-
     if (!credentials) {
       console.error('Error: credentials are undefined or empty')
       return
@@ -158,8 +156,6 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Invalid credentials format:', error.message)
     }
-
-    console.log('After initializing socket')
 
     return () => {
       if (socket) {
@@ -198,7 +194,7 @@ const Dashboard = () => {
   const inactiveVehiclesCount = useSelector(
     (state) =>
       state.liveFeatures.vehicles.filter(
-        (vehicle) => !timeDiffIsLessThan35Hours(vehicle.lastUpdate),
+        (vehicle) => !timeDiffIsLessThan35Hours(vehicle.lastUpdate) && vehicle.status === 'online',
       ).length,
   )
 
@@ -221,6 +217,9 @@ const Dashboard = () => {
           vehicle.speed > 60 &&
           timeDiffIsLessThan35Hours(vehicle.lastUpdate),
       ).length,
+  )
+  const newVehicleCount = useSelector(
+    (state) => state.liveFeatures.vehicles.filter((vehicle) => vehicle.status === 'offline').length,
   )
 
   const [expandedRow, setExpandedRow] = useState(null)
@@ -249,12 +248,8 @@ const Dashboard = () => {
     }
   }
 
-  const defaultImage = carGray
-
   const selectImage = (category, item) => {
     const cate = getCategory(category)
-    let image
-
     const imageMap = {
       car: {
         red: carRed,
@@ -262,6 +257,7 @@ const Dashboard = () => {
         yellow: carYellow,
         orange: carOrange,
         gray: carGray,
+        blue: carBlue,
       },
       bike: {
         red: bikeRed,
@@ -284,13 +280,7 @@ const Dashboard = () => {
         orange: autoOrange,
         gray: autoGray,
       },
-      jcb: {
-        red: jcbRed,
-        green: jcbGreen,
-        yellow: jcbYellow,
-        orange: jcbOrange,
-        gray: jcbGray,
-      },
+      jcb: { red: jcbRed, green: jcbGreen, yellow: jcbYellow, orange: jcbOrange, gray: jcbGray },
       crane: {
         red: craneRed,
         green: craneGreen,
@@ -304,48 +294,49 @@ const Dashboard = () => {
         yellow: craneYellow,
         orange: craneOrange,
         gray: craneGray,
-      },
-      bus: {
-        red: busRed,
-        green: busGreen,
-        yellow: busYellow,
-        orange: busOrange,
-        gray: busGray,
-      },
+      }, // duplicate of crane
+      bus: { red: busRed, green: busGreen, yellow: busYellow, orange: busOrange, gray: busGray },
     }
 
+    const defaultImage = imageMap[cate]?.gray || carGray
+
+    // Safety check
     if (!item || !item.attributes) {
-      return imageMap[cate]?.gray || carGray // Default to gray
+      return defaultImage
     }
 
-    const { ignition } = item.attributes
+    const ignition = item.attributes.ignition
     const speed = item.speed || 0
-    const isActive = timeDiffIsLessThan35Hours(item.lastUpdate)
+    const isRecent = timeDiffIsLessThan35Hours(item.lastUpdate)
 
-    if (!isActive) {
-      image = imageMap[cate].gray // Inactive (gray)
-    } else if (!ignition && speed < 1) {
-      image = imageMap[cate].red // Stopped (red)
-    } else if (ignition) {
-      if (speed > 60) {
-        image = imageMap[cate].orange // Overspeed (orange)
-      } else if (speed >= 2) {
-        image = imageMap[cate].green // Running (green)
-      } else {
-        image = imageMap[cate].yellow // Idle (yellow)
-      }
+    if (item.status === 'offline') {
+      return imageMap[cate]?.blue || carBlue
     }
 
-    return image || carGray // Fallback to gray
+    if (!ignition && speed < 1) {
+      return imageMap[cate]?.red || carRed
+    }
+
+    if (ignition && speed > 60) {
+      return imageMap[cate]?.orange || carOrange
+    }
+
+    if (ignition && speed > 2 && speed <= 60) {
+      return imageMap[cate]?.green || carGreen
+    }
+
+    if (ignition && speed <= 2) {
+      return imageMap[cate]?.yellow || carYellow
+    }
+
+    return defaultImage
   }
 
   const navigate = useNavigate()
   const handleClickOnTrack = (vehicle) => {
-    console.log('track clicked')
     navigate(`/salesman/${vehicle.deviceId}/${vehicle.category}/${vehicle.name}`)
   }
   const handleClickOnHistory = (vehicle) => {
-    console.log('trcak clicked')
     navigate(`/history/${vehicle.deviceId}/${vehicle.category}/${vehicle.name}`)
   }
 
@@ -358,7 +349,6 @@ const Dashboard = () => {
         `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`,
       )
 
-      // console.log(response)
       const address =
         response.data.features.length <= 5
           ? response.data.features[0].place_name_en
@@ -388,14 +378,12 @@ const Dashboard = () => {
   }, [address])
 
   useEffect(() => {
-    // console.log("filtered vehicle", filteredVehicles);
     filteredVehicles.forEach((vehicle) => {
       if (vehicle?.deviceId && vehicle.longitude && vehicle.latitude && !address[vehicle.id]) {
         // Fetch address only if it's not already fetched for this vehicle
         fetchAddress(vehicle.deviceId, vehicle.longitude, vehicle.latitude)
       }
     })
-    // console.log(address)
   }, [filteredVehicles])
 
   const headerRef = useRef()
@@ -450,7 +438,6 @@ const Dashboard = () => {
   const isDashboard = location.pathname === '/dashboard'
   const markerRefs = useRef({})
   const handleRowClick = (lat, lng, index) => {
-    // console.log('Row Clicked', index)
     setMapCenter({ lat, lng, zoom: 20 }) // Update map center
     if (mapRef.current) {
       mapRef.current.scrollIntoView({ behavior: 'smooth' }) // Scroll to map
@@ -510,7 +497,6 @@ const Dashboard = () => {
           const devicesData = await getDevices(selectedGroup)
           setDevices(devicesData)
           // Filter vehicles based on deviceId in filteredVehicles
-          console.log('device Dataaaaa', devicesData)
 
           dispatch(filterByDevices(devicesData))
         } catch (error) {
@@ -534,31 +520,6 @@ const Dashboard = () => {
   }, [])
 
   const [devicesWithoutPositions, setDevicesWithoutPositions] = useState([])
-
-  useEffect(() => {
-    const findDevicesWithoutPositions = async () => {
-      try {
-        const devices = devices
-        const missingDevices = []
-
-        // Iterate through devices and check if they have positions
-        for (const device of devices) {
-          const positions = filteredVehicles
-          if (positions.length === 0) {
-            missingDevices.push(device)
-          }
-        }
-
-        setDevicesWithoutPositions(missingDevices)
-        setLoading(false)
-      } catch (error) {
-        setLoading(false)
-      }
-    }
-
-    // Call the function to find devices without positions
-    findDevicesWithoutPositions()
-  }, [filteredVehicles])
 
   // sorting login
   const getSortValue = (item, key) => {
@@ -626,6 +587,8 @@ const Dashboard = () => {
     setSortConfig({ key, direction })
   }
 
+  console.log('filtered devices', filteredVehicles)
+
   return (
     <>
       {/* <WidgetsDropdown className="mb-4" /> */}
@@ -637,14 +600,6 @@ const Dashboard = () => {
               {/* <CRow>
             <CCol sm={7} className="d-none d-md-block"></CCol>
           </CRow> */}
-              <MainMap
-                filteredVehicles={filteredVehicles}
-                mapCenter={mapCenter}
-                markerRefs={markerRefs}
-              />
-              {/* <Sidenew/> */}
-              {/* <div className="mb-5"></div> */}
-              {/* <br /> */}
               <CRow className="justify-content-around my-3 mb-2">
                 {/* All Vehicles */}
                 <CCol
@@ -766,31 +721,6 @@ const Dashboard = () => {
                   </div>
                 </CCol>
 
-                <CCol
-                  xs={12}
-                  md={1}
-                  xl={2}
-                  className="count-col mb-1"
-                  style={{ width: '6rem !important' }}
-                >
-                  <div
-                    className="vehicle-card new-vehicles"
-                    // onClick={() => dispatch(filterInactiveVehicles())}
-                  >
-                    <div className="vehicle-info">
-                      <div className="vehicle-type text-muted">
-                        <strong>New</strong>
-                      </div>
-                      <div className="vehicle-count fs-4 fw-bold">
-                        {devicesWithoutPositions.length}
-                      </div>
-                    </div>
-                    <div className="vehicle-icon">
-                      <img style={{ width: '3.5rem' }} src={carBlue} alt="New Vehicles" />
-                    </div>
-                  </div>
-                </CCol>
-
                 {/* Inactive Vehicles */}
                 <CCol
                   xs={12}
@@ -814,7 +744,40 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </CCol>
+
+                {/* New Vehicles */}
+                <CCol
+                  xs={12}
+                  md={1}
+                  xl={2}
+                  className="count-col mb-1"
+                  style={{ width: '6rem !important' }}
+                >
+                  <div
+                    className="vehicle-card new-vehicles"
+                    onClick={() => dispatch(filterNewVehicles())}
+                  >
+                    <div className="vehicle-info">
+                      <div className="vehicle-type text-muted">
+                        <strong>New</strong>
+                      </div>
+                      <div className="vehicle-count fs-4 fw-bold">{newVehicleCount}</div>
+                    </div>
+                    <div className="vehicle-icon">
+                      <img style={{ width: '3.5rem' }} src={carBlue} alt="New Vehicles" />
+                    </div>
+                  </div>
+                </CCol>
               </CRow>
+              <MainMap
+                filteredVehicles={filteredVehicles}
+                mapCenter={mapCenter}
+                markerRefs={markerRefs}
+              />
+              {/* <Sidenew/> */}
+              {/* <div className="mb-5"></div> */}
+              {/* <br /> */}
+
               {/* <hr />
               <br /> */}
 
@@ -823,7 +786,7 @@ const Dashboard = () => {
               {/**TABLE */}
               <CRow>
                 <CCol xs>
-                  <CCard className="mb-4">
+                  <CCard className="mb-4 mt-4">
                     <CCardHeader>
                       {isDashboard && (
                         <div
@@ -1638,7 +1601,6 @@ const Dashboard = () => {
           </CCard>
         </CCol>
       </CRow>
-      {/* <WidgetsBrand className="mb-4" withCharts /> */}
     </>
   )
 }

@@ -155,6 +155,7 @@ import SimpleBar from 'simplebar-react'
 import 'simplebar-react/dist/simplebar.min.css'
 import { useSelector } from 'react-redux'
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
+import './AppSidebarNav.css' // Import your CSS file for custom styles
 
 export const AppSidebarNav = ({ items }) => {
   // Utility function to create the navigation link structure
@@ -163,10 +164,10 @@ export const AppSidebarNav = ({ items }) => {
       {icon
         ? icon
         : indent && (
-          <span className="nav-icon">
-            <span className="nav-icon-bullet"></span>
-          </span>
-        )}
+            <span className="nav-icon">
+              <span className="nav-icon-bullet"></span>
+            </span>
+          )}
       {name}
       {badge && (
         <CBadge color={badge.color} className="ms-auto">
@@ -182,7 +183,7 @@ export const AppSidebarNav = ({ items }) => {
     return (
       <Component as="div" key={index}>
         {rest.to || rest.href ? (
-          <CNavLink {...(rest.to && { as: NavLink })} {...rest}>
+          <CNavLink {...(rest.to && { as: NavLink })} {...rest} className="custom-dropdown-item">
             {navLink(name, icon, badge, indent)}
           </CNavLink>
         ) : (
@@ -212,7 +213,7 @@ export const AppSidebarNav = ({ items }) => {
 
   // Filter items based on active section dashboard
   const filterItemsForSection = (section) => {
-    console.log('Filtering for master dashboard:', section)
+    // console.log('Filtering for master dashboard:', section)
     if (section === 'home') {
       return items.filter((item) => item.name === 'Dashboard')
     }
@@ -221,10 +222,10 @@ export const AppSidebarNav = ({ items }) => {
 
   // Filter items based on active section master
   const filterItemsForSection1 = (section) => {
-    console.log('Filtering for master section:', section)
+    // console.log('Filtering for master section:', section)
     if (section === 'master') {
       const filteredItems = items.filter((item) => item.name === 'Master')
-      console.log('Filtered items for master:', filteredItems)
+      // console.log('Filtered items for master:', filteredItems)
       return filteredItems
     }
     return items
@@ -232,7 +233,7 @@ export const AppSidebarNav = ({ items }) => {
 
   // Filter items based on active section Reports
   const filterItemsForSection2 = (section) => {
-    console.log('Filtering for reports section:', section)
+    // console.log('Filtering for reports section:', section)
     if (section === 'reports') {
       return items.filter((item) => item.name === 'Report')
     }
@@ -241,7 +242,7 @@ export const AppSidebarNav = ({ items }) => {
 
   // Filter items based on active section Expense Management
   const filterItemsForSection3 = (section) => {
-    console.log('Filtering for Expense management section:', section)
+    // console.log('Filtering for Expense management section:', section)
     if (section === 'expense') {
       return items.filter((item) => item.name === 'Expense Management')
     }
@@ -250,7 +251,7 @@ export const AppSidebarNav = ({ items }) => {
 
   // Filter items based on active section Expense Management
   const filterItemsForSection4 = (section) => {
-    console.log('Filtering for Help and Supports section:', section)
+    // console.log('Filtering for Help and Supports section:', section)
     if (section === 'support') {
       return items.filter((item) => item.name === 'Supports')
     }

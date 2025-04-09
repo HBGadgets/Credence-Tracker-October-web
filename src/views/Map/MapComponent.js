@@ -26,15 +26,17 @@ import MaskGroup from '../../assets/PopupAssests/Mask Group.svg'
 import InternetAnenna from '../../assets/PopupAssests/Internet Antenna.svg'
 import Wifi from '../../assets/PopupAssests/Wi-Fi.svg'
 import PlaceMarker from '../../assets/PopupAssests/Place Marker.svg'
+import Navigation from '../../assets/PopupAssests/Navigation.svg'
+import TimeMachine from '../../assets/PopupAssests/Time Machine.svg'
 const VehicleMarker = memo(
   ({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => {
     const icon = useGetVehicleIcon(vehicle, vehicle.category)
 
-    console.log('vehicle', vehicle)
+    // console.log('vehicle', vehicle)
 
     return (
       <Marker position={[vehicle.latitude, vehicle.longitude]} icon={icon}>
-        <Popup style={{ border: 'none', boxShadow: 'none' }}>
+        <Popup>
           <PopupContent
             vehicle={vehicle}
             address={address}
@@ -49,66 +51,6 @@ const VehicleMarker = memo(
 
 VehicleMarker.displayName = 'VehicleMarker'
 
-// Create a separate component for PopupContent
-// const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => (
-//   // <div
-//   //   style={{
-//   //     width: '300px',
-//   //     height: '300px',
-//   //     borderRadius: '11px',
-//   //     background: '#FFF',
-//   //   }}
-//   // >
-//   //   <div>
-//   //     <span style={{ textAlign: 'center', fontSize: '0.9rem' }}>
-//   //       <strong>{vehicle.name}</strong>
-//   //     </span>
-//   //   </div>
-//   //   {/* <hr style={hrStyle} /> */}
-//   //   <div className="toolTipContent">
-//   //     <DetailItem
-//   //       icon={<RxLapTimer />}
-//   //       text={dayjs(vehicle.lastUpdate).format('YYYY-MM-DD HH:mm')}
-//   //     />
-//   //     <SpeedDetail speed={vehicle.speed} />
-//   //     <StatusDetail speed={vehicle.speed} ignition={vehicle.attributes.ignition} />
-//   //     <DetailItem icon={<IoLocationSharp />} text={address || 'Loading...'} />
-//   //     <ActionButtons
-//   //       onTrack={() => handleClickOnTrack(vehicle)}
-//   //       onHistory={() => handleClickOnHistoryTrack(vehicle)}
-//   //     />
-//   //   </div>
-//   // </div>
-//   <div>
-//     <div className="d-flex align-items-center">
-//       <div>
-//         <img src={Sedan} alt="Sedan" />
-//       </div>
-//       <div>
-//         <strong>{vehicle.name}</strong>
-//       </div>
-//     </div>
-//     <div className="popupContentGrid">
-//       <div>
-//         <div>
-//           <img src={Time} />
-//           {vehicle.lastUpdate}
-//         </div>
-//       </div>
-//       <div>2</div>
-//       <div>
-//         <div>
-//           <img src={MaskGroup} />
-//           {vehicle.speed.toFixed(2)} km/h
-//         </div>
-//       </div>
-//       <div>4</div>
-//       <div>5</div>
-//       <div>6</div>
-//     </div>
-//   </div>
-// ))
-
 const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => {
   const formatTimestamp = (utcTimestamp) => {
     return dayjs(utcTimestamp).add(5, 'hour').add(30, 'minute').format('YYYY-MM-DD hh:mm A')
@@ -117,7 +59,7 @@ const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOn
   return (
     <div>
       <div className="d-flex align-items-center gap-2 mb-2" style={{ border: '0' }}>
-        <div>
+        <div style={{ paddingLeft: '10px' }}>
           <img src={Sedan} alt="Sedan" />
         </div>
         <div>
@@ -164,22 +106,21 @@ const PopupContent = memo(({ vehicle, address, handleClickOnTrack, handleClickOn
           </div>
         </div>
         <div>
-          <div className="d-flex align-items-center gap-2" style={{ color: '#8E8E8E' }}>
+          <div
+            className="d-flex align-items-center gap-2 popupContentGrid"
+            style={{ color: '#8E8E8E' }}
+          >
             <img src={PlaceMarker} alt="Petrol" style={{ width: '20px', height: '20px' }} />
             {address || 'Loading...'}
           </div>
         </div>
       </div>
-      {/* <div className="toolTipContent">
-        <DetailItem icon={<RxLapTimer />} text={formatTimestamp(vehicle.lastUpdate)} />
-        <SpeedDetail speed={vehicle.speed} />
-        <StatusDetail speed={vehicle.speed} ignition={vehicle.attributes.ignition} />
-        <DetailItem icon={<IoLocationSharp />} text={address || 'Loading...'} />
+      <div>
         <ActionButtons
           onTrack={() => handleClickOnTrack(vehicle)}
           onHistory={() => handleClickOnHistoryTrack(vehicle)}
         />
-      </div> */}
+      </div>
     </div>
   )
 })
@@ -238,11 +179,11 @@ const MainMap = ({ filteredVehicles, mapCenter }) => {
   )
 
   useEffect(() => {
-    console.log('filtered vehicle', filteredVehicles)
+    // console.log('filtered vehicle', filteredVehicles)
   }, [filteredVehicles])
 
   useEffect(() => {
-    console.log('filtered vehicle', filteredVehicles)
+    // console.log('filtered vehicle', filteredVehicles)
   }, [filteredVehicles])
 
   // const iconImage = (category, item) => useGetVehicleIcon(item, category)
@@ -285,51 +226,16 @@ const MainMap = ({ filteredVehicles, mapCenter }) => {
   )
 }
 
-const DetailItem = ({ icon, text }) => (
-  <div>
-    <strong>{React.cloneElement(icon, { size: 17, color: '#FF7A00' })}</strong>
-    {text}
-  </div>
-)
-
-const SpeedDetail = ({ speed }) => (
-  <div>
-    <strong>
-      <GiSpeedometer size={17} color="#FF7A00" />
-    </strong>
-    {speed.toFixed(2)} km/h
-  </div>
-)
-
-const StatusDetail = ({ speed, ignition }) => {
-  const status = useMemo(() => {
-    if (speed < 1 && !ignition) return 'Stopped'
-    if (speed < 2 && !ignition) return 'Idle'
-    if (speed > 2 && speed < 60 && ignition) return 'Running'
-    if (speed > 60 && ignition) return 'Over Speed'
-    return 'Inactive'
-  }, [speed, ignition])
-
-  return (
-    <div>
-      <strong>
-        <HiOutlineStatusOnline size={17} color="#FF7A00" />
-      </strong>
-      {status}
-    </div>
-  )
-}
-
 const ActionButtons = ({ onTrack, onHistory }) => (
   <div style={buttonContainerStyle}>
     <Button
       onClick={onTrack}
-      label={<CiLocationArrow1 size={14} />}
+      label={<img src={Navigation} style={{ width: '30px', height: '30px' }} />}
       title="Live Track" // Add tooltip text
     />
     <Button
       onClick={onHistory}
-      label={<MdHistory size={14} />}
+      label={<img src={TimeMachine} style={{ width: '30px', height: '30px' }} />}
       title="History Track" // Add tooltip text
     />
   </div>
@@ -337,7 +243,6 @@ const ActionButtons = ({ onTrack, onHistory }) => (
 
 const Button = ({ onClick, label, title }) => (
   <button
-    className="btn"
     style={buttonStyle}
     onClick={onClick}
     title={title} // Add title attribute here
@@ -367,14 +272,26 @@ const buttonContainerStyle = {
   display: 'flex',
   justifyContent: 'center',
   gap: '10px',
+  marginTop: '10px',
+  marginBottom: '0px',
+  marginLeft: '0px',
+  marginRight: '0px',
+  padding: '0px',
   width: '100%',
+  backgroundColor: '#000000',
+  borderBottomLeftRadius: '10px',
+  borderBottomRightRadius: '10px',
 }
 
 const buttonStyle = {
   width: '100%',
+  height: '30px',
   color: 'white',
   fontSize: '0.6rem',
   backgroundColor: '#000000',
+  border: 'none',
+  borderBottomLeftRadius: '10px',
+  borderBottomRightRadius: '10px',
 }
 
 export default React.memo(MainMap)

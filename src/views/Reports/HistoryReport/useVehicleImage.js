@@ -6,6 +6,7 @@ import carRed from '../../../assets/vehicleList/Car/carRed.svg'
 import carYellow from '../../../assets/vehicleList/Car/carYellow.svg'
 import carOrange from '../../../assets/vehicleList/Car/carOrange.svg'
 import carGray from '../../../assets/vehicleList/Car/carGray.svg'
+import carBlue from '../../../assets/vehicleList/Car/Blue.svg'
 
 import bikeGreen from '../../../assets/vehicleList/Bike/bikeGreen.svg'
 import bikeRed from '../../../assets/vehicleList/Bike/bikeRed.svg'
@@ -52,6 +53,7 @@ const imageMap = {
     yellow: carYellow,
     orange: carOrange,
     gray: carGray,
+    blue: carBlue,
   },
   bike: {
     red: bikeRed,
@@ -135,6 +137,7 @@ function timeDiffIsLessThan35Hours(lastUpdate) {
   const now = dayjs()
   return now.diff(lastUpdateTime, 'hour') <= maxDiffInHours
 }
+
 const useVehicleImage = (category, item) => {
   const cate = getCategory(category?.toLowerCase()) // Assuming getCategory is a helper function
 
@@ -146,18 +149,32 @@ const useVehicleImage = (category, item) => {
   if (item && item.attributes) {
     const { ignition } = item.attributes
     const speed = item.speed || 0
+    const isActive = timeDiffIsLessThan35Hours(item.lastUpdate)
+    const status = item.status || 'online' // Default to online if missing
 
-    // Determine the appropriate image based on ignition and speed
-    if (!ignition && speed < 1 && timeDiffIsLessThan35Hours(item.lastUpdate)) {
-      image = images.red
-    } else if (ignition && speed > 2 && speed < 60 && timeDiffIsLessThan35Hours(item.lastUpdate)) {
-      image = images.green
-    } else if (ignition && speed < 2 && timeDiffIsLessThan35Hours(item.lastUpdate)) {
-      image = images.yellow
-    } else if (ignition && speed > 60 && timeDiffIsLessThan35Hours(item.lastUpdate)) {
-      image = images.orange
-    } else if (!timeDiffIsLessThan35Hours(item.lastUpdate)) {
+    // 1. Offline status (highest priority)
+    if (status === 'offline') {
+      image = images.blue || imageMap.car.blue
+    }
+    // 2. Inactive (online but old update)
+    else if (!isActive) {
       image = images.gray
+    }
+    // 3. Overspeed
+    else if (ignition && speed > 60) {
+      image = images.orange
+    }
+    // 4. Stopped (ignition off + low speed)
+    else if (!ignition && speed < 1) {
+      image = images.red
+    }
+    // 5. Running
+    else if (ignition && speed > 2 && speed <= 60) {
+      image = images.green
+    }
+    // 6. Idle
+    else if (ignition && speed <= 2) {
+      image = images.yellow
     }
   }
 

@@ -1,0 +1,6 @@
+.custom-dropdown-item:hover {
+    background-color: #0e264c !important;
+    /* Slightly lighter blue for hover */
+    color: white !important;
+    /* Ensures text remains white */
+}
