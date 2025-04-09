@@ -12,19 +12,17 @@ export const useVehicleTrack = (token) => {
       transports: ['websocket', 'polling'],
     })
 
-    setTimeout(() => {
-      socket.emit(
-        'shared device token',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6Njc4OCwiaWF0IjoxNzQ0MTk3MzQ5LCJleHAiOjE3NDQzMjk1OTl9.-a0uzNuiPsm54o-I9sqOe-zmxyHmGLJ55tQUH7Gy5q4',
-      )
+    socket.emit(
+      'shared device token',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6Njc4OCwiaWF0IjoxNzQ0MTk3MzQ5LCJleHAiOjE3NDQzMjk1OTl9.-a0uzNuiPsm54o-I9sqOe-zmxyHmGLJ55tQUH7Gy5q4',
+    )
 
-      socket.on('testing live track', (data) => {
-        console.log('Received vehicle data:', data)
-        setPosition(data)
-        setTimerCount(5)
-        setShowTimer(true)
-      })
-    }, 3000)
+    socket.on('testing live track', (data) => {
+      console.log('Received vehicle data:', data)
+      setPosition(data)
+      setTimerCount(5)
+      setShowTimer(true)
+    })
 
     socket.on('connect_error', (err) => {
       console.error('Socket connection error:', err)
