@@ -12,39 +12,6 @@ const useVehicleTracker = (deviceId) => {
   const [showTimer, setShowTimer] = useState(false) // Timer visibility state
   const accessToken = Cookies.get('authToken')
 
-  // useEffect(() => {
-  //   let intervalId
-
-  //   const fetchVehicleData = async () => {
-  //     try {
-  //       setLoading(true) // Set loading state to true before fetching
-  //       const positionsAPI = `${import.meta.env.VITE_API_POSITION}/api/positions?deviceId=${deviceId}`
-  //       const auth = {
-  //         username: 'hbtrack',
-  //         password: '123456@',
-  //       }
-  //       const response = await axios.get(positionsAPI, { auth })
-  //       console.log('Length of positions API: ' + response.data[0])
-
-  //       if (response.data) {
-  //         setVehicleData(response.data) // Update state with fetched data
-  //       } else {
-  //         // setError('No vehicle data found') // Handle case where no data is returned
-  //       }
-  //     } catch (err) {
-  //       // setError('Error fetching vehicle data: ' + err.message) // Set error state
-  //     } finally {
-  //       setLoading(false) // Set loading state to false after fetching
-  //     }
-  //   }
-
-  //   fetchVehicleData()
-
-  //   intervalId = setInterval(fetchVehicleData, 2500)
-
-  //   return () => clearInterval(intervalId)
-  // }, [deviceId])
-
   useEffect(() => {
     // Optionally, set the loading state initially.
     setLoading(true)

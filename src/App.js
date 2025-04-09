@@ -6,6 +6,7 @@ import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
 import Loader from './components/Loader/Loader'
 import RaiseTicket from './views/forms/help-support/RaiseTicket'
+import SharedLiveTrack from './views/pages/Live/SharedLiveTrack'
 const HelpSupp = React.lazy(() => import('./views/forms/help-support/HelpSupp'))
 const GettingStarted = React.lazy(
   () => import('./components/articles/gettingStarted/GettingStarted'),
@@ -77,6 +78,7 @@ const App = () => {
           <Route path="/HelpSupp/The-Basics-Of-Credence" element={<TheBasicsOfCredence />} />
           <Route path="/HelpSupp/Navigating-Credence" element={<NavigatingCredence />} />
           <Route path="/HelpSupp/Raise-Ticket" element={<RaiseTicket />} />
+          <Route path="/live:token" element={<SharedLiveTrack />} />
         </Routes>
       </Suspense>
     </HashRouter>
