@@ -382,7 +382,7 @@
 /* Adjust the map controls position on mobile */
 @media (max-width: 768px) {
     .map-controls {
-        bottom: 80px;
-        top: auto;
+        top: 80px;
+        bottom: auto;
     }
 }

@@ -162,6 +162,7 @@ const LiveTrackingMap = ({ token }) => {
           <RecenterMap lat={animatedPosition.latitude} lng={animatedPosition.longitude} />
         )}
 
+        {/* Draggable Vehicle Panel */}
         <Draggable bounds="parent">
           <CCard className="mb-4 parametersContainer shadow" style={{ zIndex: '555' }}>
             <CCardBody>

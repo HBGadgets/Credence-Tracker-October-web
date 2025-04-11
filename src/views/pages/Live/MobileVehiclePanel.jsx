@@ -5,31 +5,6 @@ import { ChevronUp, ChevronDown, MapPin, Clock, Zap, Activity, Car } from 'lucid
 
 const MobileVehiclePanel = ({ position, address }) => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [lastUpdated, setLastUpdated] = useState('')
-
-  useEffect(() => {
-    if (!position?.deviceTime) return
-
-    const updateTimeAgo = () => {
-      const now = new Date()
-      const deviceTime = new Date(position.deviceTime)
-      const seconds = Math.floor((now.getTime() - deviceTime.getTime()) / 1000)
-
-      if (seconds < 60) {
-        setLastUpdated(`${seconds} seconds ago`)
-      } else if (seconds < 3600) {
-        setLastUpdated(`${Math.floor(seconds / 60)} minutes ago`)
-      } else if (seconds < 86400) {
-        setLastUpdated(`${Math.floor(seconds / 3600)} hours ago`)
-      } else {
-        setLastUpdated(`${Math.floor(seconds / 86400)} days ago`)
-      }
-    }
-
-    updateTimeAgo()
-    const interval = setInterval(updateTimeAgo, 1000)
-    return () => clearInterval(interval)
-  }, [position])
 
   if (!position) return null
 

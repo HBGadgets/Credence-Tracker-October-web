@@ -7,8 +7,15 @@ export const LoaderComponent = () => {
   return (
     <>
       <Loader />
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <img src={logo} style={{ width: '200px' }} alt="logo" />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '30px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+        }}
+      >
+        <img src={logo} alt="logo" style={{ width: '100%', maxWidth: '150px', height: 'auto' }} />
       </div>
     </>
   )
