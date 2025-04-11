@@ -12,10 +12,7 @@ export const useVehicleTrack = (token) => {
       transports: ['websocket', 'polling'],
     })
 
-    socket.emit(
-      'shared device token',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6Njc4OCwiaWF0IjoxNzQ0MzUzMDA1LCJleHAiOjE3NDQ3NjE1OTl9.VNpzAu5IbpFOVOt5lXMx73LYWjYkYyG_njhFthtuu8M',
-    )
+    socket.emit('shared device token', token)
 
     socket.on('shared device data', (data) => {
       console.log('Received vehicle data:', data)
