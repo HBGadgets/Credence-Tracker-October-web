@@ -78,7 +78,7 @@ const App = () => {
           <Route path="/HelpSupp/The-Basics-Of-Credence" element={<TheBasicsOfCredence />} />
           <Route path="/HelpSupp/Navigating-Credence" element={<NavigatingCredence />} />
           <Route path="/HelpSupp/Raise-Ticket" element={<RaiseTicket />} />
-          <Route path="/:token" element={<SharedLiveTrack />} />
+          <Route path="/shared/live-track/token/:token" element={<SharedLiveTrack />} />
         </Routes>
       </Suspense>
     </HashRouter>
