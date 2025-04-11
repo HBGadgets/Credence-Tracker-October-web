@@ -795,33 +795,7 @@ const Devices = () => {
     }
   }
 
-  // const handleCheckPassword = () => {
-  //   if (extendedPassword == myPassword) {
-  //     setPasswordCheck(true)
-  //     setExtendedPasswordModel(false)
-  //     alert('Password is correct')
 
-  //     // Now update the expiration date based on the selected plan (years)
-  //     const ExpiryDate = formData.expirationdate
-  //     if (ExpiryDate && extendedYear) {
-  //       const expiry = new Date(ExpiryDate)
-  //       const extendedDate = new Date(expiry.setFullYear(expiry.getFullYear() + extendedYear))
-  //         .toISOString()
-  //         .split('T')[0] // Format to yyyy-mm-dd
-
-  //       // Now set the extended date
-  //       setFormData({
-  //         ...formData,
-  //         extenddate: extendedDate,
-  //         expirationdate: extendedDate,
-  //       })
-
-  //       setSelectedYears(null) // Reset the selected years after updating
-  //     }
-  //   } else {
-  //     alert('Password is not correct')
-  //   }
-  // }
   // below is when we deal with custom date
   const handleCheckPassword = () => {
     if (extendedPassword === myPassword) {

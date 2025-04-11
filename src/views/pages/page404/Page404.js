@@ -1,6 +1,7 @@
-import React from "react";
-import { Ghost, Home, ArrowRight } from "lucide-react";
-import "./page404.css"; // Import custom CSS file
+import React from 'react'
+import { Ghost, Home, ArrowRight } from 'lucide-react'
+import './page404.css' // Import custom CSS file
+import { Link } from 'react-router-dom'
 
 const Page404 = () => {
   return (
@@ -16,8 +17,8 @@ const Page404 = () => {
         <h1 className="display-1 fw-bold text-primary">Check Internet Connection</h1>
         <h2 className="fs-3 fw-semibold text-dark">Page Not Found(404)</h2>
         <p className="text-muted mb-4">
-          Oops! It seems like you've ventured into uncharted territory. The page
-          you're looking for might have moved or doesn't exist.
+          Oops! It seems like you've ventured into uncharted territory. The page you're looking for
+          might have moved or doesn't exist.
         </p>
 
         {/* Action Buttons */}
@@ -26,19 +27,24 @@ const Page404 = () => {
             <Home className="me-2" />
             Back to Home
           </a>
-          <a href="/contact" className="btn btn-outline-secondary d-flex align-items-center">
+          <Link to="/raise-ticket" className="btn btn-outline-secondary d-flex align-items-center">
             Contact Support
             <ArrowRight className="ms-2" />
-          </a>
+          </Link>
         </div>
 
         {/* Additional Help */}
         <div className="mt-4 text-muted small">
-          <p>Need immediate assistance? Email us at  credencetraker@gmail.com</p>
+          <p>
+            Need immediate assistance? Email us at{' '}
+            <a href="mailto:sales@credencetracker.com" className="text-primary">
+              sales@credencetracker.com
+            </a>
+          </p>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Page404;
+export default Page404
