@@ -2,9 +2,9 @@
 
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState, useRef } from 'react'
+import PropTypes from 'prop-types'
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import { useParams } from 'react-router-dom'
 import { LoaderComponent } from './Loader'
 import { useVehicleTrack } from './useVehicleTrack'
 import { RecenterMap } from './useRecenterMap'
@@ -22,9 +22,7 @@ import { useLocation } from 'react-router-dom'
 
 const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t) // Easing function for smooth animation
 
-const LiveTrackingMap = () => {
-  const query = useQuery()
-  const token = query.get('token')
+const LiveTrackingMap = ({ token }) => {
   const { position, timerCount, showTimer } = useVehicleTrack(token)
   const icon = useGetVehicleIcon(position, position?.category)
   const [path, setPath] = useState([])
@@ -221,6 +219,11 @@ const LiveTrackingMap = () => {
       </MapContainer>
     </>
   )
+}
+
+// PropTypes for LiveTrackingMap
+LiveTrackingMap.propTypes = {
+  token: PropTypes.string.isRequired,
 }
 
 export default LiveTrackingMap
