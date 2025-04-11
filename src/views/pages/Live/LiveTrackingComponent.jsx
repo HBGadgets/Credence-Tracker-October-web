@@ -18,11 +18,13 @@ import useVehicleImage from '../../Reports/HistoryReport/useVehicleImage'
 import './styles.css'
 import axios from 'axios'
 import MobileVehiclePanel from './MobileVehiclePanel'
+import { useLocation } from 'react-router-dom'
 
 const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t) // Easing function for smooth animation
 
 const LiveTrackingMap = () => {
-  const { token } = useParams()
+  const query = useQuery()
+  const token = query.get('token')
   const { position, timerCount, showTimer } = useVehicleTrack(token)
   const icon = useGetVehicleIcon(position, position?.category)
   const [path, setPath] = useState([])
@@ -35,6 +37,10 @@ const LiveTrackingMap = () => {
   const toggleMapView = () => setIsSatelliteView(!isSatelliteView)
   const [address, setAddress] = useState('')
   const vehicleImg = useVehicleImage(position?.category, position)
+
+  function useQuery() {
+    return new URLSearchParams(useLocation().search)
+  }
 
   useEffect(() => {
     if (!position) return
