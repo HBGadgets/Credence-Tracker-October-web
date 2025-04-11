@@ -14,15 +14,22 @@ export const useVehicleTrack = (token) => {
 
     socket.emit(
       'shared device token',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6Njc4OCwiaWF0IjoxNzQ0MTk3MzQ5LCJleHAiOjE3NDQzMjk1OTl9.-a0uzNuiPsm54o-I9sqOe-zmxyHmGLJ55tQUH7Gy5q4',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXZpY2VJZCI6Njc4OCwiaWF0IjoxNzQ0MzUzMDA1LCJleHAiOjE3NDQ3NjE1OTl9.VNpzAu5IbpFOVOt5lXMx73LYWjYkYyG_njhFthtuu8M',
     )
 
-    socket.on('testing live track', (data) => {
+    socket.on('shared device data', (data) => {
       console.log('Received vehicle data:', data)
       setPosition(data)
       setTimerCount(5)
       setShowTimer(true)
     })
+
+    // socket.on('testing live track', (data) => {
+    //   console.log('Testing Live Track Received vehicle data:', data)
+    //   setPosition(data)
+    //   setTimerCount(5)
+    //   setShowTimer(true)
+    // })
 
     socket.on('connect_error', (err) => {
       console.error('Socket connection error:', err)

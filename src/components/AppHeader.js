@@ -65,6 +65,7 @@ import { CircleUserRound } from 'lucide-react'
 import { Dropdown } from 'bootstrap'
 import { AppSidebarNav } from './AppSidebarNav'
 import navigation from '../_nav'
+import { MdOutlineSpaceDashboard } from 'react-icons/md'
 
 const AppHeader = () => {
   const navigate = useNavigate()
@@ -285,7 +286,7 @@ const AppHeader = () => {
                 className="text-white text-decoration-none d-flex align-items-center px-3 py-2 rounded"
                 activeClassName="bg-primary text-light"
               >
-                <FaHome className="me-2" /> Home
+                <MdOutlineSpaceDashboard className="me-2" /> Dashboard
               </CNavLink>
             </CTab>
 

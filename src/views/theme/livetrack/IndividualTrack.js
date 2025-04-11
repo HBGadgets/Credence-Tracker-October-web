@@ -477,6 +477,7 @@ const IndividualTrack = () => {
                 borderRadius: '5px',
               }}
             >
+              {/* Map Tile Layer */}
               <div>
                 <button
                   title="Toggle Satellite View"

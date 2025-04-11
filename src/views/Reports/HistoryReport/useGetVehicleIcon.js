@@ -42,8 +42,6 @@ import truckorangeSvg from '../../../assets/AllTopViewVehicle/Truck-O.svg'
 import truckgraySvg from '../../../assets/AllTopViewVehicle/Truck-Grey.svg'
 import truckblueSvg from '../../../assets/AllTopViewVehicle/Truck-B.svg'
 import dayjs from 'dayjs'
-import { blue } from '@mui/material/colors'
-import { CardBody } from 'react-bootstrap'
 
 const mapIcons = {
   bus: {

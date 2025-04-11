@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import { MdHistory } from 'react-icons/md'
 import { CiLocationArrow1 } from 'react-icons/ci'
-import { FaSearchLocation } from 'react-icons/fa'
+import { FaSatellite, FaSearchLocation, FaStreetView } from 'react-icons/fa'
 import { IoMdSpeedometer } from 'react-icons/io'
 import { HiOutlineStatusOnline } from 'react-icons/hi'
 import { RxLapTimer } from 'react-icons/rx'
@@ -28,6 +28,8 @@ import Wifi from '../../assets/PopupAssests/Wi-Fi.svg'
 import PlaceMarker from '../../assets/PopupAssests/Place Marker.svg'
 import Navigation from '../../assets/PopupAssests/Navigation.svg'
 import TimeMachine from '../../assets/PopupAssests/Time Machine.svg'
+import { TbTrafficLights, TbTrafficLightsOff } from 'react-icons/tb'
+import { BsFillGeoFill } from 'react-icons/bs'
 const VehicleMarker = memo(
   ({ vehicle, address, handleClickOnTrack, handleClickOnHistoryTrack }) => {
     const icon = useGetVehicleIcon(vehicle, vehicle.category)
@@ -158,6 +160,8 @@ const FlyToMapCenter = ({ mapCenter }) => {
 const MainMap = ({ filteredVehicles, mapCenter }) => {
   const { newAddress } = useSelector((state) => state.address)
   const navigate = useNavigate()
+  const [showTraffic, setShowTraffic] = useState(false)
+  const [isSatelliteView, setIsSatelliteView] = useState(false)
 
   const stableVehicles = useMemo(
     () => filteredVehicles,
@@ -178,19 +182,9 @@ const MainMap = ({ filteredVehicles, mapCenter }) => {
     [navigate],
   )
 
-  useEffect(() => {
-    // console.log('filtered vehicle', filteredVehicles)
-  }, [filteredVehicles])
-
-  useEffect(() => {
-    // console.log('filtered vehicle', filteredVehicles)
-  }, [filteredVehicles])
-
-  // const iconImage = (category, item) => useGetVehicleIcon(item, category)
-  const iconImage = useMemo(() => (category, item) => useGetVehicleIcon(item, category), [])
-  const getIcon = useCallback((category, item) => {
-    return useGetVehicleIcon(item, category)
-  }, [])
+  const toggleMapView = () => {
+    setIsSatelliteView((prev) => !prev)
+  }
 
   return (
     <MapContainer
@@ -206,11 +200,70 @@ const MainMap = ({ filteredVehicles, mapCenter }) => {
         zIndex: '0',
       }}
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; Credence Tracker, HB Gadget Solutions Nagpur"
-      />
+      <div>
+        <button
+          title="Toggle Satellite View"
+          onClick={toggleMapView}
+          className="btn toggle-map-view"
+          style={{
+            position: 'absolute',
+            top: '100px',
+            left: '10px',
+            zIndex: 1000,
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0',
+            backgroundColor: 'white',
+          }}
+        >
+          <FaSatellite size={14} />
+        </button>
+
+        <button
+          onClick={() => setShowTraffic(!showTraffic)}
+          className="btn toggle-geofence-view"
+          title="Toggle Traffic View"
+          style={{
+            position: 'absolute',
+            top: '140px',
+            left: '10px',
+            zIndex: 1000,
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0',
+            backgroundColor: 'white',
+          }}
+        >
+          {showTraffic ? <TbTrafficLightsOff size={14} /> : <TbTrafficLights size={14} />}
+        </button>
+
+        {/* Primary tile layer */}
+        <TileLayer
+          url={
+            isSatelliteView
+              ? 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'
+              : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+          }
+          attribution="&copy; Credence Tracker, HB Gadget Solutions Nagpur"
+        />
+
+        {/* Optional traffic layer */}
+        {showTraffic && (
+          <TileLayer
+            url="https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=WI92B5fNrRuw3y9wnNVFbF10gosmx1h2"
+            attribution="Traffic data © 2024 TomTom"
+          />
+        )}
+      </div>
+
       <FlyToMapCenter mapCenter={mapCenter} />
+
       <MarkerClusterGroup>
         {stableVehicles?.map((vehicle) => (
           <VehicleMarker
