@@ -35,7 +35,7 @@ const MobileVehiclePanel = ({ position, address }) => {
             <Activity size={20} className="stat-icon" />
             <div className="stat-label">Speed</div>
             <div className="stat-value">
-              {Math.round(position?.speed).toFixed(2)} <small>km/h</small>
+              {Math.round(position?.speed).toFixed(0)} <small>km/h</small>
             </div>
           </div>
 
