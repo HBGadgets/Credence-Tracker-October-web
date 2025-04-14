@@ -249,7 +249,7 @@ const AddDevice1 = ({
 
     try {
       const username = 'hbtrack'
-      const password = '123456@'
+      const password = '123456'
       const token1 = btoa(`${username}:${password}`)
       const oldresponse = await axios.post(oldapiUrl, oldRow, {
         headers: {
