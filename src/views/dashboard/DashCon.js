@@ -812,8 +812,11 @@ const Dashboard = () => {
                                     }
                                   : null
                               }
-                              onChange={(selectedOption) => setSelectedUser(selectedOption?.value)}
+                              onChange={(selectedOption) =>
+                                setSelectedUser(selectedOption?.value || null)
+                              }
                               isLoading={sloading}
+                              isClearable
                             />
                           </CHeaderNav>
 
@@ -835,9 +838,12 @@ const Dashboard = () => {
                                     }
                                   : null
                               }
-                              onChange={(selectedOption) => setSelectedGroup(selectedOption?.value)}
+                              onChange={(selectedOption) =>
+                                setSelectedGroup(selectedOption?.value || null)
+                              }
                               isLoading={sloading}
                               placeholder="Select a Group"
+                              isClearable
                             />
                           </CHeaderNav>
                           {/* </div> */}
