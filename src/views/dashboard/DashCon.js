@@ -133,6 +133,7 @@ const Dashboard = () => {
   const [address, setAddress] = useState({})
   const mapRef = useRef(null)
   const [mapCenter, setMapCenter] = useState({ lat: 21.1458, lng: 79.0882, zoom: 10 })
+  const [selectedStatus, setSelectedStatus] = useState('all')
 
   // pagination code
   const [currentPage, setCurrentPage] = useState(0)
@@ -219,7 +220,13 @@ const Dashboard = () => {
       ).length,
   )
   const newVehicleCount = useSelector(
-    (state) => state.liveFeatures.vehicles.filter((vehicle) => vehicle.status === 'offline').length,
+    (state) =>
+      state.liveFeatures.vehicles.filter(
+        (vehicle) =>
+          vehicle.status === 'offline' &&
+          Number(vehicle.latitude) === 0 &&
+          Number(vehicle.longitude) === 0,
+      ).length,
   )
 
   const [expandedRow, setExpandedRow] = useState(null)
@@ -294,37 +301,55 @@ const Dashboard = () => {
         yellow: craneYellow,
         orange: craneOrange,
         gray: craneGray,
-      }, // duplicate of crane
+      },
       bus: { red: busRed, green: busGreen, yellow: busYellow, orange: busOrange, gray: busGray },
+      icard: {
+        red: carRed,
+        green: carGreen,
+        yellow: carYellow,
+        orange: carOrange,
+        gray: carGray,
+        blue: carBlue,
+      },
     }
 
     const defaultImage = imageMap[cate]?.gray || carGray
 
-    // Safety check
-    if (!item || !item.attributes) {
-      return defaultImage
-    }
+    if (!item || !item.attributes) return defaultImage
 
     const ignition = item.attributes.ignition
-    const speed = item.speed || 0
-    const isRecent = timeDiffIsLessThan35Hours(item.lastUpdate)
+    const speed = Number(item.speed || 0)
+    const lat = Number(item.latitude || 0)
+    const lng = Number(item.longitude || 0)
+    const lastUpdate = item.lastUpdate || ''
+    const isRecent = timeDiffIsLessThan35Hours(lastUpdate)
 
-    if (item.status === 'offline') {
+    // 🔵 Devices that never sent location (lat/lng 0)
+    if (lat === 0 && lng === 0) {
       return imageMap[cate]?.blue || carBlue
     }
 
-    if (!ignition && speed < 1) {
+    // ⚫ Inactive: Device had location but hasn't updated in over 35h
+    if (!isRecent && item.status === 'offline') {
+      return imageMap[cate]?.gray || carGray
+    }
+
+    // 🔴 Stopped: Ignition off (or missing) + speed < 1
+    if ((!ignition || ignition === false) && speed < 1) {
       return imageMap[cate]?.red || carRed
     }
 
+    // 🟠 Overspeed
     if (ignition && speed > 60) {
       return imageMap[cate]?.orange || carOrange
     }
 
+    // 🟢 Running
     if (ignition && speed > 2 && speed <= 60) {
       return imageMap[cate]?.green || carGreen
     }
 
+    // 🟡 Idle
     if (ignition && speed <= 2) {
       return imageMap[cate]?.yellow || carYellow
     }
@@ -495,7 +520,15 @@ const Dashboard = () => {
         setLoading(true)
         try {
           const devicesData = await getDevices(selectedGroup)
-          setDevices(devicesData)
+          const formattedDevices = devicesData.map((d) => ({
+            ...d,
+            deviceId: Number(d.deviceId),
+          }))
+
+          setDevices(formattedDevices)
+          dispatch(filterByDevices(formattedDevices))
+          console.log('Devices being dispatched:', devices)
+
           // Filter vehicles based on deviceId in filteredVehicles
 
           dispatch(filterByDevices(devicesData))
@@ -589,6 +622,25 @@ const Dashboard = () => {
 
   console.log('filtered devices', filteredVehicles)
 
+  //clear filter
+  const handleClearFilters = () => {
+    setSelectedUser(null)
+    setSelectedGroup(null)
+    setDevices([])
+    setSearchTerm('')
+    setFilter1('all') // Resets category
+    dispatch(filterAllVehicles()) // Resets all filters in Redux
+  }
+
+  // reset filter
+  const resetFilters = () => {
+    setSelectedUser(null)
+    setSelectedGroup(null)
+    setDevices([])
+    setSearchTerm('')
+    setFilter1('all')
+  }
+
   return (
     <>
       {/* <WidgetsDropdown className="mb-4" /> */}
@@ -602,16 +654,14 @@ const Dashboard = () => {
           </CRow> */}
               <CRow className="justify-content-around my-3 mb-2">
                 {/* All Vehicles */}
-                <CCol
-                  xs={12}
-                  md={1}
-                  xl={2}
-                  className="count-col mb-2"
-                  style={{ width: '6rem !important' }}
-                >
+                <CCol xs={12} md={1} xl={2} className="count-col mb-2">
                   <div
-                    className="vehicle-card all-vehicles"
-                    onClick={() => dispatch(filterAllVehicles())}
+                    className={`vehicle-card all-vehicles ${selectedStatus === 'all' ? 'active' : ''}`}
+                    onClick={() => {
+                      resetFilters()
+                      setSelectedStatus('all')
+                      dispatch(filterAllVehicles())
+                    }}
                   >
                     <div className="vehicle-info">
                       <div className="vehicle-type text-muted">
@@ -626,16 +676,14 @@ const Dashboard = () => {
                 </CCol>
 
                 {/* Running Vehicles */}
-                <CCol
-                  xs={12}
-                  md={1}
-                  xl={2}
-                  className="count-col mb-2"
-                  style={{ width: '6rem !important' }}
-                >
+                <CCol xs={12} md={1} xl={2} className="count-col mb-2">
                   <div
-                    className="vehicle-card running-vehicles"
-                    onClick={() => dispatch(filterRunningVehicles())}
+                    className={`vehicle-card running-vehicles ${selectedStatus === 'running' ? 'active' : ''}`}
+                    onClick={() => {
+                      resetFilters()
+                      setSelectedStatus('running')
+                      dispatch(filterRunningVehicles())
+                    }}
                   >
                     <div className="vehicle-info">
                       <div className="vehicle-type text-muted">
@@ -650,16 +698,14 @@ const Dashboard = () => {
                 </CCol>
 
                 {/* Stopped Vehicles */}
-                <CCol
-                  xs={12}
-                  md={1}
-                  xl={2}
-                  className="count-col mb-2"
-                  style={{ width: '6rem !important' }}
-                >
+                <CCol xs={12} md={1} xl={2} className="count-col mb-2">
                   <div
-                    className="vehicle-card stopped-vehicles"
-                    onClick={() => dispatch(filterStoppedVehicles())}
+                    className={`vehicle-card stopped-vehicles ${selectedStatus === 'stopped' ? 'active' : ''}`}
+                    onClick={() => {
+                      resetFilters()
+                      setSelectedStatus('stopped')
+                      dispatch(filterStoppedVehicles())
+                    }}
                   >
                     <div className="vehicle-info">
                       <div className="vehicle-type text-muted">
@@ -674,16 +720,14 @@ const Dashboard = () => {
                 </CCol>
 
                 {/* Idle Vehicles */}
-                <CCol
-                  xs={12}
-                  md={1}
-                  xl={2}
-                  className="count-col mb-2"
-                  style={{ width: '6rem !important' }}
-                >
+                <CCol xs={12} md={1} xl={2} className="count-col mb-2">
                   <div
-                    className="vehicle-card idle-vehicles"
-                    onClick={() => dispatch(filterIdleVehicles())}
+                    className={`vehicle-card idle-vehicles ${selectedStatus === 'idle' ? 'active' : ''}`}
+                    onClick={() => {
+                      resetFilters()
+                      setSelectedStatus('idle')
+                      dispatch(filterIdleVehicles())
+                    }}
                   >
                     <div className="vehicle-info">
                       <div className="vehicle-type text-muted">
@@ -698,16 +742,14 @@ const Dashboard = () => {
                 </CCol>
 
                 {/* Overspeed Vehicles */}
-                <CCol
-                  xs={12}
-                  md={1}
-                  xl={2}
-                  className="count-col mb-2"
-                  style={{ width: '6rem !important' }}
-                >
+                <CCol xs={12} md={1} xl={2} className="count-col mb-2">
                   <div
-                    className="vehicle-card overspeed-vehicles"
-                    onClick={() => dispatch(filterOverspeedVehicles())}
+                    className={`vehicle-card overspeed-vehicles ${selectedStatus === 'overspeed' ? 'active' : ''}`}
+                    onClick={() => {
+                      resetFilters()
+                      setSelectedStatus('overspeed')
+                      dispatch(filterOverspeedVehicles())
+                    }}
                   >
                     <div className="vehicle-info">
                       <div className="vehicle-type text-muted">
@@ -722,16 +764,14 @@ const Dashboard = () => {
                 </CCol>
 
                 {/* Inactive Vehicles */}
-                <CCol
-                  xs={12}
-                  md={1}
-                  xl={2}
-                  className="count-col mb-2"
-                  style={{ width: '6rem !important' }}
-                >
+                <CCol xs={12} md={1} xl={2} className="count-col mb-2">
                   <div
-                    className="vehicle-card inactive-vehicles"
-                    onClick={() => dispatch(filterInactiveVehicles())}
+                    className={`vehicle-card inactive-vehicles ${selectedStatus === 'inactive' ? 'active' : ''}`}
+                    onClick={() => {
+                      resetFilters()
+                      setSelectedStatus('inactive')
+                      dispatch(filterInactiveVehicles())
+                    }}
                   >
                     <div className="vehicle-info">
                       <div className="vehicle-type text-muted">
@@ -746,16 +786,14 @@ const Dashboard = () => {
                 </CCol>
 
                 {/* New Vehicles */}
-                <CCol
-                  xs={12}
-                  md={1}
-                  xl={2}
-                  className="count-col mb-1"
-                  style={{ width: '6rem !important' }}
-                >
+                <CCol xs={12} md={1} xl={2} className="count-col mb-1">
                   <div
-                    className="vehicle-card new-vehicles"
-                    onClick={() => dispatch(filterNewVehicles())}
+                    className={`vehicle-card new-vehicles ${selectedStatus === 'new' ? 'active' : ''}`}
+                    onClick={() => {
+                      resetFilters()
+                      setSelectedStatus('new')
+                      dispatch(filterNewVehicles())
+                    }}
                   >
                     <div className="vehicle-info">
                       <div className="vehicle-type text-muted">
@@ -812,8 +850,11 @@ const Dashboard = () => {
                                     }
                                   : null
                               }
-                              onChange={(selectedOption) => setSelectedUser(selectedOption?.value)}
+                              onChange={(selectedOption) =>
+                                setSelectedUser(selectedOption?.value || null)
+                              }
                               isLoading={sloading}
+                              isClearable
                             />
                           </CHeaderNav>
 
@@ -835,9 +876,12 @@ const Dashboard = () => {
                                     }
                                   : null
                               }
-                              onChange={(selectedOption) => setSelectedGroup(selectedOption?.value)}
+                              onChange={(selectedOption) =>
+                                setSelectedGroup(selectedOption?.value || null)
+                              }
                               isLoading={sloading}
                               placeholder="Select a Group"
+                              isClearable
                             />
                           </CHeaderNav>
                           {/* </div> */}
@@ -872,6 +916,19 @@ const Dashboard = () => {
                               </button>
                             </form>
                           </CHeaderNav>
+
+                          <button
+                            className="btn btn-outline-secondary"
+                            onClick={handleClearFilters}
+                            disabled={
+                              !selectedUser &&
+                              !selectedGroup &&
+                              filter1 === 'all' &&
+                              searchTerm === ''
+                            }
+                          >
+                            Clear Filters
+                          </button>
 
                           {/* Table Column Visibility */}
 
