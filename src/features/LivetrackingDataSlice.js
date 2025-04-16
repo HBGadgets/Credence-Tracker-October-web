@@ -87,8 +87,12 @@ function applyFilter(vehicles, activeFilter) {
       return vehicles.filter((vehicle) => vehicle.name.toLowerCase().includes(searchTerm))
     }
     case 'devices':
+      console.log(
+        'Matching deviceIds:',
+        activeFilter.payload.map((d) => d.deviceId),
+      )
       return vehicles.filter((vehicle) =>
-        activeFilter.payload.some((device) => device.deviceId == vehicle.deviceId),
+        activeFilter.payload.some((device) => Number(device.deviceId) === Number(vehicle.deviceId)),
       )
     case 'custom':
       return activeFilter.payload
@@ -218,7 +222,16 @@ const liveFeaturesSlice = createSlice({
     filterByDevices(state, action) {
       state.loading = true
       state.activeFilter = { type: 'devices', payload: action.payload }
-      state.filteredVehicles = applyFilter(state.vehicles, state.activeFilter)
+
+      // 🔍 Ensure reliable comparison with type coercion
+      state.filteredVehicles = applyFilter(state.vehicles, {
+        type: 'devices',
+        payload: action.payload.map((d) => ({
+          ...d,
+          deviceId: Number(d.deviceId),
+        })),
+      })
+
       state.loading = false
     },
     changeVehicles(state, action) {

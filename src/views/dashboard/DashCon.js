@@ -495,7 +495,15 @@ const Dashboard = () => {
         setLoading(true)
         try {
           const devicesData = await getDevices(selectedGroup)
-          setDevices(devicesData)
+          const formattedDevices = devicesData.map((d) => ({
+            ...d,
+            deviceId: Number(d.deviceId),
+          }))
+
+          setDevices(formattedDevices)
+          dispatch(filterByDevices(formattedDevices))
+          console.log('Devices being dispatched:', devices)
+
           // Filter vehicles based on deviceId in filteredVehicles
 
           dispatch(filterByDevices(devicesData))
@@ -588,6 +596,16 @@ const Dashboard = () => {
   }
 
   console.log('filtered devices', filteredVehicles)
+
+  //clear filter
+  const handleClearFilters = () => {
+    setSelectedUser(null)
+    setSelectedGroup(null)
+    setDevices([])
+    setSearchTerm('')
+    setFilter1('all') // Resets category
+    dispatch(filterAllVehicles()) // Resets all filters in Redux
+  }
 
   return (
     <>
@@ -878,6 +896,19 @@ const Dashboard = () => {
                               </button>
                             </form>
                           </CHeaderNav>
+
+                          <button
+                            className="btn btn-outline-secondary"
+                            onClick={handleClearFilters}
+                            disabled={
+                              !selectedUser &&
+                              !selectedGroup &&
+                              filter1 === 'all' &&
+                              searchTerm === ''
+                            }
+                          >
+                            Clear Filters
+                          </button>
 
                           {/* Table Column Visibility */}
 
