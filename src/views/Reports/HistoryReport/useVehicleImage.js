@@ -139,43 +139,48 @@ function timeDiffIsLessThan35Hours(lastUpdate) {
 }
 
 const useVehicleImage = (category, item) => {
-  const cate = getCategory(category?.toLowerCase()) // Assuming getCategory is a helper function
-
-  // Determine the category-specific image map (memoized)
+  const cate = getCategory(category?.toLowerCase())
   const images = useMemo(() => imageMap[cate] || imageMap.car, [cate])
+  let image = images.gray // Default to gray
 
-  let image = images.gray // Default to gray image if category is not found
+  if (!item || !item.attributes) return image
 
-  if (item && item.attributes) {
-    const { ignition } = item.attributes
-    const speed = item.speed || 0
-    const isActive = timeDiffIsLessThan35Hours(item.lastUpdate)
-    const status = item.status || 'online' // Default to online if missing
+  const { ignition } = item.attributes
+  const speed = Number(item.speed || 0)
+  const lat = Number(item.latitude || 0)
+  const lng = Number(item.longitude || 0)
+  const lastUpdate = item.lastUpdate
+  const isRecent = timeDiffIsLessThan35Hours(lastUpdate)
+  const status = item.status || 'online'
 
-    // 1. Offline status (highest priority)
-    if (status === 'offline') {
-      image = images.blue || imageMap.car.blue
-    }
-    // 2. Inactive (online but old update)
-    else if (!isActive) {
-      image = images.gray
-    }
-    // 3. Overspeed
-    else if (ignition && speed > 60) {
-      image = images.orange
-    }
-    // 4. Stopped (ignition off + low speed)
-    else if (!ignition && speed < 1) {
-      image = images.red
-    }
-    // 5. Running
-    else if (ignition && speed > 2 && speed <= 60) {
-      image = images.green
-    }
-    // 6. Idle
-    else if (ignition && speed <= 2) {
-      image = images.yellow
-    }
+  // 🟦 Blue → Device never installed (lat/lng = 0)
+  if (lat === 0 && lng === 0) {
+    return images.blue || imageMap.car.blue
+  }
+
+  // ⚫ Gray → Device hasn't updated in over 35h
+  if (!isRecent && status === 'offline') {
+    return images.gray
+  }
+
+  // 🔴 Stopped → Ignition off or missing, and speed < 1
+  if ((!ignition || ignition === false) && speed < 1) {
+    return images.red
+  }
+
+  // 🟠 Overspeed
+  if (ignition && speed > 60) {
+    return images.orange
+  }
+
+  // 🟢 Running
+  if (ignition && speed > 2 && speed <= 60) {
+    return images.green
+  }
+
+  // 🟡 Idle
+  if (ignition && speed <= 2) {
+    return images.yellow
   }
 
   return image

@@ -134,34 +134,37 @@ const useGetVehicleIcon = (vehicle, cat) => {
   const category = getCategory(cat?.toLowerCase())
   const selectedCategory = mapIcons[category] || mapIcons['default']
 
-  // Handle missing vehicle or attributes
   if (!vehicle || !vehicle.attributes) {
     const iconUrl = selectedCategory?.gray || mapIcons.default.gray
     return createDivIcon(iconUrl, 0)
   }
 
   const ignition = vehicle.attributes.ignition
-  const speed = vehicle.speed || 0
-  const course = vehicle.course || 0
-  const isActive = timeDiffIsLessThan35Hours(vehicle.lastUpdate)
+  const speed = Number(vehicle.speed || 0)
+  const course = Number(vehicle.course || 0)
+  const lat = Number(vehicle.latitude || 0)
+  const lng = Number(vehicle.longitude || 0)
+  const lastUpdate = vehicle.lastUpdate || ''
+  const isRecent = timeDiffIsLessThan35Hours(lastUpdate)
+  const status = vehicle.status || 'online'
 
   let iconUrl
 
-  // 🆕 New Vehicle - status offline
-  if (vehicle.status === 'offline') {
+  // 🔵 New/uninstalled → lat/lng is 0
+  if (lat === 0 && lng === 0) {
     iconUrl = selectedCategory?.blue || mapIcons.default.blue
   }
-  // ❌ Inactive - old update but status still online
-  else if (!isActive && vehicle.status === 'online') {
+  // ⚫ Inactive → offline and last update > 35h
+  else if (status === 'offline' && !isRecent) {
     iconUrl = selectedCategory?.gray || mapIcons.default.gray
+  }
+  // 🔴 Stopped → ignition off or false, speed < 1
+  else if ((!ignition || ignition === false) && speed < 1) {
+    iconUrl = selectedCategory?.red || mapIcons.default.red
   }
   // 🟠 Overspeed
   else if (ignition && speed > 60) {
     iconUrl = selectedCategory?.orange || mapIcons.default.orange
-  }
-  // 🔴 Stopped (active, ignition off, speed <1)
-  else if (isActive && !ignition && speed < 1) {
-    iconUrl = selectedCategory?.red || mapIcons.default.red
   }
   // 🟢 Running
   else if (ignition && speed > 2 && speed <= 60) {
@@ -171,7 +174,7 @@ const useGetVehicleIcon = (vehicle, cat) => {
   else if (ignition && speed <= 2) {
     iconUrl = selectedCategory?.yellow || mapIcons.default.yellow
   }
-  // Default to gray if none of the above
+  // Default fallback
   else {
     iconUrl = selectedCategory?.gray || mapIcons.default.gray
   }
