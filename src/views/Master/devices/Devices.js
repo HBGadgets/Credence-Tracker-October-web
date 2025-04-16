@@ -795,7 +795,6 @@ const Devices = () => {
     }
   }
 
-
   // below is when we deal with custom date
   const handleCheckPassword = () => {
     if (extendedPassword === myPassword) {
@@ -1269,14 +1268,14 @@ const Devices = () => {
         return isNaN(date)
           ? '--'
           : date
-            .toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-            .replace(',', '')
+              .toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              .replace(',', '')
       }
 
       const formatCoordinates = (coords) => {
@@ -1386,8 +1385,18 @@ const Devices = () => {
     }
   }
 
-  if (error) return <Page404 />
+  const handleClearFilter = () => {
+    setFilteredData(data) // Reset to show all data
+    setSearchQuery('') // Clear the search query field
+    setCurrentPage(0) // Reset pagination
+    setSelectedUser('') // Clear the selected user
+    setSelectedUsername('')
+    setSelectedGroup('') // Clear the selected group
+    setSelectedGroupName('')
+    setFormData('')
+  }
 
+  if (error) return <Page404 />
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">
@@ -1421,31 +1430,28 @@ const Devices = () => {
                     value={
                       selectedUser
                         ? {
-                          value: selectedUser,
-                          label: users?.find((user) => user._id === selectedUser)?.username || '',
-                        }
+                            value: selectedUser,
+                            label: users?.find((user) => user._id === selectedUser)?.username || '',
+                          }
                         : null
                     }
                     onChange={(selectedOption) => {
-                      const selectedUserId = selectedOption?.value || null;
+                      const selectedUserId = selectedOption?.value || null
                       const selectedUsernameValue =
                         selectedOption?.label ||
                         users?.find((user) => user._id === selectedUserId)?.username ||
-                        '';
+                        ''
 
                       // Set selected user
-                      setSelectedUser(selectedUserId);
-                      setSelectedUsername(selectedUsernameValue);
+                      setSelectedUser(selectedUserId)
+                      setSelectedUsername(selectedUsernameValue)
 
                       // Reset selected group when user changes
-                      setSelectedGroup(null);
-                      setSelectedGroupName('');
-
-                      console.log('Selected User ID:', selectedUserId);
-                      console.log('Selected Username:', selectedUsernameValue);
-                      console.log('Group Reset: Selected Group Cleared');
+                      setSelectedGroup(null)
+                      setSelectedGroupName('')
                     }}
                     isLoading={fillLoading}
+                    isClearable
                   />
 
                   <Sselect
@@ -1462,25 +1468,34 @@ const Devices = () => {
                     value={
                       selectedGroup
                         ? {
-                          value: selectedGroup,
-                          label: groups.find((group) => group._id === selectedGroup)?.name,
-                        }
+                            value: selectedGroup,
+                            label: groups.find((group) => group._id === selectedGroup)?.name,
+                          }
                         : null
                     }
                     onChange={(selectedOption) => {
-                      const selectedGroupId = selectedOption?.value || null;
-                      const selectedGroupNameValue =
-                        selectedOption?.label ||
-                        groups.find((group) => group._id === selectedGroupId)?.name ||
-                        '';
+                      if (selectedOption) {
+                        const selectedGroupId = selectedOption.value
+                        const selectedGroupNameValue =
+                          selectedOption.label ||
+                          groups.find((group) => group._id === selectedGroupId)?.name ||
+                          ''
 
-                      setSelectedGroup(selectedGroupId);
-                      setSelectedGroupName(selectedGroupNameValue);
+                        setSelectedGroup(selectedGroupId)
+                        setSelectedGroupName(selectedGroupNameValue)
 
-                      console.log('Selected Group ID:', selectedGroupId);
-                      console.log('Selected Group Name:', selectedGroupNameValue);
+                        console.log('Selected Group ID:', selectedGroupId)
+                        console.log('Selected Group Name:', selectedGroupNameValue)
+                      } else {
+                        // Handle clear
+                        setSelectedGroup(null)
+                        setSelectedGroupName('')
+
+                        console.log('Group selection cleared')
+                      }
                     }}
                     isLoading={fillLoading}
+                    isClearable
                   />
 
                   <Selector
@@ -1532,6 +1547,14 @@ const Devices = () => {
                     </div>
                   </div>
 
+                  <button
+                    className="btn text-white"
+                    style={{ backgroundColor: '#0a2d63' }}
+                    onClick={handleClearFilter}
+                  >
+                    Clear Filter
+                  </button>
+
                   {decodedToken.superadmin && (
                     <button
                       onClick={handleOpen}
@@ -1550,9 +1573,6 @@ const Devices = () => {
                 height: 'auto', // Set the desired height
                 overflowX: 'auto', // Enable horizontal scrollbar
                 overflowY: 'auto', // Enable vertical scrollbar if needed
-                // marginBottom: '10px',
-                // borderRadius: '10px',
-                // border: '1px solid black',
               }}
             >
               <CCardBody>
@@ -1755,8 +1775,6 @@ const Devices = () => {
 
       <div className="d-flex justify-content-center align-items-center">
         <div className="d-flex">
-          {/* Pagination */}
-          {/* <div className="d-flex justify-content-between align-items-center mb-3"> */}
           {/* Pagination */}
           <div className="me-3">
             <ReactPaginate
