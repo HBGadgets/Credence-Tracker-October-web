@@ -67,7 +67,12 @@ function applyFilter(vehicles, activeFilter) {
       })
     }
     case 'new': {
-      return vehicles.filter((vehicle) => vehicle.status === 'offline')
+      return vehicles.filter(
+        (vehicle) =>
+          vehicle.status === 'offline' &&
+          Number(vehicle.latitude) === 0 &&
+          Number(vehicle.longitude) === 0,
+      )
     }
     case 'category':
       return vehicles.filter(
