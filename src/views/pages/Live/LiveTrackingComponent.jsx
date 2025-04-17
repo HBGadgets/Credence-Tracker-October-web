@@ -112,14 +112,6 @@ const LiveTrackingMap = ({ token }) => {
     }
   }, [position])
 
-  useEffect(() => {
-    if (tokenExpired) {
-      alert('Your session has expired.')
-      // Optionally redirect or show login UI
-      window.location.href = '/login'
-    }
-  }, [tokenExpired])
-
   if (!position || !animatedPosition) return <LoaderComponent tokenExpired={tokenExpired} /> // Loading state
 
   return (
