@@ -148,6 +148,7 @@ const SearchStatus = ({
           }}
           isLoading={loading} // Optionally show a loading spinner
           placeholder="Choose a user..."
+          isClearable
         />
       </CCol>
       <CCol md={2}>
@@ -174,6 +175,7 @@ const SearchStatus = ({
           }}
           isLoading={loading} // Optionally show a loading spinner
           placeholder="Choose a group..."
+          isClearable
         />
 
         <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
@@ -185,6 +187,7 @@ const SearchStatus = ({
           required
           value={formData.Devices}
           onChange={(e) => handleInputChange('Devices', e.target.value)}
+          isClearable
         >
           <option value="">Choose a Vehicles...</option>
           {loading ? (
@@ -204,21 +207,7 @@ const SearchStatus = ({
       </CCol>
       <CCol md={2}>
         <CFormLabel htmlFor="periods">Period</CFormLabel>
-        {/* <CFormSelect
-          id="periods"
-          required
-          value={formData.Periods}
-          onChange={(e) => handlePeriodChange(e.target.value)}
-        >
-          <option value="" disabled>Choose a period...</option>
-          <option value="Today">Today</option>
-          <option value="Yesterday">Yesterday</option>
-          <option value="This Week">This Week</option>
-          <option value="Previous Week">Previous Week</option>
-          <option value="This Month">This Month</option>
-          <option value="Previous Month">Previous Month</option>
-          <option value="Custom">Custom</option>
-        </CFormSelect> */}
+
         <Select
           id="periods"
           options={[
@@ -234,6 +223,7 @@ const SearchStatus = ({
           value={formData.Periods ? { value: formData.Periods, label: formData.Periods } : null}
           onChange={(selectedOption) => handlePeriodChange(selectedOption.value)}
           placeholder="Choose a period..." // Displayed when no value is selected
+          isClearable
         />
 
         <CFormFeedback invalid>Please select a valid period.</CFormFeedback>
@@ -264,30 +254,8 @@ const SearchStatus = ({
               )
             }
           }}
+          isClearable
         />
-        {/* <Select
-  id="columns"
-  options={[
-    { value: 'all', label: 'All Columns' }, // Add "All Columns" option
-    ...columns.map((column) => ({ value: column, label: column })),
-  ]}
-  value={
-    formData.Columns.length === 1 && formData.Columns[0] === 'all'
-      ? { value: 'all', label: 'All Columns' } // Show "All Columns" if selected
-      : formData.Columns.length === 1
-      ? { value: formData.Columns[0], label: formData.Columns[0] }
-      : null
-  }
-  onChange={(selectedOption) => {
-    if (selectedOption.value === 'all') {
-      // If "All Columns" is selected, set formData.Columns to 'all'
-      handleInputChange('Columns', ['all']);
-    } else {
-      // Otherwise, set formData.Columns to the selected column
-      handleInputChange('Columns', [selectedOption.value]);
-    }
-  }}
-/> */}
 
         <CFormFeedback invalid>Please select at least one column.</CFormFeedback>
       </CCol>
@@ -358,57 +326,55 @@ const ShowStatus = ({
   // Function to get address based on latitude and longitude using Nominatim API
   const getAddress = async (latitude, longitude) => {
     try {
-      const apiKey = 'CWVeoDxzhkO07kO693u0'; // Replace with your actual MapTiler API key
+      const apiKey = 'CWVeoDxzhkO07kO693u0' // Replace with your actual MapTiler API key
       const response = await axios.get(
-        `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`
-      );
+        `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`,
+      )
 
       if (response.data?.features?.length > 0) {
-        const address = response.data.features[0].place_name;
-        return address;
+        const address = response.data.features[0].place_name
+        return address
       } else {
-        return 'Address not available';
+        return 'Address not available'
       }
     } catch (error) {
-      console.error('Error:', error.message);
-      return 'Address not available';
+      console.error('Error:', error.message)
+      return 'Address not available'
     }
-  };
+  }
 
   useEffect(() => {
     const fetchAddresses = async () => {
       const promises = apiData.data.map(async (item, index) => {
         const [startLat, startLon] = item.startLocation
           ? item.startLocation.split(',').map((coord) => coord.trim())
-          : [null, null];
+          : [null, null]
 
         const [endLat, endLon] = item.endLocation
           ? item.endLocation.split(',').map((coord) => coord.trim())
-          : [null, null];
+          : [null, null]
 
-        const startAddress = startLat && startLon
-          ? await getAddress(startLat, startLon)
-          : 'Invalid start location';
+        const startAddress =
+          startLat && startLon ? await getAddress(startLat, startLon) : 'Invalid start location'
 
-        const endAddress = endLat && endLon
-          ? await getAddress(endLat, endLon)
-          : 'Invalid end location';
+        const endAddress =
+          endLat && endLon ? await getAddress(endLat, endLon) : 'Invalid end location'
 
         return {
           id: index, // Unique ID based on index
           startAddress,
           endAddress,
-        };
-      });
+        }
+      })
 
-      const results = await Promise.all(promises);
-      setAddressData(results);
-    };
+      const results = await Promise.all(promises)
+      setAddressData(results)
+    }
 
     if (apiData?.data?.length > 0) {
-      fetchAddresses();
+      fetchAddresses()
     }
-  }, [apiData]);
+  }, [apiData])
 
   if (newAddressData) {
     console.log(newAddressData)
@@ -604,9 +570,10 @@ const ShowStatus = ({
           `Group: ${selectedGroupName || 'N/A'}`,
         ])
         worksheet.addRow([
-          `Date Range: ${selectedFromDate && selectedToDate
-            ? `${selectedFromDate} - ${selectedToDate}`
-            : getDateRangeFromPeriod(selectedPeriod)
+          `Date Range: ${
+            selectedFromDate && selectedToDate
+              ? `${selectedFromDate} - ${selectedToDate}`
+              : getDateRangeFromPeriod(selectedPeriod)
           }`,
           `Selected Vehicle: ${selectedDeviceName || '--'}`,
         ])
@@ -834,14 +801,14 @@ const ShowStatus = ({
         return isNaN(date)
           ? '--'
           : date
-            .toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-            .replace(',', '')
+              .toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              .replace(',', '')
       }
 
       const formatCoordinates = (coords) => {
@@ -1196,7 +1163,6 @@ const ShowStatus = ({
                       ) : column === 'Start Address' ? (
                         // Displaying Start Address based on the current row
                         addressData[rowIndex]?.startAddress || 'Fetching...'
-
                       ) : column === 'End Date Time' ? (
                         row.endDateTime ? (
                           new Date(row.endDateTime).toLocaleString('en-GB', {
@@ -1220,14 +1186,14 @@ const ShowStatus = ({
                       ) : column === 'Duration' ? (
                         row.time
                       ) : // : column === 'Average Speed'
-                        //   ? row.averageSpeed
-                        column === 'Start Coordinates' ? (
-                          `${parseFloat(row.startLocation.split(',')[0]).toFixed(5)}, ${parseFloat(row.startLocation.split(',')[1]).toFixed(5)}`
-                        ) : column === 'End Coordinates' ? (
-                          `${parseFloat(row.endLocation.split(',')[0]).toFixed(5)}, ${parseFloat(row.endLocation.split(',')[1]).toFixed(5)}`
-                        ) : (
-                          '--'
-                        )}
+                      //   ? row.averageSpeed
+                      column === 'Start Coordinates' ? (
+                        `${parseFloat(row.startLocation.split(',')[0]).toFixed(5)}, ${parseFloat(row.startLocation.split(',')[1]).toFixed(5)}`
+                      ) : column === 'End Coordinates' ? (
+                        `${parseFloat(row.endLocation.split(',')[0]).toFixed(5)}, ${parseFloat(row.endLocation.split(',')[1]).toFixed(5)}`
+                      ) : (
+                        '--'
+                      )}
                     </CTableDataCell>
                   </>
                 ))}
@@ -1520,8 +1486,8 @@ const Status = () => {
 
     const toDate = formData.ToDate
       ? new Date(
-        new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000,
-      ).toISOString()
+          new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000,
+        ).toISOString()
       : ''
 
     const body = {

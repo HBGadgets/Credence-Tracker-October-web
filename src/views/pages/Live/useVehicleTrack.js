@@ -1,11 +1,11 @@
-/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 
 export const useVehicleTrack = (token) => {
   const [position, setPosition] = useState(null)
-  const [timerCount, setTimerCount] = useState(0) // Timer count state
-  const [showTimer, setShowTimer] = useState(false) // Timer visibility state
+  const [timerCount, setTimerCount] = useState(0)
+  const [showTimer, setShowTimer] = useState(false)
+  const [tokenExpired, setTokenExpired] = useState(false) // <-- new state
 
   useEffect(() => {
     const socket = io(`${import.meta.env.VITE_API_URL}`, {
@@ -21,16 +21,12 @@ export const useVehicleTrack = (token) => {
       setShowTimer(true)
     })
 
-    // socket.on('testing live track', (data) => {
-    //   console.log('Testing Live Track Received vehicle data:', data)
-    //   setPosition(data)
-    //   setTimerCount(5)
-    //   setShowTimer(true)
-    // })
-
-    socket.on('connect_error', (err) => {
+    socket.on('error', (err) => {
       console.error('Socket connection error:', err)
-      setLoading(false)
+      // Check if the error message contains "Invalid token" or similar conditions
+      if (err?.message?.toLowerCase().includes('invalid token')) {
+        setTokenExpired(true)
+      }
       setShowTimer(false)
     })
 
@@ -46,12 +42,12 @@ export const useVehicleTrack = (token) => {
         setTimerCount((prev) => prev - 1)
       }, 1000)
     } else if (timerCount === 0) {
-      setShowTimer(false) // Hide the timer when it reaches 0
+      setShowTimer(false)
     }
     return () => {
       if (interval) clearInterval(interval)
     }
   }, [showTimer, timerCount])
 
-  return { position, timerCount, showTimer }
+  return { position, timerCount, showTimer, tokenExpired }
 }

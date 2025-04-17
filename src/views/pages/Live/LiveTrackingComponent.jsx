@@ -23,7 +23,7 @@ import { useLocation } from 'react-router-dom'
 const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t) // Easing function for smooth animation
 
 const LiveTrackingMap = ({ token }) => {
-  const { position, timerCount, showTimer } = useVehicleTrack(token)
+  const { position, timerCount, showTimer, tokenExpired } = useVehicleTrack(token)
   const icon = useGetVehicleIcon(position, position?.category)
   const [path, setPath] = useState([])
   const previousPosition = useRef(null)
@@ -112,7 +112,7 @@ const LiveTrackingMap = ({ token }) => {
     }
   }, [position])
 
-  if (!position || !animatedPosition) return <LoaderComponent /> // Loading state
+  if (!position || !animatedPosition) return <LoaderComponent tokenExpired={tokenExpired} /> // Loading state
 
   return (
     <>

@@ -63,7 +63,10 @@ function applyFilter(vehicles, activeFilter) {
       return vehicles.filter((vehicle) => {
         const lastUpdate = new Date(vehicle.lastUpdate)
         const timeDifference = (currentTime - lastUpdate) / (1000 * 60 * 60)
-        return timeDifference > 35 && vehicle.status === 'online'
+        const lat = Number(vehicle.latitude || 0)
+        const lng = Number(vehicle.longitude || 0)
+
+        return timeDifference > 35 && !(lat === 0 && lng === 0)
       })
     }
     case 'new': {

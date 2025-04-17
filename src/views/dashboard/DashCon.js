@@ -194,9 +194,14 @@ const Dashboard = () => {
   )
   const inactiveVehiclesCount = useSelector(
     (state) =>
-      state.liveFeatures.vehicles.filter(
-        (vehicle) => !timeDiffIsLessThan35Hours(vehicle.lastUpdate) && vehicle.status === 'online',
-      ).length,
+      state.liveFeatures.vehicles.filter((vehicle) => {
+        const lastUpdate = new Date(vehicle.lastUpdate)
+        const timeDifference = (new Date() - lastUpdate) / (1000 * 60 * 60)
+        const lat = Number(vehicle.latitude || 0)
+        const lng = Number(vehicle.longitude || 0)
+
+        return timeDifference > 35 && !(lat === 0 && lng === 0)
+      }).length,
   )
 
   const allVehiclesCount = useSelector((state) => state.liveFeatures.vehicles.length)
@@ -1380,18 +1385,23 @@ const Dashboard = () => {
                                       className="text-center last-update table-cell"
                                     >
                                       {(() => {
-                                        // const device = salesman.find((device) => device.id === item.deviceId)
                                         if (item && item.lastUpdate) {
-                                          const date = dayjs(item.lastUpdate).format('YYYY/MM/DD') // Format date
-                                          const time = dayjs(item.lastUpdate).format('HH:mm:ss') // Format time
+                                          const date = dayjs(item.lastUpdate).format('YYYY/MM/DD')
+                                          const time = dayjs(item.lastUpdate).format('HH:mm:ss')
+
+                                          // Check for placeholder or "uninstalled" timestamp
+                                          if (date === '2024/01/01') {
+                                            return <div className="upperdata ld">-----</div>
+                                          }
+
                                           return (
                                             <div className="upperdata ld">
-                                              <div>{date}</div> {/* Date on one line */}
-                                              <div>{time}</div> {/* Time on the next line */}
+                                              <div>{date}</div>
+                                              <div>{time}</div>
                                             </div>
                                           )
                                         }
-                                        return <div>N/A</div>
+                                        return <div>-----</div>
                                       })()}
                                     </CTableDataCell>
                                   )}

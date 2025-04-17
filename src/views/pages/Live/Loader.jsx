@@ -1,9 +1,19 @@
 /* eslint-disable prettier/prettier */
-import React from 'react'
+import React, { useEffect } from 'react'
 import Loader from '../../../components/Loader2/Loader2'
 import logo from '../../../assets/brand/logo.png'
 
-export const LoaderComponent = () => {
+export const LoaderComponent = ({ tokenExpired }) => {
+  useEffect(() => {
+    if (tokenExpired) {
+      alert('Your session has expired.')
+      // Optionally redirect or show login UI
+      window.location.href = '/login'
+    }
+  }, [tokenExpired])
+
+  console.log('token expired', tokenExpired)
+
   return (
     <>
       <Loader />

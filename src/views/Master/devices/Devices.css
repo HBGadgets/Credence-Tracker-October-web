@@ -12,7 +12,7 @@
 }
 
 .particularFilter {
-  min-width: 14rem !important;
+  max-width: 14rem !important;
 }
 
 .refresh {

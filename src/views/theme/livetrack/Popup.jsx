@@ -84,7 +84,7 @@ function PopupContent({ individualSalesMan, address, handleClickOnTrack }) {
             {(() => {
               const sp = individualSalesMan?.speed || 0
               const ig = individualSalesMan?.attributes?.ignition
-              if (sp < 1 && ig === false) return 'Stopped'
+              if (ig === false) return 'Stopped'
               if (sp < 2 && ig === true) return 'Idle'
               if (sp > 2 && sp < 60 && ig === true) return 'Running'
               if (sp > 60 && ig === true) return 'Over Speed'
