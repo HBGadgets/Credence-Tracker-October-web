@@ -98,11 +98,11 @@ const processStopData = (stopData) => {
     // Calculate distance from the previous stop in kilometers
     const distanceFromPrevious = previousStop
       ? calculateDistance(
-        stop.latitude,
-        stop.longitude,
-        previousStop.latitude,
-        previousStop.longitude,
-      ) / 1000 // Convert meters to kilometers
+          stop.latitude,
+          stop.longitude,
+          previousStop.latitude,
+          previousStop.longitude,
+        ) / 1000 // Convert meters to kilometers
       : 0
 
     const obj = {
@@ -393,7 +393,7 @@ const SlidingSideMenu = ({
           <div style={{ padding: '8px', marginRight: '10px', zIndex: 9999 }}>
             {stopPage ? (
               <>
-                <div className='table-responsive'>
+                <div className="table-responsive">
                   {/* <hr className="divider" /> */}
 
                   <div className="summary-header">

@@ -76,6 +76,7 @@ const AddDevice1 = ({
   const [models, setModels] = useState([])
   const [categories, setCategories] = useState([])
   const [customDateMode, setCustomDateMode] = useState(false)
+  const [keyFeature, setKeyFeature] = useState()
 
   //const token = Cookies.get('authToken')
   //const decodedToken = jwtDecode(token)
@@ -236,6 +237,7 @@ const AddDevice1 = ({
       average: formData.average || '',
       geofences: Array.isArray(formData.geofences) ? formData.geofences : [],
       model: formData.model || '',
+      keyFeature: formData.keyFeature || '',
       category: formData.category || '',
       installationdate: formData.installationdate || '',
       expirationdate: formData.expirationdate || '',
@@ -290,6 +292,14 @@ const AddDevice1 = ({
       console.error('Error during POST request:', error)
       toast.error('Unable to create record')
     }
+  }
+
+  const handleKeyFeatureChange = (e) => {
+    setKeyFeature(e.target.value)
+    setFormData({
+      ...formData,
+      keyFeature: e.target.value === 'true',
+    })
   }
 
   return (
@@ -364,7 +374,7 @@ const AddDevice1 = ({
                         name: col.accessor,
                         value: newValue.map((user) => user._id),
                       },
-                    });
+                    })
                   }}
                   ListboxProps={{
                     sx: {
@@ -414,103 +424,7 @@ const AddDevice1 = ({
                   isOptionEqualToValue={(option, value) => option._id === value._id}
                 />
               </FormControl>
-
             )
-            //               return(
-            //                 <FormControl fullWidth sx={{ marginBottom: 2 }} key={col.accessor}>
-            //   <Autocomplete
-            //     disableCloseOnSelect
-            //     multiple
-            //     id={`autocomplete-${col.accessor}`}
-            //     options={users}
-            //     getOptionLabel={(option) => option.username || ''}
-            //     value={users.filter((user) => formData[col.accessor]?.includes(user._id)) || []}
-            //     onChange={(event, newValue) => {
-            //       handleInputChange({
-            //         target: {
-            //           name: col.accessor,
-            //           value: newValue.map((user) => user._id),
-            //         },
-            //       });
-            //     }}
-            //     ListboxComponent={CustomListbox}
-            //     renderOption={(props, option, { selected }) => (
-            //       <li {...props}>
-            //         <Checkbox
-            //           icon={<CheckBoxOutlineBlank />}
-            //           checkedIcon={<CheckBox />}
-            //           style={{ marginRight: 8 }}
-            //           checked={selected}
-            //         />
-            //         {option.username}
-            //       </li>
-            //     )}
-            //     isOptionEqualToValue={(option, value) => option._id === value._id}
-            //     renderInput={(params) => (
-            //       <TextField
-            //         {...params}
-            //         label={col.Header}
-            //         placeholder="Search users..."
-            //         variant="outlined"
-            //         InputProps={{
-            //           ...params.InputProps,
-            //           startAdornment: (
-            //             <>
-            //               <InputAdornment position="start">
-            //                 <FaUserAlt
-            //                   style={{
-            //                     fontSize: '1rem',
-            //                     color: 'rgb(51 51 51 / 73%)',
-            //                     marginRight: '0.5rem',
-            //                     marginLeft: '0.5rem',
-            //                   }}
-            //                 />
-            //               </InputAdornment>
-            //               {params.InputProps.startAdornment}
-            //             </>
-            //           ),
-            //         }}
-            //       />
-            //     )}
-            //     renderTags={(selected, getTagProps) => {
-            //       const displayedTags = selected.slice(0, 1); // Display the first selected option
-            //       const extraCount = selected.length - 1; // Count of additional selections
-
-            //       return (
-            //         <>
-            //           {displayedTags.map((option, index) => (
-            //             <span
-            //               key={option._id}
-            //               {...getTagProps({ index })}
-            //               style={{
-            //                 backgroundColor: '#e0e0e0',
-            //                 borderRadius: '4px',
-            //                 margin: '2px',
-            //                 display: 'inline-block',
-            //               }}
-            //             >
-            //               {option.username}
-            //             </span>
-            //           ))}
-            //           {extraCount > 0 && (
-            //             <span
-            //               style={{
-            //                 backgroundColor: '#e0e0e0',
-            //                 borderRadius: '4px',
-            //                 margin: '2px',
-            //                 display: 'inline-block',
-            //               }}
-            //             >
-            //               +{extraCount}
-            //             </span>
-            //           )}
-            //         </>
-            //       );
-            //     }}
-            //   />
-            // </FormControl>
-
-            //               )
           } else if (col.accessor === 'groups') {
             return (
               <FormControl fullWidth sx={{ marginBottom: 2 }} key={col.accessor}>
@@ -529,7 +443,7 @@ const AddDevice1 = ({
                         name: col.accessor,
                         value: newValue.map((group) => group._id),
                       },
-                    });
+                    })
                   }}
                   ListboxProps={{
                     sx: {
@@ -579,106 +493,6 @@ const AddDevice1 = ({
                   isOptionEqualToValue={(option, value) => option._id === value._id}
                 />
               </FormControl>
-
-
-              // <FormControl fullWidth sx={{ marginBottom: 2,  }} key={col.accessor}>
-              //   <Autocomplete
-              //     disableCloseOnSelect
-              //     multiple
-              //     id={`autocomplete-${col.accessor}`}
-              //     options={groups}
-              //     getOptionLabel={(option) => option.name || ''}
-              //     value={
-              //       groups.filter((group) => formData[col.accessor]?.includes(group._id)) || []
-              //     }
-
-              //     onChange={(event, newValue) => {
-              //       handleInputChange({
-              //         target: {
-              //           name: col.accessor,
-              //           value: newValue.map((group) => group._id),
-              //         },
-              //       });
-              //     }}
-              //     ListboxComponent={CustomListbox}
-              //     renderOption={(props, option, { selected }) => (
-              //       <li {...props}>
-              //         <Checkbox
-              //           icon={<CheckBoxOutlineBlank />}
-              //           checkedIcon={<CheckBox />}
-              //           style={{ marginRight: 8 }}
-              //           checked={selected}
-              //         />
-              //         {option.name}
-              //       </li>
-              //     )}
-              //     isOptionEqualToValue={(option, value) => option._id === value._id}
-              //     renderInput={(params) => (
-              //       <TextField
-              //         {...params}
-              //         label={col.Header}
-              //         placeholder="Search group..."
-              //         variant="outlined"
-              //         InputProps={{
-              //           ...params.InputProps,
-              //           startAdornment: (
-              //             <>
-              //               <InputAdornment position="start">
-              //                 <FaUserGroup
-              //                   style={{
-              //                     fontSize: '1.3rem',
-              //                     color: 'rgb(51 51 51 / 73%)',
-              //                     marginRight: '0.5rem',
-              //                     marginLeft: '0.5rem',
-              //                   }}
-              //                 />
-              //               </InputAdornment>
-              //               {params.InputProps.startAdornment}
-              //             </>
-              //           )
-              //         }}
-
-              //       />
-              //     )}
-              //     renderTags={(selected, getTagProps) => {
-              //       const displayedTags = selected.slice(0, 1); // Show only the first two tags
-              //       const extraCount = selected.length - 1; // Count of remaining tags
-
-              //       return (
-              //         <>
-              //           {displayedTags.map((option, index) => (
-              //             <span
-              //               key={option._id}
-              //               {...getTagProps({ index })}
-              //               style={{
-              //                 backgroundColor: '#e0e0e0',
-              //                 borderRadius: '4px',
-              //                 //padding: '2px 8px',
-              //                 margin: '2px',
-              //                 display: 'inline-block',
-              //               }}
-              //             >
-              //               {option.name}
-              //             </span>
-              //           ))}
-              //           {extraCount > 0 && (
-              //             <span
-              //               style={{
-              //                 backgroundColor: '#e0e0e0',
-              //                 borderRadius: '4px',
-              //                 //padding: '2px 8px',
-              //                 margin: '2px',
-              //                 display: 'inline-block',
-              //               }}
-              //             >
-              //               +{extraCount}
-              //             </span>
-              //           )}
-              //         </>
-              //       );
-              //     }}
-              //   />
-              // </FormControl>
             )
           } else if (col.accessor === 'Driver') {
             return (
@@ -952,48 +766,22 @@ const AddDevice1 = ({
               </>
             )
           } else if (col.accessor === 'expirationdate') {
-            // return (
-            //   <FormControl fullWidth sx={{ marginBottom: 2 }} key={col.accessor}>
-            //     <InputLabel>Expiration Plans</InputLabel>
-            //     <Select
-            //       onChange={(e) => {
-            //         handleYearSelection(parseInt(e.target.value))
-            //         setShowExpirationDropdown(false)
-            //       }}
-            //       label="Expiration Options"
-            //       startAdornment={
-            //         <InputAdornment position="start">
-            //           <RiPassExpiredFill style={{ fontSize: '1.3rem', color: 'rgb(51 51 51 / 73%)' }} />
-            //         </InputAdornment>
-            //       }
-            //       sx={{
-            //         display: 'flex',
-            //         alignItems: 'center',
-            //       }}
-            //     >
-            //       <MenuItem value={1}>1 Year</MenuItem>
-            //       <MenuItem value={2}>2 Years</MenuItem>
-            //       <MenuItem value={3}>3 Years</MenuItem>
-            //     </Select>
-            //   </FormControl>
-
-            // )
             return (
               <>
                 <FormControl fullWidth sx={{ marginBottom: 2 }} key={col.accessor}>
                   <InputLabel>Expiration Plans</InputLabel>
                   <Select
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value
 
                       // Handle custom logic for the custom date option
                       if (value === 'custom') {
-                        setShowExpirationDropdown(false); // Hide dropdown
-                        setCustomDateMode(true); // Trigger custom date input mode
+                        setShowExpirationDropdown(false) // Hide dropdown
+                        setCustomDateMode(true) // Trigger custom date input mode
                       } else {
-                        handleYearSelection(parseInt(value));
-                        setShowExpirationDropdown(false); // Reset dropdown state
-                        setCustomDateMode(false); // Reset custom date mode
+                        handleYearSelection(parseInt(value))
+                        setShowExpirationDropdown(false) // Reset dropdown state
+                        setCustomDateMode(false) // Reset custom date mode
                       }
                     }}
                     label="Expiration Options"
@@ -1046,17 +834,36 @@ const AddDevice1 = ({
                         shrink: true,
                       }}
                       onChange={(e) => {
-                        const selectedDate = e.target.value;
+                        const selectedDate = e.target.value
                         setFormData({
                           ...formData,
                           expirationdate: selectedDate, // Directly set expiration date
-                        });
+                        })
                       }}
                     />
                   </FormControl>
                 )}
-
               </>
+            )
+          }
+          return null
+        })}
+
+        {columns.map((col) => {
+          if (col.accessor === 'keyFeature') {
+            return (
+              <FormControl fullWidth sx={{ marginBottom: 2 }} key={col.accessor}>
+                <InputLabel>Key Feature</InputLabel>
+                <Select
+                  label="Key Feature"
+                  name={col.accessor}
+                  value={formData[col.accessor] || ''}
+                  onChange={handleInputChange}
+                >
+                  <MenuItem value="true">True</MenuItem>
+                  <MenuItem value="false">False</MenuItem>
+                </Select>
+              </FormControl>
             )
           }
           return null

@@ -13,12 +13,11 @@ import {
   Typography,
   IconButton,
   Modal,
-  InputAdornment
+  InputAdornment,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { AiOutlinePlus } from 'react-icons/ai'
-import { MdOutlineOnDeviceTraining } from "react-icons/md";
-
+import { MdOutlineOnDeviceTraining } from 'react-icons/md'
 
 const EditDeviceModal = ({
   editModalOpen,
@@ -43,10 +42,9 @@ const EditDeviceModal = ({
   setShowExpirationDropdown,
   customExtendDate,
   setCustomExtendDate,
-  setExtendedPasswordModel
+  setExtendedPasswordModel,
 }) => {
-
-  const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
+  const [showCustomDatePicker, setShowCustomDatePicker] = useState(false)
   return (
     <Modal open={editModalOpen} onClose={handleModalClose}>
       <Box
@@ -71,7 +69,9 @@ const EditDeviceModal = ({
         </div>
 
         {/* Step-by-step form with progress indicator */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'auto auto auto', gridGap: '1rem 1.5rem' }}>
+        <div
+          style={{ display: 'grid', gridTemplateColumns: 'auto auto auto', gridGap: '1rem 1.5rem' }}
+        >
           {/* <Stepper activeStep={currentStep} className="mb-4" alternativeLabel>
             {steps.map((label) => (
               <Step key={label}>
@@ -105,7 +105,8 @@ const EditDeviceModal = ({
                 )
               }
               return null
-            })}
+            })
+          }
 
           {/* Step 2: Assign Device */}
           {
@@ -150,7 +151,6 @@ const EditDeviceModal = ({
                       ))}
                     </Select>
                   </FormControl>
-
                 )
               } else if (col.accessor === 'groups') {
                 return (
@@ -352,7 +352,8 @@ const EditDeviceModal = ({
                 )
               }
               return null
-            })}
+            })
+          }
 
           {/* Step 3: Installation and Expiration Dates */}
           {
@@ -360,7 +361,7 @@ const EditDeviceModal = ({
             columns.map((col) => {
               if (col.accessor === 'installationdate') {
                 return (
-                  <div >
+                  <div>
                     {/* <label>Installation date: </label> */}
                     <TextField
                       key={col.accessor}
@@ -375,7 +376,7 @@ const EditDeviceModal = ({
                 )
               } else if (col.accessor === 'expirationdate') {
                 return (
-                  <div >
+                  <div>
                     <TextField
                       key={col.accessor}
                       name={col.accessor}
@@ -389,21 +390,19 @@ const EditDeviceModal = ({
                 )
               } else if (col.accessor === 'extenddate') {
                 return (
-
-
-                  <FormControl fullWidth >
+                  <FormControl fullWidth>
                     <InputLabel id="extend-plan-label">Extend Plan</InputLabel>
                     <Select
                       labelId="extend-plan-label"
                       onChange={(e) => {
-                        const value = e.target.value;
+                        const value = e.target.value
                         if (value === 'custom') {
-                          setShowCustomDatePicker(true); // Show the date picker for custom date
-                          setShowExpirationDropdown(false);
+                          setShowCustomDatePicker(true) // Show the date picker for custom date
+                          setShowExpirationDropdown(false)
                         } else {
-                          setShowCustomDatePicker(false);
-                          handleExtendYearSelection(parseInt(value));
-                          setShowExpirationDropdown(false);
+                          setShowCustomDatePicker(false)
+                          handleExtendYearSelection(parseInt(value))
+                          setShowExpirationDropdown(false)
                         }
                       }}
                       fullWidth
@@ -436,12 +435,29 @@ const EditDeviceModal = ({
                     </Select>
                   </FormControl>
                 )
+              } else if (col.accessor === 'keyFeature') {
+                return (
+                  <FormControl fullWidth sx={{ marginBottom: 2 }} key={col.accessor}>
+                    <InputLabel>Key Feature</InputLabel>
+                    <Select
+                      label="Key Feature"
+                      key={col.accessor}
+                      name={col.accessor}
+                      value={formData[col.accessor] || ''}
+                      onChange={handleInputChange}
+                    >
+                      <MenuItem value="true">True</MenuItem>
+                      <MenuItem value="false">False</MenuItem>
+                    </Select>
+                  </FormControl>
+                )
               }
               return null
-            })}
+            })
+          }
 
           {showCustomDatePicker && (
-            <FormControl fullWidth >
+            <FormControl fullWidth>
               {/* <input
                           type="date"
                           fullWidth
@@ -457,40 +473,24 @@ const EditDeviceModal = ({
                   shrink: true, // Ensures the label doesn't overlap with the date input
                 }}
                 value={customExtendDate}
-                onChange={(e) => { setCustomExtendDate(e.target.value); setExtendedPasswordModel(true) }}// Store the selected date temporarily
-
-
+                onChange={(e) => {
+                  setCustomExtendDate(e.target.value)
+                  setExtendedPasswordModel(true)
+                }} // Store the selected date temporarily
                 fullWidth
-
-              >
-
-              </TextField>
+              ></TextField>
             </FormControl>
           )}
-
-          {/* Navigation buttons */}
-          {/* <div className="d-flex justify-content-between" style={{ marginTop: '20px' }}>
-            {currentStep > 0 && (
-              <Button onClick={handleBack} variant="outlined">
-                Back
-              </Button>
-            )}
-            {currentStep < steps.length - 1 ? (
-              <Button onClick={handleNext} variant="contained" color="primary">
-                Next
-              </Button>
-            ) : (
-              <Button onClick={handleEditSubmit} variant="contained" color="primary">
-                Submit
-              </Button>
-            )}
-          </div> */}
-
         </div>
-        <button onClick={handleEditSubmit} variant="contained" className="btn btn-secondary" color="primary" style={{ marginTop: '2rem', width: '6rem', marginLeft: 'auto' }}>
+        <button
+          onClick={handleEditSubmit}
+          variant="contained"
+          className="btn btn-secondary"
+          color="primary"
+          style={{ marginTop: '2rem', width: '6rem', marginLeft: 'auto' }}
+        >
           Submit
         </button>
-
       </Box>
     </Modal>
   )

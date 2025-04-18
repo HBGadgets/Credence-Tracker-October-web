@@ -102,6 +102,7 @@ const Devices = () => {
   const [areas, setAreas] = useState([])
   const [models, setModels] = useState([])
   const [categories, setCategories] = useState([])
+  const [keyFeature, setKeyFeature] = useState()
 
   const token = Cookies.get('authToken')
   const decodedToken = jwtDecode(token)
@@ -165,6 +166,7 @@ const Devices = () => {
     { Header: 'Installation Date', accessor: 'installationdate' }, // Maps to 'installationdate'
     { Header: 'Expiration', accessor: 'expirationdate' }, // Maps to 'expirationdate'
     { Header: 'Extend Date', accessor: 'extenddate' },
+    { Header: 'Key Feature', accessor: 'keyFeature' },
   ]
 
   const style = {
@@ -233,6 +235,7 @@ const Devices = () => {
           expirationDate: newDevice.expirationdate || null,
           extendDate: newDevice.extenddate || null,
           lastUpdate: newDevice.lastUpdate || matchingOldDevice.lastUpdate,
+          keyFeature: newDevice.keyFeature,
         })
 
         // Remove the old device from the map, so it's not added again later
@@ -256,6 +259,7 @@ const Devices = () => {
           expirationDate: newDevice.expirationdate || null,
           extendDate: newDevice.extenddate || null,
           lastUpdate: newDevice.lastUpdate || null,
+          keyFeature: newDevice.keyFeature,
         })
       }
     })
@@ -313,10 +317,6 @@ const Devices = () => {
         console.log('oldApiData: ', oldApiData)
         console.log('newApiData: ', newApiData)
 
-        // const result = compareAndMerge(oldApiData, newApiData)
-        // console.log(' merge data hai : ', result)
-        //setData(result)
-
         const mergedResult = []
         function compareAndMerge(oldApiData, newApiData) {
           // Normalize old and new data to keep the key names consistent
@@ -371,6 +371,7 @@ const Devices = () => {
             groups: device.groups || [],
             users: device.users || [],
             geofences: device.geofences || [],
+            keyFeature: device.keyFeature,
           }))
 
           setData(deviceData)
@@ -457,6 +458,7 @@ const Devices = () => {
       geofences: row.geofences?.map((geo) => geo._id),
       groups: row.groups?.map((group) => group._id),
       users: row.users?.map((user) => user._id),
+      keyFeature: row.keyFeature,
     })
     setEditModalOpen(true)
   }
@@ -503,17 +505,10 @@ const Devices = () => {
         installationdate: formData.installationdate || '',
         expirationdate: formData.expirationdate || '',
         extenddate: formData.extenddate || '',
+        keyFeature: formData.keyFeature,
       }
 
       if (formData.id && formData._id) {
-        // Call both old PUT API and new PUT API
-        // response1 = await axios.put(`${oldPutApi}/${formData.id}`, oldRow, {
-        //   headers: {
-        //     Authorization: `Basic ${token1}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        // })
-
         response2 = await axios.put(`${newPutApi}/${formData._id}`, newRow, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -521,14 +516,6 @@ const Devices = () => {
           },
         })
       } else if (formData.id && !formData._id) {
-        // Call old PUT API and new POST API
-        // response1 = await axios.put(`${oldPutApi}/${formData.id}`, oldRow, {
-        //   headers: {
-        //     Authorization: `Basic ${token1}`,
-        //     'Content-Type': 'application/json',
-        //   },
-        // })
-
         response2 = await axios.post(newPostApi, newRow, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -987,7 +974,6 @@ const Devices = () => {
   }
 
   // Export to Excel
-
   const exportToExcel = async () => {
     try {
       // Validate data before proceeding
@@ -1145,7 +1131,6 @@ const Devices = () => {
   }
 
   // Export to PDF
-
   const exportToPDF = () => {
     try {
       // Validate data before proceeding
