@@ -179,7 +179,10 @@ const IndividualTrack = () => {
     { label: '4 days', value: 5760, icon: '📅' },
     { label: '5 days', value: 7200, icon: '📅' },
     { label: '6 days', value: 8640, icon: '📅' },
-    { label: '7 days', value: 10080, icon: '📅' },
+    { label: '1 Week', value: 10080, icon: '📅' },
+    { label: '1 Month', value: 43800, icon: '📅' },
+    { label: '3 Months', value: 131400, icon: '📅' },
+    { label: '6 Months', value: 262800, icon: '📅' },
   ])
 
   const PlaceType = [

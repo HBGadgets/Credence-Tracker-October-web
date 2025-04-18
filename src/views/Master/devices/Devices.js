@@ -892,6 +892,7 @@ const Devices = () => {
       fetchDevicesAndFilter()
     }
   }, [selectedGroup])
+  console.log('fill devices', fillDevices)
 
   useEffect(() => {
     const fetchDevices = async () => {
@@ -1458,52 +1459,77 @@ const Devices = () => {
                   <Sselect
                     style={{
                       zIndex: '1000',
-                      minWidth: '10rem',
+                      maxWidth: '10rem',
                     }}
                     id="group-select"
-                    placeholder="Select a Group"
-                    options={fillGroups?.map((group) => ({
-                      value: group._id,
-                      label: group.name,
-                    }))}
+                    placeholder="Select Group(s)"
+                    options={[
+                      { value: 'select_all', label: 'Select All' },
+                      ...fillGroups?.map((group) => ({
+                        value: group._id,
+                        label: group.name,
+                      })),
+                    ]}
                     value={
-                      selectedGroup
-                        ? {
-                            value: selectedGroup,
-                            label: groups.find((group) => group._id === selectedGroup)?.name,
-                          }
-                        : null
+                      selectedGroup?.length
+                        ? selectedGroup.map((groupId) => {
+                            const group = groups.find((g) => g._id === groupId)
+                            return {
+                              value: groupId,
+                              label: group?.name || '',
+                            }
+                          })
+                        : []
                     }
-                    onChange={(selectedOption) => {
-                      if (selectedOption) {
-                        const selectedGroupId = selectedOption.value
-                        const selectedGroupNameValue =
-                          selectedOption.label ||
-                          groups.find((group) => group._id === selectedGroupId)?.name ||
-                          ''
-
-                        setSelectedGroup(selectedGroupId)
-                        setSelectedGroupName(selectedGroupNameValue)
-
-                        console.log('Selected Group ID:', selectedGroupId)
-                        console.log('Selected Group Name:', selectedGroupNameValue)
-                      } else {
-                        // Handle clear
-                        setSelectedGroup(null)
+                    onChange={(selectedOptions) => {
+                      if (!selectedOptions || selectedOptions.length === 0) {
+                        setSelectedGroup([])
                         setSelectedGroupName('')
-
                         console.log('Group selection cleared')
+                        return
+                      }
+
+                      const isSelectAllSelected = selectedOptions.some(
+                        (opt) => opt.value === 'select_all',
+                      )
+
+                      if (isSelectAllSelected) {
+                        const allGroupIds = fillGroups.map((group) => group._id)
+                        const allGroupNames = fillGroups.map((group) => group.name).join(', ')
+
+                        setSelectedGroup(allGroupIds)
+                        setSelectedGroupName(allGroupNames)
+
+                        console.log('All Groups Selected')
+                      } else {
+                        const selectedGroupIds = selectedOptions.map((opt) => opt.value)
+                        const selectedGroupNames = selectedOptions
+                          .map((opt) => opt.label)
+                          .join(', ')
+
+                        setSelectedGroup(selectedGroupIds)
+                        setSelectedGroupName(selectedGroupNames)
+
+                        console.log('Selected Group IDs:', selectedGroupIds)
+                        console.log('Selected Group Names:', selectedGroupNames)
                       }
                     }}
                     isLoading={fillLoading}
                     isClearable
+                    isMulti
                   />
 
                   <Selector
                     className="particularFilter"
                     setFilteredData={setFilteredData}
                     filteredData={filteredData}
-                    fillDevices={devices || []} // Ensure devices is always an array
+                    fillDevices={
+                      devices?.filter((device) =>
+                        device.groups?.some(
+                          (groupId) => selectedGroup?.includes(String(groupId)), // ensure match by type
+                        ),
+                      ) || []
+                    }
                     onChange={(selectedDeviceId) => {
                       if (!devices || devices.length === 0) {
                         console.warn('Devices list is empty or undefined')
