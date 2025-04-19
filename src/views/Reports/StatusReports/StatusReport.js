@@ -175,7 +175,6 @@ const SearchStatus = ({
           }}
           isLoading={loading} // Optionally show a loading spinner
           placeholder="Choose a group..."
-          isClearable
         />
 
         <CFormFeedback invalid>Please provide a valid device.</CFormFeedback>
