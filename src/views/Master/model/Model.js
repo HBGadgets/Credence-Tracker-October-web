@@ -52,9 +52,8 @@ import { PiMicrosoftExcelLogo } from 'react-icons/pi'
 import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
 
-import ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
-
+import ExcelJS from 'exceljs'
+import { saveAs } from 'file-saver'
 
 import { jwtDecode } from 'jwt-decode'
 import Page404 from '../../pages/page404/Page404'
@@ -105,7 +104,7 @@ const Model = () => {
       setFilteredData(response.data.models) // Set to response.data.models
       console.log('Fetched Data: ', response.data.models) // Log the fetched data
     } catch (error) {
-      setError(error.message)
+      setError(error.response.data.message)
       console.error('Error fetching data:', error.response ? error.response.data : error.message)
       setFilteredData([]) // Ensure it's set to an array on error
     } finally {
@@ -166,7 +165,6 @@ const Model = () => {
   }
 
   //  #### POST #####
-
   const handleAddSubmit = async (e) => {
     e.preventDefault()
 
@@ -187,12 +185,11 @@ const Model = () => {
     } catch (error) {
       setError(error.message)
       console.error('Error adding category:', error)
-      toast.error("This didn't work.") // Show error alert
+      toast.error(error.response.data.error) // Show error alert
     }
   }
 
   // #### PUT EDIT ####
-
   const handleEditSubmit = async (e) => {
     e.preventDefault()
     if (!currentItemId) return
@@ -221,12 +218,11 @@ const Model = () => {
     } catch (error) {
       setError(error.message)
       console.error('Error updating category:', error)
-      toast.error("This didn't work.") // Show error alert
+      toast.error(error.response.data.error) // Show error alert
     }
   }
 
   // ### DELETE ####
-
   const handleDeleteSelected = async (id) => {
     if (window.confirm('Are you sure you want to delete this record?')) {
       try {
@@ -239,9 +235,9 @@ const Model = () => {
         setFilteredData(filteredData.filter((item) => item._id !== id))
         toast.error('Record deleted successfully')
       } catch (error) {
-        setError(error.message)
+        setError(error.response.data.error)
         console.error('Error deleting record:', error)
-        toast.error('Failed to delete the record')
+        toast.error(error.response.data.error)
       }
     }
   }
@@ -251,7 +247,7 @@ const Model = () => {
     try {
       // Validate data before proceeding
       if (!Array.isArray(sortedData) || sortedData.length === 0) {
-        throw new Error('No data available for PDF export');
+        throw new Error('No data available for PDF export')
       }
 
       // Constants and configuration
@@ -355,14 +351,14 @@ const Model = () => {
         return isNaN(date)
           ? '--'
           : date
-            .toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-            .replace(',', '')
+              .toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              .replace(',', '')
       }
 
       const formatCoordinates = (coords) => {
@@ -372,9 +368,7 @@ const Model = () => {
       }
 
       const addMetadata = () => {
-        const metadata = [
-          { label: 'User:', value: decodedToken.username || 'N/A' },
-        ]
+        const metadata = [{ label: 'User:', value: decodedToken.username || 'N/A' }]
 
         doc.setFontSize(10)
         doc.setFont(CONFIG.fonts.primary, 'bold')
@@ -426,7 +420,7 @@ const Model = () => {
 
       // Generate the table
       doc.autoTable({
-        startY: 55,  // Start below the metadata
+        startY: 55, // Start below the metadata
         head: [tableColumns],
         body: tableRows,
         theme: 'grid',
@@ -447,7 +441,7 @@ const Model = () => {
         },
         columnStyles: {
           0: { cellWidth: 10 },
-          1: { cellWidth: 'auto' },  // Auto-adjust column width
+          1: { cellWidth: 'auto' }, // Auto-adjust column width
         },
         margin: { left: CONFIG.layout.margin, right: CONFIG.layout.margin },
         didDrawPage: (data) => {
@@ -478,7 +472,7 @@ const Model = () => {
     try {
       // Validate data before proceeding
       if (!Array.isArray(filteredData) || filteredData.length === 0) {
-        throw new Error('No data available for Excel export');
+        throw new Error('No data available for Excel export')
       }
 
       // Configuration constants
@@ -501,130 +495,127 @@ const Model = () => {
           name: 'Credence Tracker',
           copyright: `© ${new Date().getFullYear()} Credence Tracker`,
         },
-      };
+      }
 
       // Helper functions
       const formatExcelDate = (dateString) => {
-        if (!dateString) return '--';
-        const date = new Date(dateString);
-        return isNaN(date) ? '--' : date.toLocaleString('en-GB');
-      };
+        if (!dateString) return '--'
+        const date = new Date(dateString)
+        return isNaN(date) ? '--' : date.toLocaleString('en-GB')
+      }
 
       // Initialize workbook and worksheet
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Model Data Report');
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet('Model Data Report')
 
       // Add title and metadata
       const addHeaderSection = () => {
         // Company title
-        const titleRow = worksheet.addRow([CONFIG.company.name]);
-        titleRow.font = { ...CONFIG.styles.titleFont, color: { argb: 'FFFFFFFF' } };
+        const titleRow = worksheet.addRow([CONFIG.company.name])
+        titleRow.font = { ...CONFIG.styles.titleFont, color: { argb: 'FFFFFFFF' } }
         titleRow.fill = {
           type: 'pattern',
           pattern: 'solid',
           fgColor: { argb: CONFIG.styles.primaryColor },
-        };
-        titleRow.alignment = { horizontal: 'center' };
-        worksheet.mergeCells('A1:L1');
+        }
+        titleRow.alignment = { horizontal: 'center' }
+        worksheet.mergeCells('A1:L1')
 
         // Report title
-        const subtitleRow = worksheet.addRow(['Model Data Report']);
+        const subtitleRow = worksheet.addRow(['Model Data Report'])
         subtitleRow.font = {
           ...CONFIG.styles.titleFont,
           size: 14,
           color: { argb: CONFIG.styles.textColor },
-        };
+        }
         subtitleRow.fill = {
           type: 'pattern',
           pattern: 'solid',
           fgColor: { argb: CONFIG.styles.secondaryColor },
-        };
-        subtitleRow.alignment = { horizontal: 'center' };
-        worksheet.mergeCells('A2:L2');
+        }
+        subtitleRow.alignment = { horizontal: 'center' }
+        worksheet.mergeCells('A2:L2')
 
         // Metadata
-        worksheet.addRow([`Username: ${decodedToken.username || 'N/A'}`]);  // Add the username
-        worksheet.addRow([`Generated: ${new Date().toLocaleString()}`]);
-        worksheet.addRow([]); // Spacer
-      };
-
+        worksheet.addRow([`Username: ${decodedToken.username || 'N/A'}`]) // Add the username
+        worksheet.addRow([`Generated: ${new Date().toLocaleString()}`])
+        worksheet.addRow([]) // Spacer
+      }
 
       // Add data table
       const addDataTable = () => {
         // Add column headers
-        const headerRow = worksheet.addRow(CONFIG.columns.map((c) => c.header));
+        const headerRow = worksheet.addRow(CONFIG.columns.map((c) => c.header))
         headerRow.eachCell((cell) => {
-          cell.font = { ...CONFIG.styles.headerFont, color: { argb: CONFIG.styles.textColor } };
+          cell.font = { ...CONFIG.styles.headerFont, color: { argb: CONFIG.styles.textColor } }
           cell.fill = {
             type: 'pattern',
             pattern: 'solid',
             fgColor: { argb: CONFIG.styles.primaryColor },
-          };
-          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          }
+          cell.alignment = { vertical: 'middle', horizontal: 'center' }
           cell.border = {
             top: { style: CONFIG.styles.borderStyle },
             bottom: { style: CONFIG.styles.borderStyle },
             left: { style: CONFIG.styles.borderStyle },
             right: { style: CONFIG.styles.borderStyle },
-          };
-        });
+          }
+        })
 
         // Add data rows from filteredData
         const tableData = filteredData.map((item, index) => ({
           SN: index + 1,
           'Model Name': item.modelName || '--',
-        }));
+        }))
 
         tableData.forEach((rowData) => {
-          const dataRow = worksheet.addRow(Object.values(rowData));
+          const dataRow = worksheet.addRow(Object.values(rowData))
           dataRow.eachCell((cell) => {
-            cell.font = CONFIG.styles.dataFont;
+            cell.font = CONFIG.styles.dataFont
             cell.border = {
               top: { style: CONFIG.styles.borderStyle },
               bottom: { style: CONFIG.styles.borderStyle },
               left: { style: CONFIG.styles.borderStyle },
               right: { style: CONFIG.styles.borderStyle },
-            };
-          });
-        });
+            }
+          })
+        })
 
         // Set column widths
         worksheet.columns = CONFIG.columns.map((col) => ({
           width: col.width,
           style: { alignment: { horizontal: 'left' } },
-        }));
-      };
+        }))
+      }
 
       // Add footer
       const addFooter = () => {
-        worksheet.addRow([]); // Spacer
-        const footerRow = worksheet.addRow([CONFIG.company.copyright]);
-        footerRow.font = { italic: true };
-        worksheet.mergeCells(`A${footerRow.number}:L${footerRow.number}`);
-      };
+        worksheet.addRow([]) // Spacer
+        const footerRow = worksheet.addRow([CONFIG.company.copyright])
+        footerRow.font = { italic: true }
+        worksheet.mergeCells(`A${footerRow.number}:L${footerRow.number}`)
+      }
 
       // Build the document
-      addHeaderSection();
-      addDataTable();
-      addFooter();
+      addHeaderSection()
+      addDataTable()
+      addFooter()
 
       // Generate and save file
-      const buffer = await workbook.xlsx.writeBuffer();
+      const buffer = await workbook.xlsx.writeBuffer()
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-      const filename = `Model_Data_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
-      saveAs(blob, filename);
-      toast.success('Excel file downloaded successfully');
+      })
+      const filename = `Model_Data_Report_${new Date().toISOString().split('T')[0]}.xlsx`
+      saveAs(blob, filename)
+      toast.success('Excel file downloaded successfully')
     } catch (error) {
-      console.error('Excel Export Error:', error);
-      toast.error(error.message || 'Failed to export Excel file');
+      console.error('Excel Export Error:', error)
+      toast.error(error.message || 'Failed to export Excel file')
     }
-  };
-
+  }
 
   // SORTING LOGIC
-
   const handleSort = (column) => {
     const isAsc = sortBy === column && sortOrder === 'asc'
     setSortOrder(isAsc ? 'desc' : 'asc')
@@ -640,7 +631,6 @@ const Model = () => {
     }
     return 0
   })
-
 
   // Download toggle dropdown
   const dropdownItems = [
@@ -670,7 +660,6 @@ const Model = () => {
       onClick: () => handlePageUp(),
     },
   ]
-
 
   // COndition of handel all the dropdown items
   const handleLogout = () => {
@@ -706,8 +695,9 @@ const Model = () => {
     document.body.style.zoom = '100%'
   }
 
-  if (error) return <Page404 />
-
+  if (error === 'Model already exists') {
+    return <Page404 />
+  }
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">
@@ -721,7 +711,6 @@ const Model = () => {
             <CCardHeader className="grand d-flex justify-content-between align-items-center">
               <strong>Model</strong>
               <div className="d-flex gap-3 justify-content-center align-items-center">
-
                 <div className="input-group">
                   <InputBase
                     type="search"

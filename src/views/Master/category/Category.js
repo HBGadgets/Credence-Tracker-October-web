@@ -216,7 +216,7 @@ const Category = () => {
       }
     } catch (error) {
       setError(error.message)
-      toast.error('An error occured')
+      toast.error(error.response.data.message)
       throw error.response ? error.response.data : new Error('An error occurred')
     }
   }
@@ -246,12 +246,12 @@ const Category = () => {
       })
 
       if (response.status === 200) {
-        toast.error('category is deleted successfully')
+        toast.error(error.response.data.message)
         fetchCategoryData()
       }
     } catch (error) {
       setError(error.message)
-      toast.error('An error occurred')
+      toast.error(error.response.data.message)
       throw error.response ? error.response.data : new Error('An error occurred')
     }
   }
