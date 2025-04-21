@@ -185,7 +185,7 @@ const Category = () => {
       }
     } catch (error) {
       setError(error.message)
-      toast.error('An error occured')
+      toast.error(error.response.data.message)
       throw error.response ? error.response.data : new Error('An error occurred')
     }
   }
@@ -354,8 +354,8 @@ const Category = () => {
         // Add data rows from filteredData
         filteredData.forEach((item, index) => {
           const rowData = [
-            index + 1,  // SN (Serial Number)
-            item.categoryName || 'N/A',  // Category Name
+            index + 1, // SN (Serial Number)
+            item.categoryName || 'N/A', // Category Name
           ]
 
           const dataRow = worksheet.addRow(rowData)
@@ -404,9 +404,7 @@ const Category = () => {
     }
   }
 
-
   // PDF download
-
   const exportToPDF = () => {
     try {
       // Validate data before proceeding
@@ -475,10 +473,7 @@ const Category = () => {
       }
 
       const addMetadata = () => {
-        const metadata = [
-          { label: 'User:', value: decodedToken.username || 'N/A' },
-
-        ]
+        const metadata = [{ label: 'User:', value: decodedToken.username || 'N/A' }]
 
         doc.setFontSize(10)
         doc.setFont(CONFIG.fonts.primary, 'bold')
@@ -534,14 +529,14 @@ const Category = () => {
         return isNaN(date)
           ? '--'
           : date
-            .toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-            .replace(',', '')
+              .toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              .replace(',', '')
       }
 
       const formatCoordinates = (coords) => {
@@ -575,7 +570,7 @@ const Category = () => {
       addMetadata()
 
       // Replace this part with your table data
-      const tableColumns = ['SN', 'Category Name']; // Define the headers
+      const tableColumns = ['SN', 'Category Name'] // Define the headers
       const tableRows = filteredData.map((item, index) => {
         return [
           index + 1, // Serial Number
@@ -719,12 +714,18 @@ const Category = () => {
     document.body.style.zoom = '100%'
   }
 
-  if (error) return <Page404 />
-
+  if (error && error.message === 'Category Already Exist') {
+    return <Page404 />
+  }
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">
-      <Toaster position="top-center" reverseOrder={false} />
+      {error ? (
+        <Toaster position="top-center" reverseOrder={false} />
+      ) : (
+        <Toaster position="top-center" reverseOrder={false} />
+      )}
+
       <div className="d-md-none mb-2">
         <input
           type="search"
@@ -917,8 +918,6 @@ const Category = () => {
       <div className="position-fixed bottom-0 end-0 mb-5 m-3 z-5">
         <IconDropdown items={dropdownItems} />
       </div>
-
-
 
       {pageCount > 1 && (
         <ReactPaginate
