@@ -134,6 +134,7 @@ const SearchStop = ({
         <CFormLabel htmlFor="devices">User</CFormLabel>
         <Select
           id="user"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Users...', isDisabled: true }]
@@ -163,6 +164,7 @@ const SearchStop = ({
         <CFormLabel htmlFor="devices">Groups</CFormLabel>
         <Select
           id="group"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Groups...', isDisabled: true }]
@@ -176,10 +178,17 @@ const SearchStop = ({
               : null
           }
           onChange={(selectedOption) => {
-            const selectedGroup = selectedOption?.value
-            setSelectedG(selectedGroup)
-            console.log('Selected Group ID:', selectedGroup)
-            getDevices(selectedGroup)
+            if (selectedOption) {
+              const selectedGroup = selectedOption.value
+              setSelectedG(selectedGroup)
+              console.log('Selected Group ID:', selectedGroup)
+              getDevices(selectedGroup)
+            } else {
+              setSelectedG(null)
+              console.log('Group selection cleared')
+              // Optionally: you can decide to clear devices or call API with null
+              // getDevices(null); // ← only if you want to reset device list
+            }
           }}
           placeholder="Choose a group..."
           isLoading={loading} // Show a loading spinner while fetching groups
@@ -189,27 +198,10 @@ const SearchStop = ({
       </CCol>
       <CCol md={2}>
         <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
-        {/* <CFormSelect
-          id="devices"
-          required
-          value={formData.Devices}
-          onChange={(e) => handleInputChange('Devices', e.target.value)}
-        >
-          <option value="">Choose a device...</option>
-          {loading ? (
-            <option>Loading devices...</option>
-          ) : devices?.length > 0 ? (
-            devices?.map((device) => (
-              <option key={device.id} value={device.deviceId}>
-                {device.name}
-              </option>
-            ))
-          ) : (
-            <option disabled>No Device in this Group</option>
-          )}
-        </CFormSelect> */}
+
         <Select
           id="devices"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Vehicles...', isDisabled: true }]
@@ -220,9 +212,9 @@ const SearchStop = ({
           value={
             formData.Devices
               ? {
-                value: formData.Devices,
-                label: devices.find((device) => device.deviceId === formData.Devices)?.name,
-              }
+                  value: formData.Devices,
+                  label: devices.find((device) => device.deviceId === formData.Devices)?.name,
+                }
               : null
           }
           onChange={(selectedOption) => handleInputChange('Devices', selectedOption?.value)}
@@ -236,22 +228,32 @@ const SearchStop = ({
         <CFormLabel htmlFor="columns">Columns</CFormLabel>
         <Select
           isMulti
+          isClearable
           id="columns"
+          styles={{
+            control: (base) => ({
+              ...base,
+              maxHeight: '40px', // Ensures the height is applied
+            }),
+            valueContainer: (base) => ({
+              ...base,
+              maxHeight: '20px', // Ensures the height is applied
+              overflowY: 'auto',
+            }),
+          }}
           options={[
-            { value: 'all', label: 'All Columns' }, // Add "All Columns" option
+            { value: 'all', label: 'All Columns' },
             ...columns.map((column) => ({ value: column, label: column })),
           ]}
           value={
             formData.Columns.length === columns.length
-              ? [{ value: 'all', label: 'All Columns' }] // Show "All Columns" if all columns are selected
+              ? [{ value: 'all', label: 'All Columns' }]
               : formData.Columns.map((column) => ({ value: column, label: column }))
           }
           onChange={(selectedOptions) => {
             if (selectedOptions.find((option) => option.value === 'all')) {
-              // If "All Columns" is selected, select all available columns
               handleInputChange('Columns', columns)
             } else {
-              // Otherwise, update formData.Columns with selected values
               handleInputChange(
                 'Columns',
                 selectedOptions.map((option) => option.value),
@@ -261,6 +263,7 @@ const SearchStop = ({
         />
         <CFormFeedback invalid>Please select at least one column.</CFormFeedback>
       </CCol>
+
       {/* Date Inputs for From Date and To Date */}
       <CCol md={2}>
         <CFormLabel htmlFor="fromDate">From Date</CFormLabel>
@@ -319,52 +322,51 @@ const StopTable = ({
   // Function to convert latitude and longitude into a location name
 
   // API Key
-  const apiKey = 'CWVeoDxzhkO07kO693u0';
+  const apiKey = 'CWVeoDxzhkO07kO693u0'
 
   let i = 0
   // Function to fetch location names using MapTiler API
   const fetchLocationName = async (lat, lng, rowId) => {
-    const url = `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${apiKey}`;
+    const url = `https://api.maptiler.com/geocoding/${lng},${lat}.json?key=${apiKey}`
 
     try {
-      const response = await axios.get(url);
-      const features = response.data.features;
+      const response = await axios.get(url)
+      const features = response.data.features
 
       // Extract all location names into an array
-      const locationNames = features.length > 0
-        ? features.map((feature) => feature?.place_name || 'Unknown Location')
-        : ['Unknown Location'];
+      const locationNames =
+        features.length > 0
+          ? features.map((feature) => feature?.place_name || 'Unknown Location')
+          : ['Unknown Location']
 
       setLocationData((prevState) => ({
         ...prevState,
         [rowId]: locationNames, // Store array of locations with rowId
-      }));
+      }))
 
       sortedData[i].location = locationNames
       i++
 
-
-      console.log("Fetched Addresses:", locationNames);
+      console.log('Fetched Addresses:', locationNames)
     } catch (error) {
-      console.error('Error fetching location names:', error);
+      console.error('Error fetching location names:', error)
       setLocationData((prevState) => ({
         ...prevState,
         [rowId]: ['Error fetching location'],
-      }));
+      }))
     }
-  };
+  }
 
   // Fetch location data when apiData changes
   useEffect(() => {
     if (apiData?.finalDeviceDataByStopage?.length > 0) {
       apiData.finalDeviceDataByStopage.forEach((row) => {
         if (row.latitude && row.longitude && !locationData[row.id]) {
-          fetchLocationName(row.latitude, row.longitude, row.id);
+          fetchLocationName(row.latitude, row.longitude, row.id)
         }
-      });
+      })
     }
-  }, [apiData]);  // Removed locationData to prevent infinite loop
-
+  }, [apiData]) // Removed locationData to prevent infinite loop
 
   // Function to export table data to Excel
 
@@ -378,38 +380,38 @@ const StopTable = ({
 
   // Sorting the data
   const sortedData = React.useMemo(() => {
-    if (!apiData?.finalDeviceDataByStopage) return [];
-    const data = [...apiData.finalDeviceDataByStopage];
+    if (!apiData?.finalDeviceDataByStopage) return []
+    const data = [...apiData.finalDeviceDataByStopage]
 
     if (sortConfig.key) {
       data.sort((a, b) => {
-        const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
+        const aValue = a[sortConfig.key]
+        const bValue = b[sortConfig.key]
 
         switch (sortConfig.key) {
           case 'arrivalTime':
           case 'departureTime': {
-            const aDate = new Date(aValue);
-            const bDate = new Date(bValue);
-            return sortConfig.direction === 'asc' ? aDate - bDate : bDate - aDate;
+            const aDate = new Date(aValue)
+            const bDate = new Date(bValue)
+            return sortConfig.direction === 'asc' ? aDate - bDate : bDate - aDate
           }
           case 'speed':
           case 'course':
-            return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
+            return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue
           case 'ignition': {
-            const aBool = aValue ? 1 : 0;
-            const bBool = bValue ? 1 : 0;
-            return sortConfig.direction === 'asc' ? aBool - bBool : bBool - aBool;
+            const aBool = aValue ? 1 : 0
+            const bBool = bValue ? 1 : 0
+            return sortConfig.direction === 'asc' ? aBool - bBool : bBool - aBool
           }
           default:
-            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-            return 0;
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1
+            return 0
         }
-      });
+      })
     }
-    return data;
-  }, [apiData, sortConfig]);
+    return data
+  }, [apiData, sortConfig])
 
   console.log('SORTED DATA:', sortedData)
 
@@ -562,9 +564,10 @@ const StopTable = ({
           `Group: ${selectedGroupName || 'N/A'}`,
         ])
         worksheet.addRow([
-          `Date Range: ${selectedFromDate && selectedToDate
-            ? `${selectedFromDate} - ${selectedToDate}`
-            : getDateRangeFromPeriod(selectedPeriod)
+          `Date Range: ${
+            selectedFromDate && selectedToDate
+              ? `${selectedFromDate} - ${selectedToDate}`
+              : getDateRangeFromPeriod(selectedPeriod)
           }`,
           `Selected Vehicle: ${selectedDeviceName || '--'}`,
         ])
@@ -782,14 +785,14 @@ const StopTable = ({
         return isNaN(date)
           ? '--'
           : date
-            .toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-            .replace(',', '')
+              .toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              .replace(',', '')
       }
 
       const formatCoordinates = (lat, lon) => {
@@ -986,8 +989,7 @@ const StopTable = ({
     },
   ]
 
-
-  console.log("sortedDataaaaaaaaaaaaaaaaaaaaaaaa", sortedData)
+  console.log('sortedDataaaaaaaaaaaaaaaaaaaaaaaa', sortedData)
 
   return (
     <>
@@ -1051,10 +1053,14 @@ const StopTable = ({
           ) : sortedData.length > 0 ? (
             sortedData.map((row, rowIndex) => (
               <CTableRow key={row.id || rowIndex} className="custom-row">
-                <CTableDataCell style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}>
+                <CTableDataCell
+                  style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}
+                >
                   {rowIndex + 1}
                 </CTableDataCell>
-                <CTableDataCell style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}>
+                <CTableDataCell
+                  style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}
+                >
                   {selectedDeviceName}
                 </CTableDataCell>
 
@@ -1079,48 +1085,50 @@ const StopTable = ({
                               <img src={upRight} alt="NE" width="30" height="25" />
                               <span>North East</span>
                             </>
-                          );
+                          )
                         } else if (row.course < 180) {
                           return (
                             <>
                               <img src={upLeft} alt="NW" width="30" height="25" />
                               <span>North West</span>
                             </>
-                          );
+                          )
                         } else if (row.course < 270) {
                           return (
                             <>
                               <img src={downLeft} alt="SW" width="30" height="25" />
                               <span>South West</span>
                             </>
-                          );
+                          )
                         } else {
                           return (
                             <>
                               <img src={downRight} alt="SE" width="30" height="25" />
                               <span>South East</span>
                             </>
-                          );
+                          )
                         }
                       })()
-
                     ) : column === 'Location' ? (
                       row.location && row.location.length > 0 ? (
                         <tr key={row.id}>
-                          <td>{row.location[0]}</td>  {/* Showing only the first location */}
+                          <td>{row.location[0]}</td> {/* Showing only the first location */}
                         </tr>
                       ) : (
                         <tr>
                           <td>Fetching location...</td>
                         </tr>
                       )
-
                     ) : column === 'Co-ordinates' ? (
-                      row.latitude && row.longitude
-                        ? `${row.latitude}, ${row.longitude}`
-                        : 'Fetching coordinates...'
+                      row.latitude && row.longitude ? (
+                        `${row.latitude}, ${row.longitude}`
+                      ) : (
+                        'Fetching coordinates...'
+                      )
                     ) : column === 'Start Time' ? (
-                      new Date(new Date(row.arrivalTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString('en-GB', {
+                      new Date(
+                        new Date(row.arrivalTime).getTime() - (5 * 60 + 30) * 60000,
+                      ).toLocaleString('en-GB', {
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric', // Changed to full year (yyyy)
@@ -1129,7 +1137,9 @@ const StopTable = ({
                         hour12: false, // 24-hour format
                       })
                     ) : column === 'End Time' ? (
-                      new Date(new Date(row.departureTime).getTime() - (5 * 60 + 30) * 60000).toLocaleString('en-GB', {
+                      new Date(
+                        new Date(row.departureTime).getTime() - (5 * 60 + 30) * 60000,
+                      ).toLocaleString('en-GB', {
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric', // Ensures full year (yyyy)
@@ -1361,7 +1371,6 @@ const Stops = () => {
   console.log('Selected Period:', selectedPeriod)
 
   if (error) return <Page404 />
-
 
   return (
     <div>
