@@ -49,6 +49,7 @@ import { jwtDecode } from 'jwt-decode'
 import IconDropdown from '../../../components/ButtonDropdown'
 import { saveAs } from 'file-saver'
 import Page404 from '../../pages/page404/Page404'
+import { Pagination } from 'react-bootstrap'
 
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
@@ -318,6 +319,8 @@ const StopTable = ({
 }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
   const [locationData, setLocationData] = useState({})
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
 
   // Function to convert latitude and longitude into a location name
 
@@ -413,7 +416,9 @@ const StopTable = ({
     return data
   }, [apiData, sortConfig])
 
-  console.log('SORTED DATA:', sortedData)
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem)
 
   // EXPORT TO EXCEL FUNCTION
   const exportToExcel = async () => {
@@ -1051,7 +1056,7 @@ const StopTable = ({
               </CTableDataCell>
             </CTableRow>
           ) : sortedData.length > 0 ? (
-            sortedData.map((row, rowIndex) => (
+            currentItems.map((row, rowIndex) => (
               <CTableRow key={row.id || rowIndex} className="custom-row">
                 <CTableDataCell
                   style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}
@@ -1174,6 +1179,34 @@ const StopTable = ({
           )}
         </CTableBody>
       </CTable>
+
+      {sortedData.length > itemsPerPage && (
+        <div className="d-flex justify-content-center my-3">
+          <Pagination>
+            <Pagination.Prev
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            />
+            {Array.from({ length: Math.ceil(sortedData.length / itemsPerPage) }, (_, i) => (
+              <Pagination.Item
+                key={i + 1}
+                active={i + 1 === currentPage}
+                onClick={() => setCurrentPage(i + 1)}
+              >
+                {i + 1}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next
+              disabled={currentPage === Math.ceil(sortedData.length / itemsPerPage)}
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  Math.min(prev + 1, Math.ceil(sortedData.length / itemsPerPage)),
+                )
+              }
+            />
+          </Pagination>
+        </div>
+      )}
 
       <div className="position-fixed bottom-0 end-0 mb-5 m-3 z-5">
         <IconDropdown items={dropdownItems} />

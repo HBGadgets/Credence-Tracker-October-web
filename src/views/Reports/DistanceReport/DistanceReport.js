@@ -301,6 +301,8 @@ const ShowDistance = ({
   const [sortOrder, setSortOrder] = useState('asc')
   const [addressData, setAddressData] = useState({})
   const [newAddressData, setnewAddressData] = useState()
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
 
   console.log('devicessssssssssasdadwssss', devices) // Devices Lists
 
@@ -639,14 +641,14 @@ const ShowDistance = ({
         return isNaN(date)
           ? '--'
           : date
-            .toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-            .replace(',', '')
+              .toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              .replace(',', '')
       }
 
       // Main document creation
@@ -802,6 +804,10 @@ const ShowDistance = ({
     },
   ]
 
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem)
+
   return (
     <>
       <Toaster />
@@ -892,13 +898,13 @@ const ShowDistance = ({
                 </CTableDataCell>
               </CTableRow>
             ) : sortedData.length > 0 ? (
-              sortedData.map((row, rowIndex) => (
-                <CTableRow key={row.deviceId} className="custom-row">
+              currentItems.map((row, rowIndex) => (
+                <CTableRow key={row.deviceId}>
                   <CTableDataCell
                     style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}
                     className="text-center"
                   >
-                    {rowIndex + 1}
+                    {indexOfFirstItem + rowIndex + 1}
                   </CTableDataCell>
                   <CTableDataCell
                     style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}
@@ -907,23 +913,21 @@ const ShowDistance = ({
                     {findDeviceName(row.deviceId)}
                   </CTableDataCell>
 
-                  {/* Dynamically render table cells based on the date range */}
-                  {allDates.map((date, index) => (
+                  {allDates.map((date, i) => (
                     <CTableDataCell
-                      key={index}
+                      key={i}
                       style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}
                       className="text-center"
                     >
-                      {/* Check if the date exists in the row, otherwise print '0' */}
                       {row[date] !== undefined ? `${row[date]} km` : '0 km'}
                     </CTableDataCell>
                   ))}
+
                   <CTableDataCell
                     style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}
                     className="text-center"
                   >
-                    {calculateTotalDistance(row).toFixed(2)}
-                    <span> km</span>
+                    {calculateTotalDistance(row).toFixed(2)} km
                   </CTableDataCell>
                 </CTableRow>
               ))
@@ -1139,17 +1143,16 @@ const Distance = () => {
     // For FromDate: Set time to 00:00:00 (start of the day)
     const fromDate = formData.FromDate
       ? new Date(
-        new Date(formData.FromDate).setHours(0, 0, 0, 0) + (5 * 60 + 30) * 60000
-      ).toISOString()
-      : '';
+          new Date(formData.FromDate).setHours(0, 0, 0, 0) + (5 * 60 + 30) * 60000,
+        ).toISOString()
+      : ''
 
     // For ToDate: Set time to 23:59:59.999 (end of the day) and adjust for UTC+5:30
     const toDate = formData.ToDate
       ? new Date(
-        new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000
-      ).toISOString()
-      : '';
-
+          new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000,
+        ).toISOString()
+      : ''
 
     const body = {
       deviceIds: formData.Devices, // Convert array to comma-separated string
@@ -1187,7 +1190,6 @@ const Distance = () => {
   console.log('Selected Period:', selectedPeriod)
 
   if (error) return <Page404 />
-
 
   return (
     <>

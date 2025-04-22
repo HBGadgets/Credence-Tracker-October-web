@@ -133,6 +133,7 @@ const SearchTravel = ({
         <CFormLabel htmlFor="devices">User</CFormLabel>
         <Select
           id="user"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Users...', isDisabled: true }]
@@ -161,6 +162,7 @@ const SearchTravel = ({
         <CFormLabel htmlFor="devices">Groups</CFormLabel>
         <Select
           id="group"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Groups...', isDisabled: true }]
@@ -184,6 +186,7 @@ const SearchTravel = ({
         />
         <CFormFeedback invalid>Please provide a valid Vehilces.</CFormFeedback>
       </CCol>
+
       <CCol md={2}>
         <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
         <CFormSelect
@@ -253,6 +256,17 @@ const SearchTravel = ({
                 selectedOptions.map((option) => option.value),
               )
             }
+          }}
+          styles={{
+            control: (base) => ({
+              ...base,
+              maxHeight: '40px', // Ensures the height is applied
+            }),
+            valueContainer: (base) => ({
+              ...base,
+              maxHeight: '20px', // Ensures the height is applied
+              overflowY: 'auto',
+            }),
           }}
         />
         <CFormFeedback invalid>Please select at least one column.</CFormFeedback>
@@ -336,14 +350,14 @@ const ShowSummary = ({
     return isNaN(date)
       ? '--'
       : date.toLocaleString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false, // 24-hour format
-        timeZone: 'UTC', // Adjust based on your requirement
-      })
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false, // 24-hour format
+          timeZone: 'UTC', // Adjust based on your requirement
+        })
   }
 
   // Transform apiData to match reportData structure
@@ -363,62 +377,60 @@ const ShowSummary = ({
       dayWiseTrips: vehicle.dayWiseTrips || [], // Adjust based on your API structure
     })) || []
 
-  const [addressData, setAddressData] = useState([]);
+  const [addressData, setAddressData] = useState([])
 
   // Address converter fetch location
 
   const getAddress = async (latitude, longitude) => {
     try {
-      const apiKey = 'CWVeoDxzhkO07kO693u0'; // Replace with your actual MapTiler API key
+      const apiKey = 'CWVeoDxzhkO07kO693u0' // Replace with your actual MapTiler API key
       const response = await axios.get(
-        `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`
-      );
+        `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`,
+      )
 
       if (response.data?.features?.length > 0) {
-        const address = response.data.features[0].place_name;
-        return address;
+        const address = response.data.features[0].place_name
+        return address
       } else {
-        return 'Address not available';
+        return 'Address not available'
       }
     } catch (error) {
-      console.error('Error:', error.message);
-      return 'Address not available';
+      console.error('Error:', error.message)
+      return 'Address not available'
     }
-  };
-
+  }
 
   useEffect(() => {
     const fetchAddresses = async () => {
       const promises = apiData.reportData.map(async (vehicle) => {
         // Fetch start and end addresses for the vehicle
-        const startAddress = await getAddress(vehicle.startLat, vehicle.startLong);
-        const endAddress = await getAddress(vehicle.endLat, vehicle.endLong);
+        const startAddress = await getAddress(vehicle.startLat, vehicle.startLong)
+        const endAddress = await getAddress(vehicle.endLat, vehicle.endLong)
 
         // Fetch addresses for dayWiseTrips
         const tripsWithAddresses = await Promise.all(
           vehicle.dayWiseTrips.map(async (trip) => {
-            const tripStartAddress = await getAddress(trip.startLatitude, trip.startLongitude);
-            const tripEndAddress = await getAddress(trip.endLatitude, trip.endLongitude);
-            return { ...trip, startAddress: tripStartAddress, endAddress: tripEndAddress };
-          })
-        );
+            const tripStartAddress = await getAddress(trip.startLatitude, trip.startLongitude)
+            const tripEndAddress = await getAddress(trip.endLatitude, trip.endLongitude)
+            return { ...trip, startAddress: tripStartAddress, endAddress: tripEndAddress }
+          }),
+        )
 
-        return { ...vehicle, startAddress, endAddress, dayWiseTrips: tripsWithAddresses };
-      });
+        return { ...vehicle, startAddress, endAddress, dayWiseTrips: tripsWithAddresses }
+      })
 
-      const updatedData = await Promise.all(promises);
-      setAddressData(updatedData); // Update state with the addresses
-      setnewAddressData(updatedData);
-    };
+      const updatedData = await Promise.all(promises)
+      setAddressData(updatedData) // Update state with the addresses
+      setnewAddressData(updatedData)
+    }
 
     if (apiData?.reportData?.length > 0) {
-      fetchAddresses();
+      fetchAddresses()
     }
-  }, [apiData]);
-
+  }, [apiData])
 
   if (newAddressData) {
-    console.log("adressss new wala", newAddressData)
+    console.log('adressss new wala', newAddressData)
   }
 
   const handleSort = (column) => {
@@ -702,17 +714,17 @@ const ShowSummary = ({
         return isNaN(date)
           ? '--'
           : date
-            .toLocaleString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false, // 24-hour format
-              timeZone: 'UTC', // Adjust based on your requirement
-            })
-            .replace(',', '') // Remove comma for clean output
+              .toLocaleString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false, // 24-hour format
+                timeZone: 'UTC', // Adjust based on your requirement
+              })
+              .replace(',', '') // Remove comma for clean output
       }
 
       const formatCoordinates = (coords) => {
@@ -760,9 +772,10 @@ const ShowSummary = ({
           `Group: ${selectedGroupName || 'N/A'}`,
         ])
         worksheet.addRow([
-          `Date Range: ${selectedFromDate && selectedToDate
-            ? `${selectedFromDate} - ${selectedToDate}`
-            : getDateRangeFromPeriods(selectedPeriod)
+          `Date Range: ${
+            selectedFromDate && selectedToDate
+              ? `${selectedFromDate} - ${selectedToDate}`
+              : getDateRangeFromPeriods(selectedPeriod)
           }`,
           `Selected Vehicle: ${selectedDeviceName || '--'}`,
         ])
@@ -870,7 +883,7 @@ const ShowSummary = ({
             index + 1,
             trip.date || '--',
             formatExcelDate(trip.startTime),
-            trip.startAddress || "--",
+            trip.startAddress || '--',
             formatCoordinates(`${trip.startLatitude}, ${trip.startLongitude}`),
             trip.distance || '--',
             trip.runningTime || '--',
@@ -1086,16 +1099,16 @@ const ShowSummary = ({
         return isNaN(date)
           ? '--'
           : date
-            .toLocaleString('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false,
-              timeZone: 'UTC',
-            })
-            .replace(',', '')
+              .toLocaleString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+                timeZone: 'UTC',
+              })
+              .replace(',', '')
       }
 
       const formatCoordinates = (coords) => {
@@ -1160,7 +1173,7 @@ const ShowSummary = ({
         item.running || '--',
         item.idle || '--',
         item.stop || '--',
-        item.endAddress || '--',   // ✅ Corrected
+        item.endAddress || '--', // ✅ Corrected
         formatCoordinates(`${item.endLat}, ${item.endLong}`),
         typeof item.maxSpeed === 'number' ? `${item.maxSpeed.toFixed(2)} km/h` : '--',
         typeof item.avgSpeed === 'number' ? `${item.avgSpeed.toFixed(2)} km/h` : '--',
@@ -1193,11 +1206,11 @@ const ShowSummary = ({
         let yPosition = doc.lastAutoTable.finalY + 10
 
         addressData.forEach((item) => {
-          if (!item.dayWiseTrips || item.dayWiseTrips.length === 0) return;
-          doc.setFontSize(12);
-          doc.setFont(CONFIG.fonts.primary, 'bold');
-          doc.text(`Day-wise Summary - ${item.name}`, CONFIG.layout.margin, yPosition);
-          yPosition += 8;
+          if (!item.dayWiseTrips || item.dayWiseTrips.length === 0) return
+          doc.setFontSize(12)
+          doc.setFont(CONFIG.fonts.primary, 'bold')
+          doc.text(`Day-wise Summary - ${item.name}`, CONFIG.layout.margin, yPosition)
+          yPosition += 8
 
           const daywiseRows = item.dayWiseTrips.map((trip, index) => [
             index + 1,
@@ -1212,11 +1225,10 @@ const ShowSummary = ({
             trip.workingHours || '--',
             `${trip.maxSpeed?.toFixed(2) ?? '--'} km/h`,
             `${trip.avgSpeed?.toFixed(2) ?? '--'} km/h`,
-            trip.endAddress || '--',   // ✅ Correct usage
+            trip.endAddress || '--', // ✅ Correct usage
             formatCoordinates(`${trip.endLatitude}, ${trip.endLongitude}`),
             formatDate(trip.endTime) || '--',
-          ]);
-
+          ])
 
           doc.autoTable({
             startY: yPosition,
@@ -1479,10 +1491,16 @@ const ShowSummary = ({
                         {`${vehicle.endLat} ${vehicle.endLong}`}
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {(vehicle.maxSpeed !== null && vehicle.maxSpeed !== undefined) ? vehicle.maxSpeed.toFixed(2) : 'N/A'} km/h
+                        {vehicle.maxSpeed !== null && vehicle.maxSpeed !== undefined
+                          ? vehicle.maxSpeed.toFixed(2)
+                          : 'N/A'}{' '}
+                        km/h
                       </CTableDataCell>
                       <CTableDataCell className="text-center">
-                        {(vehicle.avgSpeed !== null && vehicle.avgSpeed !== undefined) ? vehicle.avgSpeed.toFixed(2) : 'N/A'} km/h
+                        {vehicle.avgSpeed !== null && vehicle.avgSpeed !== undefined
+                          ? vehicle.avgSpeed.toFixed(2)
+                          : 'N/A'}{' '}
+                        km/h
                       </CTableDataCell>
                     </CTableRow>
                     <CTableRow>
@@ -1655,7 +1673,6 @@ const ShowSummary = ({
                                           month: '2-digit',
                                           year: 'numeric',
                                         })}
-
                                       </CTableDataCell>
                                       {/**Ignition Start*/}
                                       <CTableDataCell className="text-center">
@@ -2078,13 +2095,13 @@ const TravelReport = () => {
   // Example of extracting values similar to `selectedGroup`
   const selectedFromDate = formData.FromDate
     ? new Date(
-      new Date(formData.FromDate).setHours(0, 0, 0, 0) + (5 * 60 + 30) * 60000,
-    ).toISOString()
+        new Date(formData.FromDate).setHours(0, 0, 0, 0) + (5 * 60 + 30) * 60000,
+      ).toISOString()
     : ''
   const selectedToDate = formData.ToDate
     ? new Date(
-      new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000,
-    ).toISOString()
+        new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000,
+      ).toISOString()
     : ''
 
   const selectedPeriod = formData.Periods || ''
@@ -2096,7 +2113,6 @@ const TravelReport = () => {
   console.log('API Data:', apiData)
 
   if (error) return <Page404 />
-
 
   return (
     <>

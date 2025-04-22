@@ -1572,12 +1572,6 @@ const Status = () => {
                 <CCardHeader className="d-flex justify-content-between align-items-center">
                   <strong>Status Report {selectedDeviceName && `for ${selectedDeviceName}`}</strong>{' '}
                   {/* Show the device name here */}
-                  {/* <CFormInput
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    style={{ width: '250px' }}
-                  /> */}
                 </CCardHeader>
                 <CCardBody>
                   <ShowStatus
