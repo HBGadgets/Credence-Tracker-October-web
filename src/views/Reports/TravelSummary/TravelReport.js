@@ -2112,7 +2112,7 @@ const TravelReport = () => {
 
   console.log('API Data:', apiData)
 
-  if (error) return <Page404 />
+  // if (error) return <Page404 />
 
   return (
     <>
