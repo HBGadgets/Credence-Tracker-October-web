@@ -140,6 +140,7 @@ const SearchTrip = ({
         <CFormLabel htmlFor="devices">User</CFormLabel>
         <Select
           id="user"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Users...', isDisabled: true }]
@@ -192,6 +193,7 @@ const SearchTrip = ({
         </CFormSelect> */}
         <Select
           id="group"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Groups...', isDisabled: true }]
@@ -239,6 +241,7 @@ const SearchTrip = ({
         </CFormSelect> */}
         <Select
           id="devices"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Vehilces...', isDisabled: true }]
@@ -266,6 +269,7 @@ const SearchTrip = ({
         <CFormLabel htmlFor="columns">Columns</CFormLabel>
         <Select
           isMulti
+          isClearable
           id="columns"
           options={[
             { value: 'all', label: 'All Columns' }, // Add "All Columns" option
