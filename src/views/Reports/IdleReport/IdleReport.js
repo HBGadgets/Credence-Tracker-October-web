@@ -48,6 +48,7 @@ import { FaArrowUp } from 'react-icons/fa'
 import toast, { Toaster } from 'react-hot-toast'
 import { jwtDecode } from 'jwt-decode'
 import Page404 from '../../pages/page404/Page404'
+import { Pagination } from 'react-bootstrap'
 const accessToken = Cookies.get('authToken')
 const decodedToken = jwtDecode(accessToken)
 
@@ -124,6 +125,7 @@ const SearchIdeal = ({
 
         <Select
           id="user"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Users...', isDisabled: true }]
@@ -152,6 +154,7 @@ const SearchIdeal = ({
         <CFormLabel htmlFor="devices">Groups</CFormLabel>
         <Select
           id="group"
+          isClearable
           options={
             loading
               ? [{ value: '', label: 'Loading Groups...', isDisabled: true }]
@@ -181,6 +184,7 @@ const SearchIdeal = ({
         <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
         <Select
           id="devices"
+          isClearable
           options={
             devices.length > 0
               ? devices.map((device) => ({ value: device.deviceId, label: device.name }))
@@ -189,9 +193,9 @@ const SearchIdeal = ({
           value={
             formData.Devices
               ? {
-                value: formData.Devices,
-                label: devices.find((device) => device.deviceId === formData.Devices)?.name,
-              }
+                  value: formData.Devices,
+                  label: devices.find((device) => device.deviceId === formData.Devices)?.name,
+                }
               : null
           }
           onChange={(selectedOption) => handleInputChange('Devices', selectedOption?.value)}
@@ -205,6 +209,7 @@ const SearchIdeal = ({
         <CFormLabel htmlFor="periods">Periods</CFormLabel>
         <Select
           id="periods"
+          isClearable
           options={[
             { value: '', label: 'Choose a period...' },
             { value: 'Today', label: 'Today' },
@@ -226,6 +231,7 @@ const SearchIdeal = ({
       <CCol md={3}>
         <CFormLabel htmlFor="columns">Columns</CFormLabel>
         <Select
+          isClearable
           isMulti
           id="columns"
           options={[
@@ -309,47 +315,45 @@ const ShowIdeal = ({
   selectedToDate,
   selectedPeriod,
 }) => {
-
   const [sortConfig, setSortConfig] = useState({ key: 'idleStartTime', direction: 'asc' })
   const [dataWithAddresses, setDataWithAddresses] = useState([])
   console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa', selectedUserName)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
 
   // Address api code
 
-  const addressCache = {};
+  const addressCache = {}
 
   const getAddressFromLatLng = async (latitude, longitude, rowId) => {
-    const cacheKey = `${latitude},${longitude}`;
+    const cacheKey = `${latitude},${longitude}`
     if (addressCache[cacheKey]) {
-      return addressCache[cacheKey]; // Return cached result
+      return addressCache[cacheKey] // Return cached result
     }
 
-    const apiKey = 'CWVeoDxzhkO07kO693u0';
-    const url = `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`;
+    const apiKey = 'CWVeoDxzhkO07kO693u0'
+    const url = `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`
 
     try {
-      const response = await axios.get(url);
-      const features = response.data.features;
+      const response = await axios.get(url)
+      const features = response.data.features
 
       if (features && features.length > 0) {
-        const address = features[0].place_name;
-        addressCache[cacheKey] = address; // Cache the result
-        return address;
+        const address = features[0].place_name
+        addressCache[cacheKey] = address // Cache the result
+        return address
       } else {
-        return 'Address not found';
+        return 'Address not found'
       }
     } catch (error) {
-      console.error('Error fetching address:', error);
-      return 'Address not found';
+      console.error('Error fetching address:', error)
+      return 'Address not found'
     }
-  };
-
-
-
+  }
 
   // Function to map over API data and fetch addresses
   const mapDataWithAddress = async () => {
-    if (!apiData || apiData.length === 0) return apiData;
+    if (!apiData || apiData.length === 0) return apiData
 
     const updatedData = await Promise.all(
       apiData.map(async (row) => {
@@ -358,46 +362,44 @@ const ShowIdeal = ({
             row.idleArray.map(async (nestedRow) => {
               // Check if latitude and longitude exist and address is not already present
               if (nestedRow.latitude && nestedRow.longitude && !nestedRow.address) {
-                const latitude = nestedRow.latitude;
-                const longitude = nestedRow.longitude;
+                const latitude = nestedRow.latitude
+                const longitude = nestedRow.longitude
 
-                const address = await getAddressFromLatLng(latitude, longitude);
-                console.log("Fetched address:", address);
+                const address = await getAddressFromLatLng(latitude, longitude)
+                console.log('Fetched address:', address)
                 return {
                   ...nestedRow,
                   address,
-                };
+                }
               }
-              return nestedRow;
-            })
-          );
-          return { ...row, idleArray: updatedNestedData };
+              return nestedRow
+            }),
+          )
+          return { ...row, idleArray: updatedNestedData }
         }
-        return row;
-      })
-    );
+        return row
+      }),
+    )
 
-    return updatedData;
-  };
-
+    return updatedData
+  }
 
   // Fetch addresses when apiData changes
   useEffect(() => {
     const fetchDataWithAddresses = async () => {
-      const updatedData = await mapDataWithAddress();
-      setDataWithAddresses(updatedData);
-      console.log("updatedddddeded", updatedData)
-    };
+      const updatedData = await mapDataWithAddress()
+      setDataWithAddresses(updatedData)
+      console.log('updatedddddeded', updatedData)
+    }
 
     if (apiData && apiData.length > 0) {
-      fetchDataWithAddresses();
+      fetchDataWithAddresses()
     }
-  }, [apiData]);
-
+  }, [apiData])
 
   // Flatten the data
   const enhancedFlattenedData = useMemo(() => {
-    if (!dataWithAddresses) return [];
+    if (!dataWithAddresses) return []
 
     return dataWithAddresses.flatMap(
       (row, rowIndex) =>
@@ -409,9 +411,9 @@ const ShowIdeal = ({
           rowIndex: rowIndex + 1,
           nestedIndex: nestedIndex + 1,
           durationSeconds: (new Date(idle.idleEndTime) - new Date(idle.idleStartTime)) / 1000,
-        })) || []
-    );
-  }, [dataWithAddresses, selectedDeviceName]);
+        })) || [],
+    )
+  }, [dataWithAddresses, selectedDeviceName])
 
   const columnKeyMap = {
     'Start Time': 'idleStartTime',
@@ -462,6 +464,10 @@ const ShowIdeal = ({
       }
     })
   }, [enhancedFlattenedData, sortConfig])
+
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = sortedFlattenedData.slice(indexOfFirstItem, indexOfLastItem)
 
   // Function to get date range based on selectedPeriod
   const getDateRangeFromPeriod = (selectedPeriod) => {
@@ -620,9 +626,10 @@ const ShowIdeal = ({
           `Group: ${selectedGroupName || 'N/A'}`,
         ])
         worksheet.addRow([
-          `Date Range: ${selectedFromDate && selectedToDate
-            ? `${selectedFromDate} - ${selectedToDate}`
-            : getDateRangeFromPeriod(selectedPeriod)
+          `Date Range: ${
+            selectedFromDate && selectedToDate
+              ? `${selectedFromDate} - ${selectedToDate}`
+              : getDateRangeFromPeriod(selectedPeriod)
           }`,
           `Selected Vehicle: ${selectedDeviceName || '--'}`,
         ])
@@ -671,10 +678,10 @@ const ShowIdeal = ({
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit',
-                  });
-                  cellValue = formattedDate;
+                  })
+                  cellValue = formattedDate
                 } else {
-                  cellValue = '--';
+                  cellValue = '--'
                 }
                 break
               }
@@ -690,9 +697,10 @@ const ShowIdeal = ({
                 break
               }
               case 'Co-ordinates': {
-                cellValue = item.latitude && item.longitude
-                  ? `${item.latitude.toFixed(5)}, ${item.longitude.toFixed(5)}`
-                  : '--';
+                cellValue =
+                  item.latitude && item.longitude
+                    ? `${item.latitude.toFixed(5)}, ${item.longitude.toFixed(5)}`
+                    : '--'
                 break
               }
               case 'Start Time': {
@@ -708,10 +716,10 @@ const ShowIdeal = ({
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit',
-                  });
-                  cellValue = formattedDate;
+                  })
+                  cellValue = formattedDate
                 } else {
-                  cellValue = '--';
+                  cellValue = '--'
                 }
                 break
               }
@@ -776,17 +784,17 @@ const ShowIdeal = ({
     try {
       // Validate data before proceeding
       if (!Array.isArray(sortedFlattenedData) || sortedFlattenedData.length === 0) {
-        throw new Error('No data available for PDF export');
+        throw new Error('No data available for PDF export')
       }
 
       // Constants and configuration
       const CONFIG = {
         colors: {
-          primary: [10, 45, 99],  // Company primary color
-          secondary: [70, 70, 70],  // Secondary color for text
-          accent: [0, 112, 201],  // Accent color for highlights
-          border: [220, 220, 220],  // Border color
-          background: [249, 250, 251],  // Background color
+          primary: [10, 45, 99], // Company primary color
+          secondary: [70, 70, 70], // Secondary color for text
+          accent: [0, 112, 201], // Accent color for highlights
+          border: [220, 220, 220], // Border color
+          background: [249, 250, 251], // Background color
         },
         company: {
           name: 'Credence Tracker',
@@ -801,37 +809,43 @@ const ShowIdeal = ({
           primary: 'helvetica',
           secondary: 'courier',
         },
-      };
+      }
 
       const doc = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
         format: 'a4',
-      });
+      })
 
       // Helper functions for color application
       const applyPrimaryColor = () => {
-        doc.setFillColor(...CONFIG.colors.primary);
-        doc.setTextColor(...CONFIG.colors.primary);
-      };
+        doc.setFillColor(...CONFIG.colors.primary)
+        doc.setTextColor(...CONFIG.colors.primary)
+      }
 
       const applySecondaryColor = () => {
-        doc.setTextColor(...CONFIG.colors.secondary);
-      };
+        doc.setTextColor(...CONFIG.colors.secondary)
+      }
 
       const addHeader = () => {
         // Company logo and name
-        doc.setFillColor(...CONFIG.colors.primary);
-        doc.rect(CONFIG.company.logo.x, CONFIG.company.logo.y, CONFIG.company.logo.size, CONFIG.company.logo.size, 'F');
-        doc.setFont(CONFIG.fonts.primary, 'bold');
-        doc.setFontSize(16);
-        doc.text(CONFIG.company.name, 28, 21);
+        doc.setFillColor(...CONFIG.colors.primary)
+        doc.rect(
+          CONFIG.company.logo.x,
+          CONFIG.company.logo.y,
+          CONFIG.company.logo.size,
+          CONFIG.company.logo.size,
+          'F',
+        )
+        doc.setFont(CONFIG.fonts.primary, 'bold')
+        doc.setFontSize(16)
+        doc.text(CONFIG.company.name, 28, 21)
 
         // Header line
-        doc.setDrawColor(...CONFIG.colors.primary);
-        doc.setLineWidth(0.5);
-        doc.line(CONFIG.layout.margin, 25, doc.internal.pageSize.width - CONFIG.layout.margin, 25);
-      };
+        doc.setDrawColor(...CONFIG.colors.primary)
+        doc.setLineWidth(0.5)
+        doc.line(CONFIG.layout.margin, 25, doc.internal.pageSize.width - CONFIG.layout.margin, 25)
+      }
 
       const addMetadata = () => {
         const metadata = [
@@ -839,68 +853,69 @@ const ShowIdeal = ({
           { label: 'Selected User:', value: selectedUserName || 'N/A' },
           { label: 'Group:', value: selectedGroupName || 'N/A' },
           {
-            label: 'Date Range:', value: selectedFromDate && selectedToDate
-              ? `${selectedFromDate} - ${selectedToDate}`
-              : getDateRangeFromPeriod(selectedPeriod)
+            label: 'Date Range:',
+            value:
+              selectedFromDate && selectedToDate
+                ? `${selectedFromDate} - ${selectedToDate}`
+                : getDateRangeFromPeriod(selectedPeriod),
           },
           { label: 'Vehicle:', value: selectedDeviceName || 'N/A' },
-        ];
+        ]
 
+        doc.setFontSize(10)
+        doc.setFont(CONFIG.fonts.primary, 'bold')
 
-        doc.setFontSize(10);
-        doc.setFont(CONFIG.fonts.primary, 'bold');
-
-        let yPosition = 45;
-        const xPosition = CONFIG.layout.margin;
-        const lineHeight = CONFIG.layout.lineHeight;
+        let yPosition = 45
+        const xPosition = CONFIG.layout.margin
+        const lineHeight = CONFIG.layout.lineHeight
 
         metadata.forEach((item) => {
-          doc.text(`${item.label} ${item.value.toString()}`, xPosition, yPosition);
-          yPosition += lineHeight;
-        });
-      };
+          doc.text(`${item.label} ${item.value.toString()}`, xPosition, yPosition)
+          yPosition += lineHeight
+        })
+      }
 
       const addFooter = () => {
-        const pageCount = doc.getNumberOfPages();
+        const pageCount = doc.getNumberOfPages()
         for (let i = 1; i <= pageCount; i++) {
-          doc.setPage(i);
+          doc.setPage(i)
 
           // Footer line
-          doc.setDrawColor(...CONFIG.colors.border);
-          doc.setLineWidth(0.5);
+          doc.setDrawColor(...CONFIG.colors.border)
+          doc.setLineWidth(0.5)
           doc.line(
             CONFIG.layout.margin,
             doc.internal.pageSize.height - 15,
             doc.internal.pageSize.width - CONFIG.layout.margin,
-            doc.internal.pageSize.height - 15
-          );
+            doc.internal.pageSize.height - 15,
+          )
 
           // Copyright text
-          doc.setFontSize(9);
-          applySecondaryColor();
+          doc.setFontSize(9)
+          applySecondaryColor()
           doc.text(
             `© ${CONFIG.company.name}`,
             CONFIG.layout.margin,
-            doc.internal.pageSize.height - 10
-          );
+            doc.internal.pageSize.height - 10,
+          )
 
           // Page number
-          const pageNumber = `Page ${i} of ${pageCount}`;
-          const pageNumberWidth = doc.getTextWidth(pageNumber);
+          const pageNumber = `Page ${i} of ${pageCount}`
+          const pageNumberWidth = doc.getTextWidth(pageNumber)
           doc.text(
             pageNumber,
             doc.internal.pageSize.width - CONFIG.layout.margin - pageNumberWidth,
-            doc.internal.pageSize.height - 10
-          );
+            doc.internal.pageSize.height - 10,
+          )
         }
-      };
+      }
 
       // Helper function to format dates
       const formatDateTime = (dateString) => {
-        if (!dateString) return '--';
-        const date = new Date(dateString);
-        if (isNaN(date)) return '--';
-        date.setHours(date.getHours() - 5, date.getMinutes() - 30);
+        if (!dateString) return '--'
+        const date = new Date(dateString)
+        if (isNaN(date)) return '--'
+        date.setHours(date.getHours() - 5, date.getMinutes() - 30)
         return date.toLocaleString('en-GB', {
           year: 'numeric',
           month: '2-digit',
@@ -908,23 +923,23 @@ const ShowIdeal = ({
           hour: '2-digit',
           minute: '2-digit',
           hour12: false,
-        });
-      };
+        })
+      }
 
       // Build dynamic table columns
-      const pdfColumns = ['SN', 'Vehicle Name', ...selectedColumns];
+      const pdfColumns = ['SN', 'Vehicle Name', ...selectedColumns]
 
       // Build table rows from sortedFlattenedData
       const tableRows = sortedFlattenedData.map((item, index) => {
-        const rowData = [];
+        const rowData = []
         // Fixed first column: serial number
-        rowData.push(index + 1);
+        rowData.push(index + 1)
         // Fixed second column: Vehicle Name
-        rowData.push(item.vehicleName || '--');
+        rowData.push(item.vehicleName || '--')
 
         // Dynamic columns based on selectedColumns array
         selectedColumns.forEach((column) => {
-          let cellValue = '--';
+          let cellValue = '--'
           switch (column) {
             case 'Start Time':
               if (item.idleStartTime) {
@@ -935,23 +950,24 @@ const ShowIdeal = ({
                   hour: '2-digit',
                   minute: '2-digit',
                   second: '2-digit',
-                });
-                cellValue = formattedDate;
+                })
+                cellValue = formattedDate
               } else {
-                cellValue = '--';
+                cellValue = '--'
               }
-              break;
+              break
             case 'Duration':
-              cellValue = item.duration || '--';
-              break;
+              cellValue = item.duration || '--'
+              break
             case 'Location':
-              cellValue = item.address || item.location || '--';
-              break;
+              cellValue = item.address || item.location || '--'
+              break
             case 'Co-ordinates':
-              cellValue = item.latitude && item.longitude
-                ? `${item.latitude.toFixed(5)}, ${item.longitude.toFixed(5)}`
-                : '--';
-              break;
+              cellValue =
+                item.latitude && item.longitude
+                  ? `${item.latitude.toFixed(5)}, ${item.longitude.toFixed(5)}`
+                  : '--'
+              break
 
             case 'End Time':
               if (item.idleEndTime) {
@@ -962,66 +978,65 @@ const ShowIdeal = ({
                   hour: '2-digit',
                   minute: '2-digit',
                   second: '2-digit',
-                });
-                cellValue = formattedDate;
+                })
+                cellValue = formattedDate
               } else {
-                cellValue = '--';
+                cellValue = '--'
               }
-              break;
+              break
             default:
-              cellValue = '--';
+              cellValue = '--'
           }
-          rowData.push(cellValue);
-        });
+          rowData.push(cellValue)
+        })
 
-        return rowData;
-      });
+        return rowData
+      })
 
       // Optional: Define dynamic column styles (set widths, etc.)
-      const dynamicColumnStyles = {};
-      dynamicColumnStyles[0] = { cellWidth: 20 };
-      dynamicColumnStyles[1] = { cellWidth: 70 };
+      const dynamicColumnStyles = {}
+      dynamicColumnStyles[0] = { cellWidth: 20 }
+      dynamicColumnStyles[1] = { cellWidth: 70 }
       selectedColumns.forEach((col, i) => {
-        const colIndex = i + 2;
+        const colIndex = i + 2
         if (col === 'Start Time') {
-          dynamicColumnStyles[colIndex] = { cellWidth: 35 };
+          dynamicColumnStyles[colIndex] = { cellWidth: 35 }
         } else if (col === 'Location') {
-          dynamicColumnStyles[colIndex] = { cellWidth: 35 };
+          dynamicColumnStyles[colIndex] = { cellWidth: 35 }
         } else if (col === 'Co-ordinates') {
-          dynamicColumnStyles[colIndex] = { cellWidth: 35 };
+          dynamicColumnStyles[colIndex] = { cellWidth: 35 }
         } else if (col === 'Duration') {
-          dynamicColumnStyles[colIndex] = { cellWidth: 35 };
+          dynamicColumnStyles[colIndex] = { cellWidth: 35 }
         } else if (col === 'End Time') {
-          dynamicColumnStyles[colIndex] = { cellWidth: 35 };
+          dynamicColumnStyles[colIndex] = { cellWidth: 35 }
+        } else {
+          dynamicColumnStyles[colIndex] = { cellWidth: 35 }
         }
-        else {
-          dynamicColumnStyles[colIndex] = { cellWidth: 35 };
-        }
-      });
+      })
 
       // Main document creation
-      addHeader();
+      addHeader()
 
       // Title and generated date
-      doc.setFontSize(24);
-      doc.setFont(CONFIG.fonts.primary, 'bold');
-      doc.text('Idle Report', CONFIG.layout.margin, 35);
+      doc.setFontSize(24)
+      doc.setFont(CONFIG.fonts.primary, 'bold')
+      doc.text('Idle Report', CONFIG.layout.margin, 35)
 
       const currentDate = new Date().toLocaleDateString('en-GB', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-      });
-      const dateText = `Generated: ${currentDate}`;
-      applySecondaryColor();
-      doc.setFontSize(10);
+      })
+      const dateText = `Generated: ${currentDate}`
+      applySecondaryColor()
+      doc.setFontSize(10)
       doc.text(
         dateText,
         doc.internal.pageSize.width - CONFIG.layout.margin - doc.getTextWidth(dateText),
-        21
-      );
+        21,
+      )
 
-      addMetadata();
+      addMetadata()
 
       // Generate table using autoTable with dynamic header and rows
       doc.autoTable({
@@ -1049,24 +1064,24 @@ const ShowIdeal = ({
         didDrawPage: (data) => {
           // Add header on subsequent pages if needed
           if (doc.getCurrentPageInfo().pageNumber > 1) {
-            doc.setFontSize(15);
-            doc.setFont(CONFIG.fonts.primary, 'bold');
-            doc.text('Idle Report', CONFIG.layout.margin, 10);
+            doc.setFontSize(15)
+            doc.setFont(CONFIG.fonts.primary, 'bold')
+            doc.text('Idle Report', CONFIG.layout.margin, 10)
           }
         },
-      });
+      })
 
-      addFooter();
+      addFooter()
 
       // Save PDF
-      const filename = `Idle_Report_${new Date().toISOString().split('T')[0]}.pdf`;
-      doc.save(filename);
-      toast.success('PDF downloaded successfully');
+      const filename = `Idle_Report_${new Date().toISOString().split('T')[0]}.pdf`
+      doc.save(filename)
+      toast.success('PDF downloaded successfully')
     } catch (error) {
-      console.error('PDF Export Error:', error);
-      toast.error(error.message || 'Failed to export PDF');
+      console.error('PDF Export Error:', error)
+      toast.error(error.message || 'Failed to export PDF')
     }
-  };
+  }
 
   // Handel buttons
   const handleLogout = () => {
@@ -1193,11 +1208,13 @@ const ShowIdeal = ({
               </CTableDataCell>
             </CTableRow>
           ) : !statusLoading && sortedFlattenedData.length > 0 ? (
-            sortedFlattenedData.map((item, index) => (
+            currentItems.map((item, index) => (
               <CTableRow key={`${item.deviceId}-${index}`} className="custom-row">
                 <CTableDataCell>{index + 1}</CTableDataCell>
                 <CTableDataCell>{item.vehicleName || '--'}</CTableDataCell>
-                <CTableDataCell style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <CTableDataCell
+                  style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                >
                   <img
                     src={idels}
                     alt="Vehicle Status"
@@ -1211,28 +1228,34 @@ const ShowIdeal = ({
                       switch (column) {
                         case 'Start Time':
                           return item.idleStartTime
-                            ? new Date(item.idleStartTime).toLocaleString('en-GB', { timeZone: 'UTC', hour12: false })
-                            : '--';
+                            ? new Date(item.idleStartTime).toLocaleString('en-GB', {
+                                timeZone: 'UTC',
+                                hour12: false,
+                              })
+                            : '--'
                         case 'End Time':
                           return item.idleEndTime
-                            ? new Date(item.idleEndTime).toLocaleString('en-GB', { timeZone: 'UTC', hour12: false })
-                            : '--';
+                            ? new Date(item.idleEndTime).toLocaleString('en-GB', {
+                                timeZone: 'UTC',
+                                hour12: false,
+                              })
+                            : '--'
                         case 'Duration':
-                          return item.duration || '--';
+                          return item.duration || '--'
                         case 'Location':
-                          return item.address || 'No Address Found...';
+                          return item.address || 'No Address Found...'
                         case 'Co-ordinates':
                           return item.latitude && item.longitude
                             ? `${item.latitude.toFixed(5)}, ${item.longitude.toFixed(5)}`
-                            : '--';
+                            : '--'
                         case 'Vehicle Status':
-                          return item.speed !== undefined && item.speed === 0 ? 'Idle' : 'Moving';
+                          return item.speed !== undefined && item.speed === 0 ? 'Idle' : 'Moving'
                         case 'Total Duration':
                           return item.durationSeconds
                             ? new Date(item.durationSeconds * 1000).toISOString().substr(11, 8)
-                            : '--';
+                            : '--'
                         default:
-                          return '--';
+                          return '--'
                       }
                     })()}
                   </CTableDataCell>
@@ -1242,21 +1265,72 @@ const ShowIdeal = ({
           ) : (
             !statusLoading && (
               <CTableRow>
-                <CTableDataCell colSpan={selectedColumns.length + 3} style={{ textAlign: 'center', fontStyle: 'italic' }}>
+                <CTableDataCell
+                  colSpan={selectedColumns.length + 3}
+                  style={{ textAlign: 'center', fontStyle: 'italic' }}
+                >
                   No data available
                 </CTableDataCell>
               </CTableRow>
             )
           )}
         </CTableBody>
-
       </CTable>
+
+      {sortedFlattenedData.length > itemsPerPage && (
+        <div className="d-flex justify-content-center my-3">
+          <Pagination>
+            <Pagination.Prev
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            />
+            {Array.from(
+              { length: Math.ceil(sortedFlattenedData.length / itemsPerPage) },
+              (_, i) => (
+                <Pagination.Item
+                  key={i + 1}
+                  active={i + 1 === currentPage}
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </Pagination.Item>
+              ),
+            )}
+            <Pagination.Next
+              disabled={currentPage === Math.ceil(sortedFlattenedData.length / itemsPerPage)}
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  Math.min(prev + 1, Math.ceil(sortedFlattenedData.length / itemsPerPage)),
+                )
+              }
+            />
+          </Pagination>
+        </div>
+      )}
+
+      <CDropdown>
+        <CDropdownToggle color="secondary">
+          {itemsPerPage === Infinity ? 'All rows' : `${itemsPerPage} rows`}
+        </CDropdownToggle>
+        <CDropdownMenu>
+          {[10, 25, 50, 100, Infinity].map((count) => (
+            <CDropdownItem
+              key={count}
+              onClick={() => {
+                setItemsPerPage(count)
+                setCurrentPage(1)
+              }}
+            >
+              {count === Infinity ? 'All rows' : `${count} rows`}
+            </CDropdownItem>
+          ))}
+        </CDropdownMenu>
+      </CDropdown>
 
       <div className="position-fixed bottom-0 end-0 mb-5 m-3 z-5">
         <IconDropdown items={dropdownItems} />
       </div>
     </>
-
   )
 }
 
@@ -1374,7 +1448,7 @@ const Ideal = () => {
         console.log('yaha tak thik hai')
 
         // After setting the users, find the selected user based on formData.User
-        const selectedUser = usersData.find((user) => user.userId === formData.User);
+        const selectedUser = usersData.find((user) => user.userId === formData.User)
         const selectedUserName = selectedUser ? selectedUser.username : ''
         setSelectedUserName(selectedUserName)
         console.log('Selected User:', selectedUserName)
@@ -1410,8 +1484,8 @@ const Ideal = () => {
     const fromDate = formData.FromDate ? new Date(formData.FromDate).toISOString() : ''
     const toDate = formData.ToDate
       ? new Date(
-        new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000,
-      ).toISOString()
+          new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000,
+        ).toISOString()
       : ''
 
     const body = {
@@ -1465,8 +1539,7 @@ const Ideal = () => {
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
 
-  if (error) return <Page404 />
-
+  // if (error) return <Page404 />
 
   return (
     <>
