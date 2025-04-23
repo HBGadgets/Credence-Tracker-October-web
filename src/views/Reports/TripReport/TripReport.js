@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Pagination } from 'react-bootstrap'
 import {
   CButton,
   CCard,
@@ -248,9 +249,9 @@ const SearchTrip = ({
           value={
             formData.Devices
               ? {
-                value: formData.Devices,
-                label: devices.find((device) => device.deviceId === formData.Devices)?.name,
-              }
+                  value: formData.Devices,
+                  label: devices.find((device) => device.deviceId === formData.Devices)?.name,
+                }
               : null
           }
           onChange={(selectedOption) => handleInputChange('Devices', selectedOption?.value)}
@@ -347,61 +348,60 @@ const TripTable = ({
 }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
   const [addressData, setAddressData] = useState({})
-  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa', selectedUserName)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
 
+  console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa', selectedUserName)
 
   // Function to get address based on latitude and longitude using Nominatim API
   const getAddress = async (latitude, longitude) => {
     try {
-      const apiKey = 'CWVeoDxzhkO07kO693u0';
+      const apiKey = 'CWVeoDxzhkO07kO693u0'
       const response = await axios.get(
-        `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`
-      );
+        `https://api.maptiler.com/geocoding/${longitude},${latitude}.json?key=${apiKey}`,
+      )
 
       if (response.data?.features?.length > 0) {
-        const address = response.data.features[0].place_name;
-        console.log('Fetched address:', address);
-        return address;
+        const address = response.data.features[0].place_name
+        console.log('Fetched address:', address)
+        return address
       } else {
-        console.error('Error fetching address: No data found');
-        return 'Address not available';
+        console.error('Error fetching address: No data found')
+        return 'Address not available'
       }
     } catch (error) {
-      console.error('Error:', error.message);
-      return 'Address not available';
+      console.error('Error:', error.message)
+      return 'Address not available'
     }
-  };
-
+  }
 
   useEffect(() => {
     const fetchAddresses = async () => {
-      const newAddressData = {};
+      const newAddressData = {}
 
       const promises = apiData.finalTrip.map(async (trip) => {
-        const tripKey = `${trip.deviceId}-${trip.startTime}`; // Unique key for each trip
+        const tripKey = `${trip.deviceId}-${trip.startTime}` // Unique key for each trip
 
         if (!addressData[tripKey]) {
           const [startAddress, endAddress] = await Promise.all([
             getAddress(trip.startLatitude, trip.startLongitude),
-            getAddress(trip.endLatitude, trip.endLongitude)
-          ]);
+            getAddress(trip.endLatitude, trip.endLongitude),
+          ])
 
-          newAddressData[tripKey] = { startAddress, endAddress };
+          newAddressData[tripKey] = { startAddress, endAddress }
         } else {
-          newAddressData[tripKey] = addressData[tripKey]; // Use cached data if available
+          newAddressData[tripKey] = addressData[tripKey] // Use cached data if available
         }
-      });
+      })
 
-      await Promise.all(promises);
-      setAddressData((prev) => ({ ...prev, ...newAddressData }));
-    };
+      await Promise.all(promises)
+      setAddressData((prev) => ({ ...prev, ...newAddressData }))
+    }
 
     if (apiData?.finalTrip?.length > 0) {
-      fetchAddresses();
+      fetchAddresses()
     }
-  }, [apiData]);
-
-
+  }, [apiData])
 
   const columnKeyMap = {
     'Start Time': 'startTime',
@@ -470,6 +470,10 @@ const TripTable = ({
     }
     return data
   }, [apiData, sortConfig])
+
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem)
 
   // Function to export table data to Excel
   const exportToExcel = async () => {
@@ -559,9 +563,10 @@ const TripTable = ({
           `Group: ${selectedGroupName || 'N/A'}`,
         ])
         worksheet.addRow([
-          `Date Range: ${selectedFromDate && selectedToDate
-            ? `${new Date(selectedFromDate).toLocaleDateString('en-GB')} - ${new Date(selectedToDate).toLocaleDateString('en-GB')}`
-            : getDateRangeFromPeriod(selectedPeriod)
+          `Date Range: ${
+            selectedFromDate && selectedToDate
+              ? `${new Date(selectedFromDate).toLocaleDateString('en-GB')} - ${new Date(selectedToDate).toLocaleDateString('en-GB')}`
+              : getDateRangeFromPeriod(selectedPeriod)
           }`,
           `Selected Vehicle: ${selectedDeviceName || '--'}`,
         ])
@@ -1212,19 +1217,20 @@ const TripTable = ({
               </CTableDataCell>
             </CTableRow>
           ) : sortedData.length > 0 ? (
-            sortedData.map((row, rowIndex) => (
-              <CTableRow key={(row.id, rowIndex)} className="custom-row">
+            currentItems.map((row, rowIndex) => (
+              <CTableRow key={`${row.deviceId}-${row.startTime}`} className="custom-row">
                 <CTableDataCell
                   style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}
                 >
-                  {rowIndex + 1}
+                  {indexOfFirstItem + rowIndex + 1}
                 </CTableDataCell>
                 <CTableDataCell
                   style={{ backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#eeeeefc2' }}
                 >
                   {row.name}
                 </CTableDataCell>
-                {/* Dynamically render table cells based on selected columns */}
+
+                {/* Your dynamic column rendering remains unchanged */}
                 {selectedColumns.map((column, index) => (
                   <CTableDataCell
                     key={index}
@@ -1235,33 +1241,29 @@ const TripTable = ({
                         case 'Start Time':
                           return row.startTime
                             ? new Date(row.startTime).toLocaleString('en-GB', {
-                              timeZone: 'UTC',
-                              hour12: false,
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })
-                            : '--';
-
+                                timeZone: 'UTC',
+                                hour12: false,
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })
+                            : '--'
                         case 'End Time':
                           return row.endTime
                             ? new Date(row.endTime).toLocaleString('en-GB', {
-                              timeZone: 'UTC',
-                              hour12: false,
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })
-                            : '--';
-
+                                timeZone: 'UTC',
+                                hour12: false,
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })
+                            : '--'
                         case 'Distance':
                           return row.distance
-                        // case 'Total Distance':
-                        //   return row.totalDistance
                         case 'Maximum Speed':
                           return `${row.maxSpeed.toFixed(2)} km/h`
                         case 'Average Speed':
@@ -1269,15 +1271,15 @@ const TripTable = ({
                         case 'Duration':
                           return row.duration
                         case 'Start Address':
-                          const startKey = `${row.deviceId}-${row.startTime}`;
-                          return addressData[startKey]?.startAddress || 'Fetching...';
+                          const startKey = `${row.deviceId}-${row.startTime}`
+                          return addressData[startKey]?.startAddress || 'Fetching...'
                         case 'Start Co-ordinates':
                           return row.startLatitude && row.startLongitude
                             ? `${row.startLatitude}, ${row.startLongitude}`
                             : 'Fetching Co-ordinates...'
                         case 'End Address':
-                          const endKey = `${row.deviceId}-${row.startTime}`;
-                          return addressData[endKey]?.endAddress || 'Fetching...';
+                          const endKey = `${row.deviceId}-${row.startTime}`
+                          return addressData[endKey]?.endAddress || 'Fetching...'
                         case 'End Co-ordinates':
                           return row.endLatitude && row.endLongitude
                             ? `${row.endLatitude}, ${row.endLongitude}`
@@ -1312,6 +1314,51 @@ const TripTable = ({
           )}
         </CTableBody>
       </CTable>
+
+      {sortedData.length > itemsPerPage && (
+        <div className="d-flex justify-content-center my-3">
+          <Pagination>
+            <Pagination.Prev
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            />
+            {Array.from({ length: Math.ceil(sortedData.length / itemsPerPage) }, (_, i) => (
+              <Pagination.Item
+                key={i + 1}
+                active={i + 1 === currentPage}
+                onClick={() => setCurrentPage(i + 1)}
+              >
+                {i + 1}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next
+              disabled={currentPage === Math.ceil(sortedData.length / itemsPerPage)}
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  Math.min(prev + 1, Math.ceil(sortedData.length / itemsPerPage)),
+                )
+              }
+            />
+          </Pagination>
+        </div>
+      )}
+
+      <CDropdown className="mb-2">
+        <CDropdownToggle color="secondary">{itemsPerPage} rows</CDropdownToggle>
+        <CDropdownMenu>
+          {[10, 25, 50, 100, Infinity].map((count) => (
+            <CDropdownItem
+              key={count}
+              onClick={() => {
+                setItemsPerPage(count)
+                setCurrentPage(1)
+              }}
+            >
+              {count === Infinity ? 'All' : `${count} rows`}
+            </CDropdownItem>
+          ))}
+        </CDropdownMenu>
+      </CDropdown>
 
       <div className="position-fixed bottom-0 end-0 mb-5 m-3 z-5">
         <IconDropdown items={dropdownItems} />
@@ -1521,16 +1568,15 @@ const Trips = () => {
   // Example of extracting values similar to `selectedGroup`
   const selectedFromDate = formData.FromDate
     ? new Date(
-      new Date(formData.FromDate).setHours(0, 0, 0, 0) + (5 * 60 + 30) * 60000
-    ).toISOString()
-    : '';
+        new Date(formData.FromDate).setHours(0, 0, 0, 0) + (5 * 60 + 30) * 60000,
+      ).toISOString()
+    : ''
 
   const selectedToDate = formData.ToDate
     ? new Date(
-      new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000,
-    ).toISOString()
+        new Date(formData.ToDate).setHours(23, 59, 59, 999) + (5 * 60 + 30) * 60000,
+      ).toISOString()
     : ''
-
 
   const selectedPeriod = formData.Periods || ''
 
@@ -1538,7 +1584,8 @@ const Trips = () => {
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
 
-  if (error) return <Page404 />
+  // fix this error in the upcoming update
+  // if (error) return <Page404 />
 
   return (
     <>
