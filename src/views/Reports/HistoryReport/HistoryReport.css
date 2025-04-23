@@ -261,3 +261,7 @@
     /* Further adjustment for very small screens */
   }
 }
+
+#root>div>div>div.body.flex-grow-1>div>div {
+  height: 100vh !important;
+}

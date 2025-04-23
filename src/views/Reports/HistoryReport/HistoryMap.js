@@ -18,6 +18,7 @@ import ReactDOMServer from 'react-dom/server'
 import { Line } from 'react-chartjs-2'
 import redFlag from '../../../assets/red-flag-svgrepo-com.svg'
 import greenFlag from '../../../assets/green.svg'
+
 import {
   Chart as ChartJS,
   LineElement,
