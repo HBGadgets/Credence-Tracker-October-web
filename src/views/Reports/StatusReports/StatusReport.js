@@ -1220,7 +1220,7 @@ const ShowStatus = ({
 
       {/* Rows Per Page Dropdown */}
       <CRow className="my-3">
-        <CCol xs={12} className="d-flex justify-content-end">
+        <CCol xs={12} className="d-flex justify-content-start">
           <CDropdown aria-label="Rows per page selector">
             <CDropdownToggle color="secondary" className="d-flex align-items-center">
               {itemsPerPage === Infinity ? 'All' : itemsPerPage}
@@ -1243,12 +1243,12 @@ const ShowStatus = ({
 
       {!statusLoading && (
         <CRow className="my-3">
-          <CCol xs={6} className="d-flex align-items-center">
+          {/* <CCol xs={6} className="d-flex align-items-center">
             <span className="text-muted small">
               Showing {indexOfFirstItem + 1 || ''} to {Math.min(indexOfLastItem, sortedData.length)}{' '}
               of {sortedData.length} entries
             </span>
-          </CCol>
+          </CCol> */}
           <div className="d-flex justify-content-center">
             {sortedData.length > itemsPerPage && (
               <Pagination align="end" aria-label="Table pagination">
