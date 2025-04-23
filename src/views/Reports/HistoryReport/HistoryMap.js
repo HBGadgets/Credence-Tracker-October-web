@@ -546,9 +546,21 @@ const HistoryMap = ({
   const toggleMapView = () => {
     setIsSatelliteView((prev) => !prev)
   }
+
   return (
     <div className="individualMap position-relative">
       <div className="graphAndMap" style={{ width: '100%' }}>
+        {fetch && !loading && positions.length === 0 && (
+          <div className="no-history-container">
+            <p className="no-history-message">
+              History is not available for the selected time range.
+            </p>
+            <CButton color="danger" onClick={handleBack} className="back-button">
+              Back
+            </CButton>
+          </div>
+        )}
+
         <MapContainer
           ref={mapRef}
           center={
@@ -704,6 +716,7 @@ const HistoryMap = ({
               </Marker>
             ))}
         </MapContainer>
+
         {historyOn && positions.length > 0 && (
           <>
             <div className="infoNav" style={{ height: '60px', width: '100%' }}>
