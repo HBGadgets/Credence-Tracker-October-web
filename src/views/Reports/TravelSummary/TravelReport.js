@@ -189,25 +189,41 @@ const SearchTravel = ({
 
       <CCol md={2}>
         <CFormLabel htmlFor="devices">Vehicles</CFormLabel>
-        <CFormSelect
+        <Select
           id="devices"
-          required
-          value={formData.Devices}
-          onChange={(e) => handleInputChange('Devices', e.target.value)}
-        >
-          <option value="">Choose a Vehilces...</option>
-          {loading ? (
-            <option disabled>Loading vehicles...</option>
-          ) : devices?.length > 0 ? (
-            devices?.map((device) => (
-              <option key={device.id} value={device.deviceId}>
-                {device.name}
-              </option>
-            ))
-          ) : (
-            <option disabled>No Vehilces in this Group</option>
-          )}
-        </CFormSelect>
+          isMulti
+          options={
+            loading
+              ? [{ value: '', label: 'Loading vehicles...', isDisabled: true }]
+              : [
+                  { value: 'all', label: 'All Vehicles' },
+                  ...devices.map((device) => ({
+                    value: device.deviceId,
+                    label: device.name,
+                  })),
+                ]
+          }
+          value={
+            formData.Devices.includes('all')
+              ? [{ value: 'all', label: 'All Vehicles' }]
+              : devices
+                  .filter((d) => formData.Devices.includes(d.deviceId))
+                  .map((d) => ({ value: d.deviceId, label: d.name }))
+          }
+          onChange={(selectedOptions) => {
+            const selectedValues = selectedOptions.map((opt) => opt.value)
+
+            if (selectedValues.includes('all')) {
+              const allDeviceIds = devices.map((d) => d.deviceId)
+              handleInputChange('Devices', allDeviceIds)
+            } else {
+              handleInputChange('Devices', selectedValues)
+            }
+          }}
+          placeholder="Choose vehicles..."
+          isLoading={loading}
+        />
+
         <CFormFeedback invalid>Please provide a valid vehicle.</CFormFeedback>
       </CCol>
       <CCol md={2}>
@@ -1778,7 +1794,7 @@ const ShowSummary = ({
 
 const TravelReport = () => {
   const [formData, setFormData] = useState({
-    Devices: '',
+    Devices: [],
     Details: '',
     Periods: '',
     FromDate: '',
@@ -1834,7 +1850,10 @@ const TravelReport = () => {
 
   // Get the selected device name from the device list based on formData.Devices
   const selectedDevice = devices.find((device) => device.deviceId === formData.Devices)
-  const selectedDeviceName = selectedDevice ? selectedDevice.name : ''
+  // const selectedDeviceNames = devices
+  //   .filter((device) => formData.Devices.includes(device.deviceId))
+  //   .map((device) => device.name)
+  //   .join(', ')
 
   const handlePutName = (name) => {
     setPutName(name)
@@ -2037,10 +2056,7 @@ const TravelReport = () => {
     //   value = convertToIST(value);
     // }
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }))
+    setFormData((prev) => ({ ...prev, [name]: value }))
 
     if (name === 'Columns') {
       setSelectedColumns(value)
@@ -2072,8 +2088,14 @@ const TravelReport = () => {
 
       console.log(date, 'DATE HAI YE')
 
+      if (!formData.Devices.length) {
+        toast.error('Please select at least one vehicle.')
+        setStatusLoading(false)
+        return
+      }
+
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/reports/travel-summary-report?deviceIds=${formData.Devices}&from=${date}`,
+        `${import.meta.env.VITE_API_URL}/reports/travel-summary-report?deviceIds=${formData.Devices.join(',')}&from=${date}`,
         { headers: { Authorization: `Bearer ${token}` } },
       )
 
@@ -2111,6 +2133,11 @@ const TravelReport = () => {
   console.log('Selected Period:', selectedPeriod)
 
   console.log('API Data:', apiData)
+
+  const selectedDeviceNames = devices
+    .filter((device) => formData.Devices.includes(device.deviceId))
+    .map((device) => device.name)
+    .join(', ')
 
   // if (error) return <Page404 />
 
@@ -2156,15 +2183,15 @@ const TravelReport = () => {
               <CCard className="p-0 mb-4 shadow-sm">
                 <CCardHeader className="d-flex justify-content-between align-items-center">
                   <strong>
-                    Travel Summary {selectedDeviceName && `for ${selectedDeviceName}`}
-                  </strong>{' '}
+                    Travel Summary {selectedDeviceNames && `for ${selectedDeviceNames}`}
+                  </strong>
                 </CCardHeader>
                 <CCardBody>
                   <ShowSummary
                     formData={formData}
                     apiData={apiData}
                     statusLoading={statusLoading}
-                    selectedDeviceName={selectedDeviceName}
+                    // selectedDeviceName={selectedDeviceName}
                     selectedColumns={selectedColumns}
                     selectedGroupName={selectedGroupName}
                     daywiseSummaryColumn={daywiseSummaryColumn}
