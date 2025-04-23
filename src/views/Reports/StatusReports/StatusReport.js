@@ -1528,7 +1528,7 @@ const Status = () => {
   console.log('Selected To Date:', selectedToDate)
   console.log('Selected Period:', selectedPeriod)
 
-  if (error) return <Page404 />
+  // if (error) return <Page404 />
 
   return (
     <>
