@@ -379,6 +379,11 @@ const StopTable = ({
     Speed: 'speed',
     Ignition: 'ignition',
     Direction: 'course',
+    Duration: 'duration',
+    Address: 'address',
+    Reason: 'reason',
+    Latitude: 'latitude',
+    Longitude: 'longitude',
   }
 
   // Sorting the data
@@ -388,29 +393,25 @@ const StopTable = ({
 
     if (sortConfig.key) {
       data.sort((a, b) => {
-        const aValue = a[sortConfig.key]
-        const bValue = b[sortConfig.key]
+        const aValue = a[sortConfig.key] ?? ''
+        const bValue = b[sortConfig.key] ?? ''
 
-        switch (sortConfig.key) {
-          case 'arrivalTime':
-          case 'departureTime': {
-            const aDate = new Date(aValue)
-            const bDate = new Date(bValue)
-            return sortConfig.direction === 'asc' ? aDate - bDate : bDate - aDate
-          }
-          case 'speed':
-          case 'course':
-            return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue
-          case 'ignition': {
-            const aBool = aValue ? 1 : 0
-            const bBool = bValue ? 1 : 0
-            return sortConfig.direction === 'asc' ? aBool - bBool : bBool - aBool
-          }
-          default:
-            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1
-            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1
-            return 0
+        // Special case for dates
+        if (sortConfig.key === 'arrivalTime' || sortConfig.key === 'departureTime') {
+          const aDate = new Date(aValue)
+          const bDate = new Date(bValue)
+          return sortConfig.direction === 'asc' ? aDate - bDate : bDate - aDate
         }
+
+        // Numbers (e.g., speed, course)
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue
+        }
+
+        // Everything else: compare as string
+        return sortConfig.direction === 'asc'
+          ? aValue.toString().localeCompare(bValue.toString())
+          : bValue.toString().localeCompare(aValue.toString())
       })
     }
     return data
@@ -995,6 +996,16 @@ const StopTable = ({
   ]
 
   console.log('sortedDataaaaaaaaaaaaaaaaaaaaaaaa', sortedData)
+  const handleSort = (columnLabel) => {
+    const sortKey = columnKeyMap[columnLabel]
+    if (!sortKey) return
+
+    let direction = 'asc'
+    if (sortConfig.key === sortKey && sortConfig.direction === 'asc') {
+      direction = 'desc'
+    }
+    setSortConfig({ key: sortKey, direction })
+  }
 
   return (
     <>
