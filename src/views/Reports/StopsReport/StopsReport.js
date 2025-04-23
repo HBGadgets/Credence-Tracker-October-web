@@ -1208,6 +1208,22 @@ const StopTable = ({
         </div>
       )}
 
+      <CDropdown className="mb-2">
+        <CDropdownToggle color="secondary">{itemsPerPage} rows</CDropdownToggle>
+        <CDropdownMenu>
+          {[10, 25, 50, 100, Infinity].map((count) => (
+            <CDropdownItem
+              key={count}
+              onClick={() => {
+                setItemsPerPage(count)
+                setCurrentPage(1)
+              }}
+            >
+              {count === Infinity ? 'All' : `${count} rows`}
+            </CDropdownItem>
+          ))}
+        </CDropdownMenu>
+      </CDropdown>
       <div className="position-fixed bottom-0 end-0 mb-5 m-3 z-5">
         <IconDropdown items={dropdownItems} />
       </div>
