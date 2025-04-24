@@ -172,6 +172,22 @@ const LiveTrackingMap = ({ token }) => {
                     {position?.name ? position?.name : 'User Name'}
                   </h6>
                   <p>{address ? `${address}` : 'Address of User'}</p>
+                  <div className="d-flex align-items-center gap-1 mt-2 mb-2">
+                    <i className="bi bi-clock-history text-secondary small"></i>
+                    <span className="text-secondary ">
+                      Last Update:
+                      <span className="text-dark fw-semibold ms-1 font-monospace">
+                        {position?.lastUpdate
+                          ? new Date(position.lastUpdate).toLocaleString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              day: 'numeric',
+                              month: 'short',
+                            })
+                          : 'N/A'}
+                      </span>
+                    </span>
+                  </div>
                 </div>
                 <div className="col-5">
                   <img src={vehicleImg || '/placeholder.svg'} className="nimg" alt="vehicle" />

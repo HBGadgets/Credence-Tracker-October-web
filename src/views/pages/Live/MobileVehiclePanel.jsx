@@ -12,10 +12,23 @@ const MobileVehiclePanel = ({ position, address }) => {
     <div className={`mobile-vehicle-panel ${isExpanded ? 'expanded' : ''}`}>
       <div className="panel-handle" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="handle-bar"></div>
-        <div className="vehicle-id">
-          {position?.name || 'Vehicle'}
-          {isExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+        <div className="vehicle-meta">
+          <div className="vehicle-id">
+            {position?.name || 'Vehicle'}
+            <span className="update-time">
+              Last Update: {''}
+              {position?.lastUpdate
+                ? new Date(position.lastUpdate).toLocaleString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    day: 'numeric',
+                    month: 'short',
+                  })
+                : 'N/A'}
+            </span>
+          </div>
         </div>
+        {isExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
       </div>
 
       <div className="panel-content">
