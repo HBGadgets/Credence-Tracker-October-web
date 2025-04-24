@@ -4,3 +4,13 @@
     color: white !important;
     /* Ensures text remains white */
 }
+
+.custom-dropdown-item.active,
+.custom-dropdown-item:active,
+.custom-dropdown-item.router-link-exact-active {
+    background-color: #091a35 !important;
+    color: inherit !important;
+    /* Optional: inherit the color too */
+    box-shadow: none !important;
+    /* Optional: remove shadow if added */
+}
