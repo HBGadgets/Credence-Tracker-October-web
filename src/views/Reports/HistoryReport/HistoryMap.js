@@ -18,6 +18,7 @@ import ReactDOMServer from 'react-dom/server'
 import { Line } from 'react-chartjs-2'
 import redFlag from '../../../assets/red-flag-svgrepo-com.svg'
 import greenFlag from '../../../assets/green.svg'
+import './HistoryReport.css'
 
 import {
   Chart as ChartJS,
@@ -549,19 +550,8 @@ const HistoryMap = ({
   }
 
   return (
-    <div className="individualMap position-relative">
+    <div>
       <div className="graphAndMap" style={{ width: '100%' }}>
-        {fetch && !loading && positions.length === 0 && (
-          <div className="no-history-container">
-            <p className="no-history-message">
-              History is not available for the selected time range.
-            </p>
-            <CButton color="danger" onClick={handleBack} className="back-button">
-              Back
-            </CButton>
-          </div>
-        )}
-
         <MapContainer
           ref={mapRef}
           center={
@@ -717,6 +707,16 @@ const HistoryMap = ({
               </Marker>
             ))}
         </MapContainer>
+        {fetch && !loading && positions.length === 0 && (
+          <div className="no-history-container">
+            <p className="no-history-message">
+              History is not available for the selected time range.
+            </p>
+            <CButton color="danger" onClick={handleBack} className="back-button">
+              Back
+            </CButton>
+          </div>
+        )}
 
         {historyOn && positions.length > 0 && (
           <>
