@@ -39,7 +39,7 @@ const MobileVehiclePanel = ({ position, address }) => {
 
         <div className="stats-grid">
           <div className={`stat-item ${position?.attributes?.ignition ? 'active' : 'inactive'}`}>
-            <Zap size={20} className="stat-icon" />
+            <Zap size={15} className="stat-icon" />
             <div className="stat-label">Ignition</div>
             <div className="stat-value">{position?.attributes?.ignition ? 'On' : 'Off'}</div>
           </div>
