@@ -41,6 +41,7 @@ import { auto } from '@popperjs/core'
 import idel from 'src/status/idel.png'
 import ignitionOff from 'src/status/power-off.png'
 import ignitionOn from 'src/status/power-on.png'
+import overspeed from 'src/status/overspeed.png'
 import Loader from '../../../components/Loader/Loader'
 import '../style/remove-gutter.css'
 import '../../../utils.css'
@@ -404,8 +405,6 @@ const ShowStatus = ({
           return row.distance
         case 'Maximum Speed':
           return row.maxSpeed
-        // case 'Total KM':
-        //   return row.totalKm
         case 'Duration':
           return row.time
         default:
@@ -1138,9 +1137,9 @@ const ShowStatus = ({
                           </>
                         ) : row.vehicleStatus === 'Overspeed' ? (
                           <>
-                            <CTooltip content="Ignition On">
+                            <CTooltip content="Overspeed">
                               <img
-                                src={ignitionOn}
+                                src={overspeed}
                                 alt="on"
                                 width="40"
                                 height="40"
