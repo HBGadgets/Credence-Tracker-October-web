@@ -71,7 +71,7 @@ import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
-import Page404 from '../../pages/page404/Page404'
+// import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 
@@ -1383,7 +1383,7 @@ const Devices = () => {
     setFormData('')
   }
 
-  if (error) return <Page404 />
+  // if (error) return <Page404 />
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">

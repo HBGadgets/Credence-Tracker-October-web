@@ -1,11 +1,34 @@
 import React, { useState, useEffect } from 'react'
-import { TextField, Typography, Accordion, AccordionSummary, AccordionDetails, InputAdornment, FormControlLabel, Checkbox, FormGroup, Button, FormControl, InputLabel, Select, Box, Autocomplete } from '@mui/material'
-import { AccountCircle, MailOutline, Phone, LockOutlined, ExpandMoreOutlined } from '@mui/icons-material'
+import {
+  TextField,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  InputAdornment,
+  FormControlLabel,
+  Checkbox,
+  FormGroup,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  Box,
+  Autocomplete,
+  Chip,
+} from '@mui/material'
+import {
+  AccountCircle,
+  MailOutline,
+  Phone,
+  LockOutlined,
+  ExpandMoreOutlined,
+} from '@mui/icons-material'
 import Cookies from 'js-cookie'
 import axios from 'axios'
 import toast, { Toaster } from 'react-hot-toast'
-import { FaUserGroup } from "react-icons/fa6";
-import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
+import { FaUserGroup } from 'react-icons/fa6'
+import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material'
 
 import { jwtDecode } from 'jwt-decode'
 function AllUser({ handleNextStep, handleSkip }) {
@@ -66,29 +89,27 @@ function AllUser({ handleNextStep, handleSkip }) {
   }, [])
   // to limit no of list items so that list should always open downwards
   const CustomListbox = (props) => {
-    return (
-      <ul {...props} style={{ maxHeight: '150px', overflowY: 'auto' }} />
-    );
-  };
+    return <ul {...props} style={{ maxHeight: '150px', overflowY: 'auto' }} />
+  }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   const handlePermissionChange = (e) => {
-    const { name, checked } = e.target;
+    const { name, checked } = e.target
     setFormData((prev) => ({
       ...prev,
       permissions: {
         ...prev.permissions,
         [name]: checked,
       },
-    }));
-  };
+    }))
+  }
   const handleAdminToggle = (e) => {
     const isAdmin = e.target.checked
     setFormData((prev) => ({
@@ -124,9 +145,8 @@ function AllUser({ handleNextStep, handleSkip }) {
     }
   }
 
-
   useEffect(() => {
-    fetchGroups();
+    fetchGroups()
   }, [])
 
   const handleSaveAndNext = async (e) => {
@@ -139,8 +159,7 @@ function AllUser({ handleNextStep, handleSkip }) {
       groupsAssigned: formData.groups,
       ...formData.permissions,
     }
-    console.log("data to submit in alluser", dataToSubmit);
-
+    console.log('data to submit in alluser', dataToSubmit)
 
     try {
       console.log('dekhte hai')
@@ -203,11 +222,9 @@ function AllUser({ handleNextStep, handleSkip }) {
     }
   }
 
-
-
   return (
     <div>
-      <form >
+      <form>
         <div style={{ display: 'grid', gridTemplateColumns: 'auto auto auto', gridGap: '1rem' }}>
           <TextField
             label="User Name"
@@ -287,33 +304,31 @@ function AllUser({ handleNextStep, handleSkip }) {
               multiple
               options={groups}
               getOptionLabel={(option) => option.name || ''}
-              value={
-                groups.filter((group) => formData.groups?.includes(group._id)) || []
-              }
+              value={groups.filter((group) => formData.groups?.includes(group._id)) || []}
               onChange={(event, newValue) => {
                 handleInputChange({
                   target: {
-                    name: "groups",
+                    name: 'groups',
                     value: newValue.map((group) => group._id),
                   },
-                });
+                })
               }}
               ListboxProps={{
                 sx: {
-                  maxHeight: 200, // Restrict max height
-                  overflowY: 'scroll', // Always show scrollbar
+                  maxHeight: 200,
+                  overflowY: 'scroll',
                   '&::-webkit-scrollbar': {
-                    width: '8px', // Scrollbar width
+                    width: '8px',
                   },
                   '&::-webkit-scrollbar-track': {
-                    background: '#f1f1f1', // Track color
+                    background: '#f1f1f1',
                   },
                   '&::-webkit-scrollbar-thumb': {
-                    background: '#888', // Scrollbar color
+                    background: '#888',
                     borderRadius: '4px',
                   },
                   '&::-webkit-scrollbar-thumb:hover': {
-                    background: '#555', // Hover effect
+                    background: '#555',
                   },
                 },
               }}
@@ -321,10 +336,16 @@ function AllUser({ handleNextStep, handleSkip }) {
                 <TextField
                   {...params}
                   label="groups"
-                  placeholder="Search group..."
+                  placeholder={formData.groups?.length ? '' : 'Search group...'}
                   variant="outlined"
                   InputProps={{
                     ...params.InputProps,
+                    style: {
+                      ...params.InputProps.style,
+                      flexWrap: 'nowrap',
+                      overflowX: 'auto',
+                      width: '400px',
+                    },
                     startAdornment: (
                       <>
                         <InputAdornment position="start">
@@ -343,106 +364,37 @@ function AllUser({ handleNextStep, handleSkip }) {
                   }}
                 />
               )}
+              renderTags={(value, getTagProps) => (
+                <div
+                  style={{
+                    display: 'flex',
+                    width: '100%',
+                    overflowX: 'auto',
+                    gap: '4px',
+                    alignItems: 'center',
+                  }}
+                >
+                  {value.map((option, index) => (
+                    <Chip
+                      {...getTagProps({ index })}
+                      label={option.name}
+                      size="small"
+                      sx={{
+                        width: 100,
+                        flexShrink: 0,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
               isOptionEqualToValue={(option, value) => option._id === value._id}
+              sx={{
+                '& .MuiAutocomplete-inputRoot': {
+                  flexWrap: 'nowrap',
+                },
+              }}
             />
           </FormControl>
-
-
-
-          {/* <FormControl fullWidth sx={{ marginBottom: 2 }}>
-            <Autocomplete
-              disableCloseOnSelect
-              multiple
-              options={groups}
-              getOptionLabel={(option) => option.name || ''}
-              value={
-                groups.filter((group) => formData.groups?.includes(group._id)) || []
-              }
-              onChange={(event, newValue) => {
-                handleInputChange({
-                  target: {
-                    name: 'groups',
-                    value: newValue.map((group) => group._id),
-                  },
-                });
-              }}
-              ListboxComponent={CustomListbox}
-              renderOption={(props, option, { selected }) => (
-                <li {...props}>
-                  <Checkbox
-                    icon={<CheckBoxOutlineBlank />}
-                    checkedIcon={<CheckBox />}
-                    style={{ marginRight: 8 }}
-                    checked={selected}
-                  />
-                  {option.name}
-                </li>
-              )}
-              isOptionEqualToValue={(option, value) => option._id === value._id}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Groups"
-                  placeholder="Search group..."
-                  variant="outlined"
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <>
-                        <InputAdornment position="start">
-                          <FaUserGroup
-                            style={{
-                              fontSize: '1.3rem',
-                              color: 'rgb(51 51 51 / 73%)',
-                              marginRight: '0.5rem',
-                              marginLeft: '0.5rem',
-                            }}
-                          />
-                        </InputAdornment>
-                        {params.InputProps.startAdornment}
-                      </>
-                    ),
-                  }}
-                />
-              )}
-              renderTags={(selected, getTagProps) => {
-                const displayedTags = selected.slice(0, 1); // Display only the first selected option
-                const extraCount = selected.length - 1; // Count of additional selections
-
-                return (
-                  <>
-                    {displayedTags.map((option, index) => (
-                      <span
-                        key={option._id}
-                        {...getTagProps({ index })}
-                        style={{
-                          backgroundColor: '#e0e0e0',
-                          borderRadius: '4px',
-                          margin: '2px',
-                          display: 'inline-block',
-                        }}
-                      >
-                        {option.name}
-                      </span>
-                    ))}
-                    {extraCount > 0 && (
-                      <span
-                        style={{
-                          backgroundColor: '#e0e0e0',
-                          borderRadius: '4px',
-                          margin: '2px',
-                          display: 'inline-block',
-                        }}
-                      >
-                        +{extraCount}
-                      </span>
-                    )}
-                  </>
-                );
-              }}
-            />
-          </FormControl> */}
-
         </div>
 
         <div className="mt-3">
@@ -467,9 +419,7 @@ function AllUser({ handleNextStep, handleSkip }) {
             <div className="row w-100">
               <div className="col">
                 <Accordion>
-                  <AccordionSummary expandIcon={<ExpandMoreOutlined />}>
-                    Master
-                  </AccordionSummary>
+                  <AccordionSummary expandIcon={<ExpandMoreOutlined />}>Master</AccordionSummary>
                   <AccordionDetails>
                     <FormGroup sx={{ color: 'black' }}>
                       {[
@@ -539,9 +489,7 @@ function AllUser({ handleNextStep, handleSkip }) {
               <div className="row w-100">
                 <div className="col">
                   <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMoreOutlined />}>
-                      Master
-                    </AccordionSummary>
+                    <AccordionSummary expandIcon={<ExpandMoreOutlined />}>Master</AccordionSummary>
                     <AccordionDetails>
                       <FormGroup sx={{ color: 'black' }}>
                         {[
@@ -590,7 +538,8 @@ function AllUser({ handleNextStep, handleSkip }) {
                           'vehicle',
                           'sensor',
                           'geofenceReport',
-                        ].filter((permission) => availablePermissions[permission])
+                        ]
+                          .filter((permission) => availablePermissions[permission])
                           .map((permission) => (
                             <FormControlLabel
                               key={permission}
@@ -612,23 +561,11 @@ function AllUser({ handleNextStep, handleSkip }) {
             )
           )}
         </div>
-        <div style={{ position: "absolute", bottom: "1.5rem", right: "1.5rem" }}>
-          {/* <Button variant="contained" color="primary" type="button" onClick={handleSkip}>
-      Skip
-    </Button>
-    <Button variant="contained" color="primary" type="button" onClick={handleSaveAndNext}>
-      Save and Next
-    </Button> */}
-          <button
-
-            onClick={handleSkip}
-            variant="contained"
-            className="btn btn-secondary"
-          >
+        <div style={{ position: 'absolute', bottom: '1.5rem', right: '1.5rem' }}>
+          <button onClick={handleSkip} variant="contained" className="btn btn-secondary">
             Skip
           </button>
           <button
-
             onClick={handleSaveAndNext}
             variant="contained"
             className="btn btn-secondary"
@@ -643,12 +580,3 @@ function AllUser({ handleNextStep, handleSkip }) {
 }
 
 export default AllUser
-
-
-
-
-
-
-
-
-

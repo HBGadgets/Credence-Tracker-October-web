@@ -35,6 +35,7 @@ import {
   Autocomplete,
   InputAdornment,
   Checkbox,
+  Chip,
 } from '@mui/material'
 import { AiOutlinePlus } from 'react-icons/ai'
 import CloseIcon from '@mui/icons-material/Close'
@@ -43,6 +44,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import { MdDevicesOther } from 'react-icons/md'
 import Cookies from 'js-cookie'
 import { grey } from '@mui/material/colors'
+import '../../../Reports/style/remove-gutter.css'
 
 const AddDevice1 = ({
   handleSkip,
@@ -429,8 +431,8 @@ const AddDevice1 = ({
             return (
               <FormControl fullWidth sx={{ marginBottom: 2 }} key={col.accessor}>
                 <Autocomplete
-                  disableCloseOnSelect
                   multiple
+                  disableCloseOnSelect
                   id={`autocomplete-${col.accessor}`}
                   options={groups}
                   getOptionLabel={(option) => option.name || ''}
@@ -447,20 +449,20 @@ const AddDevice1 = ({
                   }}
                   ListboxProps={{
                     sx: {
-                      maxHeight: 200, // Restrict max height
-                      overflowY: 'scroll', // Always show scrollbar
+                      maxHeight: 200,
+                      overflowY: 'scroll',
                       '&::-webkit-scrollbar': {
-                        width: '8px', // Scrollbar width
+                        width: '8px',
                       },
                       '&::-webkit-scrollbar-track': {
-                        background: '#f1f1f1', // Track color
+                        background: '#f1f1f1',
                       },
                       '&::-webkit-scrollbar-thumb': {
-                        background: '#888', // Scrollbar color
+                        background: '#888',
                         borderRadius: '4px',
                       },
                       '&::-webkit-scrollbar-thumb:hover': {
-                        background: '#555', // Hover effect
+                        background: '#555',
                       },
                     },
                   }}
@@ -468,10 +470,16 @@ const AddDevice1 = ({
                     <TextField
                       {...params}
                       label={col.Header}
-                      placeholder="Search group..."
+                      placeholder={formData[col.accessor]?.length ? '' : 'Search group...'}
                       variant="outlined"
                       InputProps={{
                         ...params.InputProps,
+                        style: {
+                          ...params.InputProps.style,
+                          flexWrap: 'nowrap',
+                          overflowX: 'auto',
+                          width: '400px',
+                        },
                         startAdornment: (
                           <>
                             <InputAdornment position="start">
@@ -490,7 +498,35 @@ const AddDevice1 = ({
                       }}
                     />
                   )}
+                  renderTags={(value, getTagProps) => (
+                    <div
+                      style={{
+                        display: 'flex',
+                        width: '100%',
+                        overflowX: 'auto',
+                        gap: '4px',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {value.map((option, index) => (
+                        <Chip
+                          {...getTagProps({ index })}
+                          label={option.name}
+                          size="small"
+                          sx={{
+                            width: 100,
+                            flexShrink: 0,
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
                   isOptionEqualToValue={(option, value) => option._id === value._id}
+                  sx={{
+                    '& .MuiAutocomplete-inputRoot': {
+                      flexWrap: 'nowrap',
+                    },
+                  }}
                 />
               </FormControl>
             )
@@ -574,20 +610,20 @@ const AddDevice1 = ({
                   }}
                   ListboxProps={{
                     sx: {
-                      maxHeight: 200, // Restrict max height
-                      overflowY: 'scroll', // Always show scrollbar
+                      maxHeight: 200,
+                      overflowY: 'scroll',
                       '&::-webkit-scrollbar': {
-                        width: '8px', // Scrollbar width
+                        width: '8px',
                       },
                       '&::-webkit-scrollbar-track': {
-                        background: '#f1f1f1', // Track color
+                        background: '#f1f1f1',
                       },
                       '&::-webkit-scrollbar-thumb': {
-                        background: '#888', // Scrollbar color
+                        background: '#888',
                         borderRadius: '4px',
                       },
                       '&::-webkit-scrollbar-thumb:hover': {
-                        background: '#555', // Hover effect
+                        background: '#555',
                       },
                     },
                   }}
@@ -595,10 +631,16 @@ const AddDevice1 = ({
                     <TextField
                       {...params}
                       label={col.Header}
-                      placeholder="Search area..."
+                      placeholder={formData[col.accessor]?.length ? '' : 'Search area...'}
                       variant="outlined"
                       InputProps={{
                         ...params.InputProps,
+                        style: {
+                          ...params.InputProps.style,
+                          flexWrap: 'nowrap',
+                          overflowX: 'auto',
+                          width: '400px',
+                        },
                         startAdornment: (
                           <>
                             <InputAdornment position="start">
@@ -617,7 +659,35 @@ const AddDevice1 = ({
                       }}
                     />
                   )}
+                  renderTags={(value, getTagProps) => (
+                    <div
+                      style={{
+                        display: 'flex',
+                        width: '100%',
+                        overflowX: 'auto',
+                        gap: '4px',
+                        alignItems: 'center',
+                      }}
+                    >
+                      {value.map((option, index) => (
+                        <Chip
+                          {...getTagProps({ index })}
+                          label={option.name}
+                          size="small"
+                          sx={{
+                            width: 100, // Limit chip width
+                            flexShrink: 0, // Prevent chips from shrinking
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
                   isOptionEqualToValue={(option, value) => option._id === value._id}
+                  sx={{
+                    '& .MuiAutocomplete-inputRoot': {
+                      flexWrap: 'nowrap', // Ensure input stays single line
+                    },
+                  }}
                 />
               </FormControl>
             )

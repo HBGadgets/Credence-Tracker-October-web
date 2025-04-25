@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import { Box, Tabs, Tab, Modal, Button, TextField, Typography, IconButton } from "@mui/material";
-import AllUser from "./allforms/AllUser";
-import AllGroups from "./allforms/AllGroups";
-import AllDriver from "./allforms/AllDriver";
-import AddDeviceForm from "../devices/AddDeviceForm";
-import AllDevice1 from "./allforms/AllDevice1";
-import GroupIcon from '@mui/icons-material/Group';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import React, { useState } from 'react'
+import { Box, Tabs, Tab, Modal, Button, TextField, Typography, IconButton } from '@mui/material'
+import AllUser from './allforms/AllUser'
+import AllGroups from './allforms/AllGroups'
+import AllDriver from './allforms/AllDriver'
+import AddDeviceForm from '../devices/AddDeviceForm'
+import AllDevice1 from './allforms/AllDevice1'
+import GroupIcon from '@mui/icons-material/Group'
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar'
 import CloseIcon from '@mui/icons-material/Close'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faUserPoliceTie } from '@fortawesome/sharp-regular-svg-icons'; // Ensure this matches the icon set you need
 
-
-
-function AllInOneForm({ open, handleClose, setOpen,
+function AllInOneForm({
+  open,
+  handleClose,
+  setOpen,
   style,
   token,
   fetchData,
@@ -33,17 +34,16 @@ function AllInOneForm({ open, handleClose, setOpen,
   handleBack,
   handleYearSelection,
   setShowExpirationDropdown,
-
 }) {
-  const [activeTab, setActiveTab] = useState(0);
-  const handleTabChange = (event, newValue) => setActiveTab(newValue);
+  const [activeTab, setActiveTab] = useState(0)
+  const handleTabChange = (event, newValue) => setActiveTab(newValue)
 
   const handleNextStep = () => {
-    setActiveTab((prevTab) => prevTab + 1);
-  };
+    setActiveTab((prevTab) => prevTab + 1)
+  }
   const handleSkip = () => {
-    setActiveTab((prevTab) => prevTab + 1);
-  };
+    setActiveTab((prevTab) => prevTab + 1)
+  }
 
   const tabsStyling = {
     mb: 6,
@@ -70,19 +70,31 @@ function AllInOneForm({ open, handleClose, setOpen,
       backgroundColor: 'red', // Active tab underline color
       height: '4px', // Thickness of the indicator
     },
-  };
+  }
 
   return (
-    <Modal open={open} onClose={handleClose}  >
-      <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: '72%', height: '94vh', bgcolor: "background.paper", borderRadius: 2, boxShadow: 24, p: 3, overflowY: 'auto', }}>
-        <div style={{ display: 'flex', flexDirection: 'row' }}><Typography variant="h6" gutterBottom style={{ textAlign: 'center' }}>
-
-        </Typography>
+    <Modal open={open} onClose={handleClose}>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '72%',
+          height: '94vh',
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 3,
+          overflowY: 'auto',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <Typography variant="h6" gutterBottom style={{ textAlign: 'center' }}></Typography>
           <IconButton onClick={handleClose} style={{ marginLeft: 'auto' }}>
             <CloseIcon />
           </IconButton>
         </div>
-
 
         {/* Tabs */}
         <Tabs
@@ -92,12 +104,14 @@ function AllInOneForm({ open, handleClose, setOpen,
           //className="btn-secondary"
           sx={tabsStyling}
         >
-          <Tab label="Groups" style={{ height: '100%', }} />
-          <Tab label="Users" style={{ height: '100%', }}
-          // icon={<FontAwesomeIcon icon="fa-sharp fa-regular fa-user-police-tie" />}
+          <Tab label="Groups" style={{ height: '100%' }} />
+          <Tab
+            label="Users"
+            style={{ height: '100%' }}
+            // icon={<FontAwesomeIcon icon="fa-sharp fa-regular fa-user-police-tie" />}
           />
-          <Tab label="Vehicle" style={{ height: '100%', }} />
-          <Tab label="Driver" style={{ height: '100%', }} />
+          <Tab label="Vehicle" style={{ height: '100%' }} />
+          <Tab label="Driver" style={{ height: '100%' }} />
         </Tabs>
 
         {/* Tab Panels */}
@@ -108,7 +122,9 @@ function AllInOneForm({ open, handleClose, setOpen,
           <UserForm handleSkip={handleSkip} handleNextStep={handleNextStep} />
         </TabPanel>
         <TabPanel value={activeTab} index={2}>
-          <AllDevice1 handleSkip={handleSkip} handleNextStep={handleNextStep}
+          <AllDevice1
+            handleSkip={handleSkip}
+            handleNextStep={handleNextStep}
             style={style}
             token={token}
             fetchData={fetchData}
@@ -131,13 +147,15 @@ function AllInOneForm({ open, handleClose, setOpen,
           />
         </TabPanel>
         <TabPanel value={activeTab} index={3}>
-          <DriverForm handleSkip={handleSkip} handleNextStep={handleNextStep} handleClose={handleClose} />
+          <DriverForm
+            handleSkip={handleSkip}
+            handleNextStep={handleNextStep}
+            handleClose={handleClose}
+          />
         </TabPanel>
-
-
       </Box>
     </Modal>
-  );
+  )
 }
 
 // TabPanel Component
@@ -146,24 +164,22 @@ function TabPanel({ children, value, index }) {
     <div role="tabpanel" hidden={value !== index}>
       {value === index && <Box>{children}</Box>}
     </div>
-  );
+  )
 }
 
 // Forms
 const UserForm = ({ handleSkip, handleNextStep }) => (
   <AllUser handleSkip={handleSkip} handleNextStep={handleNextStep} />
-);
+)
 
 const GroupForm = ({ handleSkip, handleNextStep }) => (
   <AllGroups handleSkip={handleSkip} handleNextStep={handleNextStep} />
-);
+)
 
 const DeviceForm = ({ handleSkip, handleNextStep }) => (
   <AllDevice handleSkip={handleSkip} handleNextStep={handleNextStep} />
-);
+)
 
-const DriverForm = ({ handleClose }) => (
-  <AllDriver handleClose={handleClose} />
-);
+const DriverForm = ({ handleClose }) => <AllDriver handleClose={handleClose} />
 
-export default AllInOneForm;
+export default AllInOneForm
