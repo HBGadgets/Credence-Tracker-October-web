@@ -83,7 +83,7 @@ import { PiMicrosoftExcelLogo } from 'react-icons/pi'
 import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
 import IconDropdown from '../../../components/ButtonDropdown'
-import Page404 from '../../pages/page404/Page404'
+// import Page404 from '../../pages/page404/Page404'
 
 const accessToken = Cookies.get('authToken')
 
@@ -1235,7 +1235,7 @@ const Users = () => {
     }
   }
 
-  if (error) return <Page404 />
+  // if (error) return <Page404 />
 
   return (
     <div className="d-flex flex-column mx-md-3 mt-3 h-auto">
@@ -1861,7 +1861,6 @@ const Users = () => {
                   )
 
                   if (hasSelectAll) {
-                    // Select all group IDs (excluding 'new' and 'select_all')
                     selectedValues = groups
                   }
 
@@ -1902,9 +1901,16 @@ const Users = () => {
                   <TextField
                     {...params}
                     label="Groups"
-                    placeholder="Search or select groups"
+                    placeholder={formData.groupsAssigned?.length ? '' : 'Search or select groups'}
+                    variant="outlined"
                     InputProps={{
                       ...params.InputProps,
+                      style: {
+                        ...params.InputProps.style,
+                        flexWrap: 'nowrap',
+                        overflowX: 'auto',
+                        width: '400px',
+                      },
                       startAdornment: (
                         <>
                           <InputAdornment position="start">
@@ -1941,11 +1947,26 @@ const Users = () => {
                     {option.name}
                   </Box>
                 )}
-                renderTags={(selected, getTagProps) =>
-                  selected.map((option, index) => (
-                    <Chip key={option._id} label={option.name} {...getTagProps({ index })} />
-                  ))
-                }
+                renderTags={(selected, getTagProps) => (
+                  <div
+                    style={{
+                      display: 'flex',
+                      width: '100%',
+                      overflowX: 'auto',
+                      gap: '4px',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {selected.map((option, index) => (
+                      <Chip key={option._id} label={option.name} {...getTagProps({ index })} />
+                    ))}
+                  </div>
+                )}
+                sx={{
+                  '& .MuiAutocomplete-inputRoot': {
+                    flexWrap: 'nowrap',
+                  },
+                }}
               />
 
               {/* // Dialog for creating a new group */}
