@@ -45,7 +45,7 @@ const MobileVehiclePanel = ({ position, address }) => {
           </div>
 
           <div className="stat-item">
-            <Activity size={20} className="stat-icon" />
+            <Activity size={15} className="stat-icon" />
             <div className="stat-label">Speed</div>
             <div className="stat-value">
               {Math.round(position?.speed).toFixed(0)} <small>km/h</small>
@@ -53,7 +53,7 @@ const MobileVehiclePanel = ({ position, address }) => {
           </div>
 
           <div className="stat-item">
-            <MapPin size={20} className="stat-icon" />
+            <MapPin size={15} className="stat-icon" />
             <div className="stat-label">Distance</div>
             <div className="stat-value">
               {Math.round(position?.todayDistance)} <small>KM</small>
@@ -61,7 +61,7 @@ const MobileVehiclePanel = ({ position, address }) => {
           </div>
 
           <div className={`stat-item ${position?.attributes?.motion ? 'active' : 'inactive'}`}>
-            <Car size={20} className="stat-icon" />
+            <Car size={15} className="stat-icon" />
             <div className="stat-label">Moving</div>
             <div className="stat-value">{position?.attributes?.motion ? 'Yes' : 'No'}</div>
           </div>
