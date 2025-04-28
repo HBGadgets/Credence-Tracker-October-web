@@ -166,7 +166,7 @@ const AppHeader = () => {
     if (userId) {
       // Only connect if we have a valid user ID
       try {
-        socket = io(`${import.meta.env.VITE_API_URL}`, {
+        socket = io(`${import.meta.env.VITE_SOCKET_URL}`, {
           transports: ['websocket'],
           withCredentials: true,
           reconnection: true,
