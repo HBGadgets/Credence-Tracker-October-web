@@ -212,7 +212,6 @@ const SearchTravel = ({
           }
           onChange={(selectedOptions) => {
             const selectedValues = selectedOptions.map((opt) => opt.value)
-
             if (selectedValues.includes('all')) {
               const allDeviceIds = devices.map((d) => d.deviceId)
               handleInputChange('Devices', allDeviceIds)
@@ -222,6 +221,13 @@ const SearchTravel = ({
           }}
           placeholder="Choose vehicles..."
           isLoading={loading}
+          styles={{
+            valueContainer: (provided) => ({
+              ...provided,
+              maxHeight: '30px', // <-- adjust height
+              overflowY: 'auto', // <-- add scroll when too many
+            }),
+          }}
         />
 
         <CFormFeedback invalid>Please provide a valid vehicle.</CFormFeedback>
