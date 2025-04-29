@@ -111,7 +111,6 @@ function applyFilter(vehicles, activeFilter) {
 
 // WebSocket connection logic
 export const socket = io(`${import.meta.env.VITE_SOCKET_URL}`, {
-  path: '/socket.io/',
   transports: ['websocket', 'polling'], // Specify transports (optional)
 })
 
