@@ -5,7 +5,17 @@ import useHistoryData from './useHistoryData'
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker'
 import DriftMarker from 'react-leaflet-drift-marker'
 import { IoMdPause, IoMdPlay } from 'react-icons/io'
-import { FaForward, FaBackward } from 'react-icons/fa'
+import {
+  FaForward,
+  FaBackward,
+  FaSignOutAlt,
+  FaSignInAlt,
+  FaTachometerAlt,
+  FaMapMarkerAlt,
+  FaStopwatch,
+  FaRoad,
+  FaClock,
+} from 'react-icons/fa'
 import { FaSatellite } from 'react-icons/fa6'
 import { CButton } from '@coreui/react'
 import useStoppageTimes from './useStoppageTimes.js'
@@ -33,6 +43,7 @@ import { Scrollbars } from 'react-custom-scrollbars-2'
 import SlidingSideMenu from './SlidingSideMenu'
 import axios from 'axios'
 import { useFetchHistory } from './useFetchHistory.js'
+import dayjs from 'dayjs'
 
 // Register Chart.js components
 ChartJS.register(LineElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement)
@@ -170,7 +181,7 @@ const HistoryMap = ({
 
       if (results && results.length > 0) {
         // Extract the relevant part for place/area and pincode
-        console.log(results)
+        // console.log(results)
         const place = results[0]?.text || '' // Place/Area
         const pincode =
           results[0]?.context?.find((item) => item.id.startsWith('postal_code'))?.text ||
@@ -195,7 +206,7 @@ const HistoryMap = ({
 
       if (results && results.length > 0) {
         // Extract the relevant part for place/area and pincode
-        console.log(results)
+        // console.log(results)
         const place = results[0]?.text || 'Unknown Place'
         const pincode =
           results[0]?.context?.find((item) => item.id.startsWith('postal_code'))?.text ||
@@ -390,8 +401,8 @@ const HistoryMap = ({
     const current = positions[validIndex]
     const next = positions[(validIndex + 1) % positions.length]
 
-    console.log('currentPositionIndex:', currentPositionIndex, 'validIndex:', validIndex)
-    console.log('current:', current, 'next:', next)
+    // console.log('currentPositionIndex:', currentPositionIndex, 'validIndex:', validIndex)
+    // console.log('current:', current, 'next:', next)
 
     const lerp = (start, end, t) => start + (end - start) * t
     const lat = lerp(current.latitude, next.latitude, segmentProgress)
@@ -399,10 +410,10 @@ const HistoryMap = ({
     return [lat, lng]
   }, [currentPositionIndex, segmentProgress, positions])
 
-  console.log(
-    'POSITIONS####################################################################',
-    currentMarkerPosition,
-  )
+  // console.log(
+  //   'POSITIONS####################################################################',
+  //   currentMarkerPosition,
+  // )
 
   const handlePlayPause = () => setIsPlaying((prev) => !prev)
 
@@ -549,6 +560,100 @@ const HistoryMap = ({
     setIsSatelliteView((prev) => !prev)
   }
 
+  const formatDuration = (milliseconds) => {
+    const d = dayjs.duration(milliseconds)
+    return `${d.days()}d ${d.hours()}h ${d.minutes()}m ${d.seconds()}s`
+  }
+
+  const toRadians = (degree) => (degree * Math.PI) / 180
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371e3 // Earth's radius in meters
+    const φ1 = toRadians(lat1)
+    const φ2 = toRadians(lat2)
+    const Δφ = toRadians(lat2 - lat1)
+    const Δλ = toRadians(lon2 - lon1)
+
+    const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+    return R * c // Distance in meters
+  }
+
+  const processStopData = (stopData) => {
+    return stopData.map((stop, index, array) => {
+      const previousStop = array[index - 1]
+      const nextStop = array[index + 1]
+      const arrivalTime = dayjs(stop.arrivalTime)
+      const departureTime = stop.departureTime
+        ? dayjs(stop.departureTime)
+        : nextStop?.arrivalTime
+          ? dayjs(nextStop.arrivalTime)
+          : null
+
+      const durationFromPrevious = previousStop
+        ? arrivalTime.diff(dayjs(previousStop.departureTime))
+        : 0
+
+      const haltTime = departureTime ? departureTime.diff(arrivalTime) : null
+
+      // Calculate distance from the previous stop in kilometers
+      const distanceFromPrevious = previousStop
+        ? calculateDistance(
+            stop.latitude,
+            stop.longitude,
+            previousStop.latitude,
+            previousStop.longitude,
+          ) / 1000 // Convert meters to kilometers
+        : 0
+
+      const obj = {
+        ...stop,
+        departureTime: departureTime?.toISOString() || null,
+        distanceFromPrevious: distanceFromPrevious.toFixed(2), // Distance in KM, rounded to 2 decimals
+        durationFromPrevious: formatDuration(durationFromPrevious),
+        haltTime: haltTime ? formatDuration(haltTime) : 'N/A',
+      }
+
+      return obj
+    })
+  }
+  const [processedStopages, setProcessedStopages] = useState([])
+
+  useEffect(() => {
+    const fetchStopAddresses = async () => {
+      if (!stopages || stopages.length === 0) return
+
+      const processedData = await Promise.all(
+        processStopData(stopages).map(async (stop) => {
+          const address = await fetchAddressStop(stop.latitude, stop.longitude)
+          return { ...stop, address }
+        }),
+      )
+
+      setProcessedStopages(processedData)
+    }
+
+    fetchStopAddresses()
+  }, [stopages])
+
+  const DetailRow = ({ icon, label, value }) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div style={{ fontSize: '16px' }}>{icon}</div>
+      <div style={{ fontSize: '13px' }}>
+        <strong>{label}:</strong> {value}
+      </div>
+    </div>
+  )
+
+  const MetricBox = ({ icon, title, value }) => (
+    <div style={{ flex: 1, textAlign: 'center' }}>
+      <div style={{ fontSize: '16px', marginBottom: '4px' }}>{icon}</div>
+      <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '2px' }}>{title}</div>
+      <div style={{ fontSize: '12px' }}>{value}</div>
+    </div>
+  )
+
   return (
     <div>
       <div className="graphAndMap" style={{ width: '100%' }}>
@@ -681,7 +786,7 @@ const HistoryMap = ({
 
           {showStopages &&
             stopages &&
-            stopages.map((stop, index) => (
+            processedStopages.map((stop, index) => (
               <Marker
                 key={index}
                 position={[stop?.latitude, stop?.longitude]}
@@ -690,18 +795,112 @@ const HistoryMap = ({
                 popupAnchor={[1, -34]}
                 shadowAnchor={[10, 41]}
               >
-                <Popup>
-                  <div>
-                    <p>
-                      <strong>Speed:</strong> {stop?.speed}
-                    </p>
-                    <p>
-                      <strong>Arrival Time:</strong> {new Date(stop?.arrivalTime).toLocaleString()}
-                    </p>
-                    <p>
-                      <strong>Departure Time:</strong>{' '}
-                      {stop.departureTime ? new Date(stop?.departureTime).toLocaleString() : 'N/A'}
-                    </p>
+                <Popup key={index}>
+                  <div
+                    style={{
+                      minWidth: '280px',
+                      padding: '20px',
+                      borderRadius: '12px',
+                      backgroundColor: '#ffffff',
+                      // boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                      fontFamily: 'Segoe UI, Roboto, sans-serif',
+                      color: '#333',
+                    }}
+                  >
+                    {/* Header */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginBottom: '15px',
+                        borderBottom: '1px solid #e0e0e0',
+                        paddingBottom: '10px',
+                      }}
+                    >
+                      <FaMapMarkerAlt
+                        style={{ color: '#f44336', marginRight: '10px', fontSize: '20px' }}
+                      />
+                      <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', flexGrow: 1 }}>
+                        Stop #{index}
+                      </h3>
+                      <span
+                        style={{
+                          backgroundColor: '#f44336',
+                          color: 'white',
+                          fontSize: '11px',
+                          padding: '4px 8px',
+                          borderRadius: '8px',
+                        }}
+                      >
+                        #{index}
+                      </span>
+                    </div>
+
+                    {/* Details Section */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      {/* Speed */}
+                      <DetailRow
+                        icon={<FaTachometerAlt color="#2196f3" />}
+                        label="Speed"
+                        value={`${stop?.speed || 0} km/h`}
+                      />
+
+                      {/* Arrival Time */}
+                      <DetailRow
+                        icon={<FaSignInAlt color="#4caf50" />}
+                        label="Arrival"
+                        value={dayjs(stop.arrivalTime).format('DD/MM/YYYY hh:mm A')}
+                      />
+
+                      {/* Departure Time */}
+                      <DetailRow
+                        icon={<FaSignOutAlt color="#f44336" />}
+                        label="Departure"
+                        value={dayjs(stop.departureTime).format('DD/MM/YYYY hh:mm A')}
+                      />
+
+                      {/* Duration, Distance, Halt Time */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          marginTop: '10px',
+                        }}
+                      >
+                        <MetricBox
+                          icon={<FaClock color="#9c27b0" />}
+                          title="Duration"
+                          value={stop?.durationFromPrevious || 'N/A'}
+                        />
+                        <MetricBox
+                          icon={<FaRoad color="#3f51b5" />}
+                          title="Distance"
+                          value={`${stop?.distanceFromPrevious || '0'} km`}
+                        />
+                        <MetricBox
+                          icon={<FaStopwatch color="#009688" />}
+                          title="Halt"
+                          value={stop?.haltTime || 'N/A'}
+                        />
+                      </div>
+
+                      {/* Address */}
+                      <div
+                        style={{
+                          marginTop: '15px',
+                          paddingTop: '10px',
+                          borderTop: '1px solid #e0e0e0',
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '8px',
+                        }}
+                      >
+                        <FaMapMarkerAlt style={{ color: '#f44336', marginTop: '3px' }} />
+                        <div style={{ fontSize: '13px', lineHeight: '1.5' }}>
+                          {stop?.address || 'Address not available'}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </Popup>
               </Marker>
