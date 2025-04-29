@@ -319,7 +319,7 @@ const SlidingSideMenu = ({
           top: '20px',
           right: isOpen ? '0' : '-350px', // Smooth sliding effect
           height: '80%',
-          width: '300px',
+          width: '350px',
           backgroundColor: '#f8f9fa',
           boxShadow: '2px 0 5px rgba(0,0,0,0.2)',
           transition: 'right 0.3s ease-in-out, opacity 0.3s ease-in-out', // Smooth transitions
@@ -394,7 +394,7 @@ const SlidingSideMenu = ({
             {stopPage ? (
               <>
                 <div className="table-responsive">
-                  {/* <hr className="divider" /> */}
+                  <hr className="divider" />
 
                   <div className="summary-header">
                     <div className="summary-box">
@@ -428,71 +428,44 @@ const SlidingSideMenu = ({
                   <hr className="divider" />
 
                   {processedData.map((stop, index) => (
-                    <div key={index} className="stop-card">
-                      <h4 className="stop-title"> {index + 1} Stop Details</h4>
-                      <hr className="divider" />
+                    <div key={index} className="trip-card">
+                      <div className="trip-header">
+                        <div className="time-address-group">
+                          <div className="time-address">
+                            <div className="time">
+                              Arrival Time: {dayjs(stop.arrivalTime).format('DD/MM/YYYY hh:mm A')}
+                            </div>
+                            <div className="address">{stop.address || 'Loading address...'}</div>
+                          </div>
 
-                      <div className="stop-info">
-                        <div className="info-item">
-                          <FaClock className="icon" />
-                          <div>
-                            <span className="info-label">Arrival</span>
-                            <p className="info-value">
-                              {dayjs(stop?.arrivalTime).format('MMM D, YYYY • h:mm A')}
-                            </p>
+                          <div className="time-address">
+                            <div className="time">
+                              Departure Time:{' '}
+                              {dayjs(stop.departureTime).format('DD/MM/YYYY hh:mm A')}
+                            </div>
+                            <div className="address">{stop.address || 'Loading address...'}</div>
                           </div>
                         </div>
+                      </div>
 
-                        <div className="info-item">
-                          <FaCalendarAlt className="icon" />
-                          <div>
-                            <span className="info-label">Departure</span>
-                            <p className="info-value">
-                              {dayjs(stop?.departureTime).format('MMM D, YYYY • h:mm A')}
-                            </p>
-                          </div>
+                      <div className="metrics">
+                        <div className="metric-box">
+                          <div className="label">From Previous</div>
+                          <div className="value">{stop?.durationFromPrevious}</div>
                         </div>
-
-                        <hr className="divider" />
-
-                        <div className="info-item">
-                          <FaClock className="icon" />
-                          <div>
-                            <span className="info-label">Dur. from Previous Stop</span>
-                            <p className="info-value">{stop?.durationFromPrevious}</p>
-                          </div>
+                        <div className="metric-box">
+                          <div className="label">Distance</div>
+                          <div className="value">{stop?.distanceFromPrevious} km</div>
                         </div>
-
-                        <div className="info-item">
-                          <FaRoad className="icon" />
-                          <div>
-                            <span className="info-label">Dist. from Previous Stop:</span>
-                            <p className="info-value">{stop?.distanceFromPrevious} km</p>
-                          </div>
+                        <div className="metric-box">
+                          <div className="label">Halt Time</div>
+                          <div className="value">{stop?.haltTime}</div>
                         </div>
+                      </div>
 
-                        <div className="info-item">
-                          <FaClock className="icon" />
-                          <div>
-                            <span className="info-label">Halt Time</span>
-                            <p className="info-value">{stop?.haltTime}</p>
-                          </div>
-                        </div>
-
-                        <hr className="divider" />
-
-                        <div className="info-item">
-                          <FaMapMarkerAlt className="icon" />
-                          <div>
-                            <span className="info-label">Location</span>
-                            <p className="info-value">
-                              {stop?.address || 'Loading address...'}
-                              <br />
-                              <span className="location-sub">
-                                {stop?.city}, {stop?.state}, {stop?.country}
-                              </span>
-                            </p>
-                          </div>
+                      <div className="location-details">
+                        <div className="address-sub">
+                          {[stop?.city, stop?.state, stop?.country].filter(Boolean).join(', ')}
                         </div>
                       </div>
                     </div>
