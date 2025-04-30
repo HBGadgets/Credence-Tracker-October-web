@@ -47,7 +47,7 @@ import '../style/remove-gutter.css'
 import '../../../utils.css'
 import IconDropdown from '../../../components/ButtonDropdown'
 import { color } from 'framer-motion'
-import { FaRegFilePdf, FaPrint } from 'react-icons/fa6'
+import { FaRegFilePdf, FaPrint, FaPlay } from 'react-icons/fa6'
 import { PiMicrosoftExcelLogo } from 'react-icons/pi'
 import { HiOutlineLogout } from 'react-icons/hi'
 import { FaArrowUp } from 'react-icons/fa'
@@ -60,6 +60,7 @@ const decodedToken = jwtDecode(accessToken)
 
 import PropTypes from 'prop-types'
 import Page404 from '../../pages/page404/Page404'
+import { useNavigate } from 'react-router-dom'
 
 const SearchTravel = ({
   formData,
@@ -355,6 +356,7 @@ const ShowSummary = ({
   const [sortOrder, setSortOrder] = useState('asc')
   console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa', selectedUserName)
   const [newAddressData, setnewAddressData] = useState()
+  const navigate = useNavigate()
 
   const toggleRow = (vehicleName) => {
     setExpandedRows((prev) =>
@@ -385,6 +387,7 @@ const ShowSummary = ({
   // Transform apiData to match reportData structure
   const reportData =
     apiData?.reportData?.map((vehicle) => ({
+      deviceId: vehicle.deviceId,
       name: selectedDeviceName,
       distance: vehicle.distance,
       running: vehicle.running || '--',
@@ -1353,7 +1356,10 @@ const ShowSummary = ({
     },
   ]
 
-  console.log('REPORTED DATA', reportData)
+  const handleHistoryClick = (deviceId, startTime, endTime) => {
+    console.log(`History button clicked ${deviceId} ${startTime} ${endTime}`)
+    navigate(`/history-playback/${deviceId}/${startTime}/${endTime}`)
+  }
   return (
     <>
       <Toaster />
@@ -1679,6 +1685,16 @@ const ShowSummary = ({
                                     >
                                       Ignition Stop
                                     </CTableHeaderCell>
+                                    <CTableHeaderCell
+                                      className="text-center"
+                                      style={{
+                                        background: '#0a2d63',
+                                        color: 'white',
+                                        minWidth: '120px',
+                                      }}
+                                    >
+                                      Play
+                                    </CTableHeaderCell>
                                   </CTableRow>
                                 </CTableHead>
                                 <CTableBody>
@@ -1749,6 +1765,25 @@ const ShowSummary = ({
                                       {/**Ignition Stop */}
                                       <CTableDataCell className="text-center">
                                         {formatDateTime(trip.endTime)}
+                                      </CTableDataCell>
+                                      {/**Playback Button */}
+                                      <CTableDataCell
+                                        className="text-center"
+                                        style={{ cursor: 'pointer' }}
+                                      >
+                                        {
+                                          <FaPlay
+                                            color="#00a65a"
+                                            size={20}
+                                            onClick={() =>
+                                              handleHistoryClick(
+                                                trip.deviceId,
+                                                trip.startTime,
+                                                trip.endTime,
+                                              )
+                                            }
+                                          />
+                                        }
                                       </CTableDataCell>
                                     </CTableRow>
                                   ))}
@@ -1849,6 +1884,7 @@ const TravelReport = () => {
   const [apiData, setApiData] = useState()
   const [statusLoading, setStatusLoading] = useState(false)
   const [putName, setPutName] = useState('')
+  const [historyData, setHistoryData] = useState({ deviceId: '', fromDate: '', toDate: '' })
 
   useEffect(() => {
     console.log('BHAIYAAAAAAAA PUTTTTT HOOOOOO GAYAAAAAAAAA', putName)
@@ -2177,6 +2213,7 @@ const TravelReport = () => {
                 columns={columns}
                 daywiseSummaryColumn={daywiseSummaryColumn}
                 handlePutName={handlePutName}
+                setHistoryData={setHistoryData}
               />
             </CCardBody>
           </CCard>

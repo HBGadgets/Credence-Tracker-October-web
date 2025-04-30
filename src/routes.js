@@ -75,6 +75,11 @@ const routes = [
     name: 'History',
     element: History,
   },
+  {
+    path: '/history-playback/:travelDeviceId/:fromDate/:toDate',
+    name: 'Playback History',
+    element: History,
+  },
   { path: '/stops', name: 'Stops', element: Stops },
   { path: '/travelsreport', name: 'Travel', element: Travel },
   { path: '/tripsreport', name: 'Trips', element: Trips },

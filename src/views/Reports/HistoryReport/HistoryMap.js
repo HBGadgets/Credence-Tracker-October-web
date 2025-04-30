@@ -29,6 +29,7 @@ import { Line } from 'react-chartjs-2'
 import redFlag from '../../../assets/red-flag-svgrepo-com.svg'
 import greenFlag from '../../../assets/green.svg'
 import './HistoryReport.css'
+import { useNavigate } from 'react-router-dom'
 
 import {
   Chart as ChartJS,
@@ -141,6 +142,7 @@ const HistoryMap = ({
   const [prevhoveredIndex, setPrevHoveredIndex] = useState(null)
   const [originalPositions, setOriginalPositions] = useState([])
   const [filteredPositions, setFilteredPositions] = useState([])
+  const navigate = useNavigate()
 
   const mapRef = useRef()
   useEffect(() => {
@@ -420,7 +422,9 @@ const HistoryMap = ({
   const handleForward = () =>
     setCurrentPositionIndex((prevIndex) => Math.min(prevIndex + 10, positions.length - 1))
 
-  const handleBackward = () => setCurrentPositionIndex((prevIndex) => Math.max(prevIndex - 10, 0))
+  const handleBackward = () => {
+    setCurrentPositionIndex((prevIndex) => Math.max(prevIndex - 10, 0))
+  }
 
   const handleZoomChange = (level) => setZoomLevel(level)
 
@@ -449,7 +453,7 @@ const HistoryMap = ({
   }
 
   const handleBack = (e) => {
-    window.location.reload()
+    navigate(-1)
   }
   const toggleStopages = (e) => {
     e.preventDefault()
@@ -733,20 +737,75 @@ const HistoryMap = ({
                   icon={greenFlagIcon}
                 >
                   <Popup>
-                    <div>
-                      <p>
-                        <strong>Speed:</strong> {stop?.speed || 'N/A'}
-                      </p>
-                      <p>
-                        <strong>Arrival Time:</strong>{' '}
-                        {stop?.arrivalTime ? new Date(stop.arrivalTime).toLocaleString() : 'N/A'}
-                      </p>
-                      <p>
-                        <strong>Departure Time:</strong>{' '}
-                        {stop?.departureTime
-                          ? new Date(stop.departureTime).toLocaleString()
-                          : 'N/A'}
-                      </p>
+                    <div
+                      style={{
+                        minWidth: '280px',
+                        padding: '20px',
+                        borderRadius: '12px',
+                        backgroundColor: '#ffffff',
+                        fontFamily: 'Segoe UI, Roboto, sans-serif',
+                        color: '#333',
+                      }}
+                    >
+                      {/* Header */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginBottom: '15px',
+                          borderBottom: '1px solid #e0e0e0',
+                          paddingBottom: '10px',
+                        }}
+                      >
+                        <FaMapMarkerAlt
+                          style={{ color: '#4caf50', marginRight: '10px', fontSize: '20px' }}
+                        />
+                        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', flexGrow: 1 }}>
+                          Start Point
+                        </h3>
+                        <span
+                          style={{
+                            backgroundColor: '#4caf50',
+                            color: 'white',
+                            fontSize: '11px',
+                            padding: '4px 8px',
+                            borderRadius: '8px',
+                          }}
+                        >
+                          START
+                        </span>
+                      </div>
+
+                      {/* Details Section */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <DetailRow
+                          icon={<FaTachometerAlt color="#2196f3" />}
+                          label="Speed"
+                          value={`${startData?.speed || 0} km/h`}
+                        />
+
+                        <DetailRow
+                          icon={<FaSignInAlt color="#4caf50" />}
+                          label="Start Time"
+                          value={dayjs(startData?.time).format('DD/MM/YYYY hh:mm A')}
+                        />
+
+                        <div
+                          style={{
+                            marginTop: '15px',
+                            paddingTop: '10px',
+                            borderTop: '1px solid #e0e0e0',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '8px',
+                          }}
+                        >
+                          <FaMapMarkerAlt style={{ color: '#f44336', marginTop: '3px' }} />
+                          <div style={{ fontSize: '13px', lineHeight: '1.5' }}>
+                            {startData?.address || 'Address not available'}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </Popup>
                 </Marker>
@@ -821,7 +880,7 @@ const HistoryMap = ({
                         style={{ color: '#f44336', marginRight: '10px', fontSize: '20px' }}
                       />
                       <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', flexGrow: 1 }}>
-                        Stop #{index}
+                        Stop {index}
                       </h3>
                       <span
                         style={{

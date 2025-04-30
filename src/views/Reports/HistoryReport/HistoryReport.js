@@ -13,28 +13,83 @@ import {
   CFormLabel,
   CFormSelect,
 } from '@coreui/react'
-
 import { fetchDevices } from '../../../features/deviceSlice.js'
 import Loader from '../../../components/Loader/Loader'
 import '../style/remove-gutter.css'
 import HistoryMap from './HistoryMap'
 import './HistoryReport.css'
 import '../../../utils.css'
-
-// Import react-select
 import Select from 'react-select'
 
 const HistoryReport = () => {
-  const { deviceId: urlDeviceId, category, name } = useParams() // Retrieve params from URL
-  const [fromDateTime, setFromDateTime] = useState('')
-  const [toDateTime, setToDateTime] = useState('')
+  const params = useParams()
+  const urlDeviceId = params.deviceId
+  const category = params.category
+  const travelDeviceId = params.travelDeviceId
+  const fromDate = params.fromDate
+  const toDate = params.toDate
+  const [fromDateTime, setFromDateTime] = useState(fromDate || '')
+  const [toDateTime, setToDateTime] = useState(toDate || '')
   const [period, setPeriod] = useState('')
-  const [deviceId, setDeviceId] = useState(urlDeviceId || '')
+  const [deviceId, setDeviceId] = useState(urlDeviceId || travelDeviceId || '')
   const [fetch, setFetch] = useState(false)
   const [historyOn, setHistoryOn] = useState(false)
+  const [hasAutoSubmitted, setHasAutoSubmitted] = useState(false)
 
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-CA') // This formats as YYYY-MM-DD
+  const dispatch = useDispatch()
+  const { devices = [], loading } = useSelector((state) => ({
+    devices: state.devices.devices || [],
+    loading: state.devices.loading,
+  }))
+
+  const selectedDevice = devices.find((device) => device.deviceId === deviceId) || {}
+  const deviceName = selectedDevice.name || ''
+
+  const deviceOptions = devices.map((device) => ({
+    value: device.deviceId,
+    label: device.name,
+  }))
+
+  // Set period to Custom if travel parameters exist
+  useEffect(() => {
+    if (travelDeviceId) {
+      setPeriod('Custom')
+    }
+  }, [travelDeviceId])
+
+  // Auto-submit when travel parameters are present
+  useEffect(() => {
+    if (travelDeviceId && fromDate && toDate && !hasAutoSubmitted) {
+      const timer = setTimeout(() => {
+        if (period === 'Custom' && deviceId && fromDateTime && toDateTime) {
+          const { fromDate, toDate } = normalizeToFromDates(fromDateTime)
+          setFromDateTime(fromDate)
+          setToDateTime(toDate)
+          handleAutoSubmit()
+          setHasAutoSubmitted(true)
+        }
+      }, 500) // Short delay to ensure state updates
+      return () => clearTimeout(timer)
+    }
+  }, [period, deviceId, fromDateTime, toDateTime, hasAutoSubmitted])
+
+  // Normalize to correct date format
+  const normalizeToFromDates = (isoDateStr) => {
+    const date = new Date(isoDateStr)
+    if (isNaN(date)) throw new Error('Invalid date')
+
+    const year = date.getUTCFullYear()
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+    const day = String(date.getUTCDate()).padStart(2, '0')
+    const dateStr = `${year}-${month}-${day}`
+
+    const normalizedFrom = new Date(`${dateStr}T00:01:00.100Z`)
+    const normalizedTo = new Date(`${dateStr}T23:59:59.000Z`)
+
+    return {
+      fromDate: normalizedFrom.toISOString(),
+      toDate: normalizedTo.toISOString(),
+    }
   }
 
   const validateDateRange = (fromDate, toDate) => {
@@ -56,10 +111,19 @@ const HistoryReport = () => {
     return true
   }
 
+  const handleAutoSubmit = () => {
+    const isCustomPeriod = period === 'Custom'
+
+    if (!period || !deviceId || (isCustomPeriod && (!fromDateTime || !toDateTime))) return
+
+    if (isCustomPeriod && !validateDateRange(fromDateTime, toDateTime)) return
+
+    setHistoryOn(true)
+    setFetch(true)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
-
-    // Check required fields based on period selection
     const isCustomPeriod = period === 'Custom'
     const missingFields = []
 
@@ -73,32 +137,24 @@ const HistoryReport = () => {
       return
     }
 
-    // Validate date range only for custom periods
     if (isCustomPeriod) {
-      if (!validateDateRange(fromDateTime, toDateTime)) return
+      const { fromDate, toDate } = normalizeToFromDates(fromDateTime)
+      setFromDateTime(fromDate)
+      setToDateTime(toDate)
+      if (!validateDateRange(fromDate, toDate)) return
     }
 
-    // Start the history playback for all valid cases
     setHistoryOn(true)
     setFetch(true)
   }
-
-  const dispatch = useDispatch()
-  const { devices, loading } = useSelector((state) => state.devices)
-
-  useEffect(() => {
-    dispatch(fetchDevices())
-  }, [dispatch])
 
   const handleDeviceChange = (selectedOption) => {
     setDeviceId(selectedOption ? selectedOption.value : '')
   }
 
-  // Transform devices to the format react-select expects
-  const deviceOptions = devices.map((device) => ({
-    value: device.deviceId,
-    label: device.name,
-  }))
+  useEffect(() => {
+    dispatch(fetchDevices())
+  }, [dispatch])
 
   return (
     <>
@@ -116,7 +172,7 @@ const HistoryReport = () => {
                 historyOn={historyOn}
                 setHistoryOn={setHistoryOn}
                 category={category}
-                name={name}
+                name={deviceName}
               />
             </CCardBody>
           </CCard>
@@ -134,7 +190,6 @@ const HistoryReport = () => {
               </CCardHeader>
               <CCardBody>
                 <CForm style={{ display: 'flex', gap: '4rem' }} onSubmit={handleSubmit}>
-                  {/* Period Selection Dropdown */}
                   <div style={{ width: '20rem' }}>
                     <CFormLabel htmlFor="period">Select Date Range</CFormLabel>
                     <CFormSelect
@@ -174,7 +229,6 @@ const HistoryReport = () => {
                     </>
                   )}
 
-                  {/* Searchable device select using react-select */}
                   <div style={{ width: '20rem' }}>
                     <CFormLabel htmlFor="device">Vehicles</CFormLabel>
                     <Select
@@ -186,21 +240,15 @@ const HistoryReport = () => {
                       styles={{
                         menuList: (base) => ({
                           ...base,
-                          maxHeight: '200px', // Restrict max height
-                          overflowY: 'scroll', // Enable scrolling
-                          '&::-webkit-scrollbar': {
-                            width: '8px', // Scrollbar width
-                          },
-                          '&::-webkit-scrollbar-track': {
-                            background: '#f1f1f1', // Track color
-                          },
+                          maxHeight: '200px',
+                          overflowY: 'scroll',
+                          '&::-webkit-scrollbar': { width: '8px' },
+                          '&::-webkit-scrollbar-track': { background: '#f1f1f1' },
                           '&::-webkit-scrollbar-thumb': {
-                            background: '#888', // Scrollbar color
+                            background: '#888',
                             borderRadius: '4px',
                           },
-                          '&::-webkit-scrollbar-thumb:hover': {
-                            background: '#555', // Hover effect
-                          },
+                          '&::-webkit-scrollbar-thumb:hover': { background: '#555' },
                         }),
                       }}
                     />
