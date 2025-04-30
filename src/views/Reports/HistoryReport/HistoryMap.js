@@ -453,7 +453,7 @@ const HistoryMap = ({
   }
 
   const handleBack = (e) => {
-    navigate(-1)
+    navigate(0)
   }
   const toggleStopages = (e) => {
     e.preventDefault()
@@ -731,6 +731,7 @@ const HistoryMap = ({
           {positions.length > 0 && positions[0]?.latitude && positions[0].longitude && (
             <>
               {/* Marker for the starting position */}
+
               {positions[0]?.latitude && positions[0]?.longitude && (
                 <Marker
                   position={[positions[0].latitude, positions[0].longitude]}
@@ -747,7 +748,6 @@ const HistoryMap = ({
                         color: '#333',
                       }}
                     >
-                      {/* Header */}
                       <div
                         style={{
                           display: 'flex',
@@ -758,36 +758,35 @@ const HistoryMap = ({
                         }}
                       >
                         <FaMapMarkerAlt
-                          style={{ color: '#4caf50', marginRight: '10px', fontSize: '20px' }}
+                          style={{ color: '#4CAF50', marginRight: '10px', fontSize: '20px' }}
                         />
                         <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '600', flexGrow: 1 }}>
                           Start Point
                         </h3>
                         <span
                           style={{
-                            backgroundColor: '#4caf50',
+                            backgroundColor: '#4CAF50',
                             color: 'white',
                             fontSize: '11px',
                             padding: '4px 8px',
                             borderRadius: '8px',
                           }}
                         >
-                          START
+                          Start
                         </span>
                       </div>
 
-                      {/* Details Section */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         <DetailRow
                           icon={<FaTachometerAlt color="#2196f3" />}
                           label="Speed"
-                          value={`${startData?.speed || 0} km/h`}
+                          value={`${positions[0]?.speed || 0} km/h`}
                         />
 
                         <DetailRow
-                          icon={<FaSignInAlt color="#4caf50" />}
-                          label="Start Time"
-                          value={dayjs(startData?.time).format('DD/MM/YYYY hh:mm A')}
+                          icon={<FaClock color="#9c27b0" />}
+                          label="Time"
+                          value={dayjs(positions[0]?.deviceTime).format('DD/MM/YYYY hh:mm A')}
                         />
 
                         <div
@@ -800,9 +799,9 @@ const HistoryMap = ({
                             gap: '8px',
                           }}
                         >
-                          <FaMapMarkerAlt style={{ color: '#f44336', marginTop: '3px' }} />
+                          <FaMapMarkerAlt style={{ color: '#4CAF50', marginTop: '3px' }} />
                           <div style={{ fontSize: '13px', lineHeight: '1.5' }}>
-                            {startData?.address || 'Address not available'}
+                            {positions[0]?.address || 'Fetching address...'}
                           </div>
                         </div>
                       </div>
@@ -822,20 +821,77 @@ const HistoryMap = ({
                     icon={redFlagIcon}
                   >
                     <Popup>
-                      <div>
-                        <p>
-                          <strong>Speed:</strong> {stop?.speed || 'N/A'}
-                        </p>
-                        <p>
-                          <strong>Arrival Time:</strong>{' '}
-                          {stop?.arrivalTime ? new Date(stop?.arrivalTime).toLocaleString() : 'N/A'}
-                        </p>
-                        <p>
-                          <strong>Departure Time:</strong>{' '}
-                          {stop?.departureTime
-                            ? new Date(stop?.departureTime).toLocaleString()
-                            : 'N/A'}
-                        </p>
+                      <div
+                        style={{
+                          minWidth: '280px',
+                          padding: '20px',
+                          borderRadius: '12px',
+                          backgroundColor: '#ffffff',
+                          fontFamily: 'Segoe UI, Roboto, sans-serif',
+                          color: '#333',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginBottom: '15px',
+                            borderBottom: '1px solid #e0e0e0',
+                            paddingBottom: '10px',
+                          }}
+                        >
+                          <FaMapMarkerAlt
+                            style={{ color: '#f44336', marginRight: '10px', fontSize: '20px' }}
+                          />
+                          <h3
+                            style={{ margin: 0, fontSize: '18px', fontWeight: '600', flexGrow: 1 }}
+                          >
+                            End Point
+                          </h3>
+                          <span
+                            style={{
+                              backgroundColor: '#f44336',
+                              color: 'white',
+                              fontSize: '11px',
+                              padding: '4px 8px',
+                              borderRadius: '8px',
+                            }}
+                          >
+                            End
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          <DetailRow
+                            icon={<FaTachometerAlt color="#2196f3" />}
+                            label="Speed"
+                            value={`${positions[positions.length - 1]?.speed || 0} km/h`}
+                          />
+
+                          <DetailRow
+                            icon={<FaClock color="#9c27b0" />}
+                            label="Time"
+                            value={dayjs(positions[positions.length - 1]?.deviceTime).format(
+                              'DD/MM/YYYY hh:mm A',
+                            )}
+                          />
+
+                          <div
+                            style={{
+                              marginTop: '15px',
+                              paddingTop: '10px',
+                              borderTop: '1px solid #e0e0e0',
+                              display: 'flex',
+                              alignItems: 'flex-start',
+                              gap: '8px',
+                            }}
+                          >
+                            <FaMapMarkerAlt style={{ color: '#f44336', marginTop: '3px' }} />
+                            <div style={{ fontSize: '13px', lineHeight: '1.5' }}>
+                              {positions[positions.length - 1]?.address || 'Fetching address...'}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </Popup>
                   </Marker>
